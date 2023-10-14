@@ -1,33 +1,13 @@
-import { useState } from 'react';
-
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-
 /**
  * Login Cluster includes the input box, buttons, checkboxes
  * 
  * Sends: A payload to the HT login API endpoint
  * Receives: Token containing login status (success/fail)
  */
-
-const LOGIN_API = 'https://api.htuslab1.com/user/login'
-
-/**
- * Call HT login API endpoint with user's email & password
- * @param email User's email
- * @param password User's password
- * @returns Payload containing login status
- */
-async function loginUser(email: String, password: String) {
-  return fetch(LOGIN_API, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  })
-    .then(data => data.json())
- }
+import { useState } from 'react';
+import { useLogin } from '../hooks/useLogin';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 /**
  * Handles login buttons, input boxes, and remember-me button
@@ -37,18 +17,18 @@ export function LoginCluster() {
   const [email, setEmail] = useState(localStorage.getItem("user-email") || ""); // User email - always retrieve from localStorage if possible
   const [password, setPassword] = useState("");                                 // User password
   const [remember, setRemember] = useState(false);                              // Remember-me button state
+  const {login, error, isLoading} = useLogin();
 
   // Handle login button
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const token = await loginUser(email, password); // Call API endpoint
-    console.log(token);
-
+    await login(email, password); // Call API endpoint
+    
     // Store user email in local storage as "user-email"
-    if(remember && token.status == 200) {
+    if(remember && !error) {
       localStorage.setItem("user-email", email);
     } else {
-      localStorage.setItem("user-email", "");
+      localStorage.removeItem("user-email");
     }
   }
 
