@@ -2,7 +2,7 @@ import { LoginCluster } from "../components/LoginCluster"
 
 /**
  * Login page
- * /login
+ * "/login"
  */
 export function Login() {
   return (

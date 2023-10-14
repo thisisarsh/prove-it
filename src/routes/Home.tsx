@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 /**
  * Home page
- * /home
+ * "/"
  * 
  * WIP: need to add the rest of the page
  */
