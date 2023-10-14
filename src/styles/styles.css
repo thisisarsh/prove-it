@@ -2,6 +2,11 @@
     padding: 2rem;
 }
 
+.main-logo {
+    width: 500px;
+    padding: 2rem;
+}
+
 .login-container {
     display: flex;
     flex-direction: column;
