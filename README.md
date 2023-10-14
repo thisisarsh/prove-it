@@ -25,3 +25,14 @@ Requirements:
 
    3. Run the build command - your files will appear in the `/dist` folder\
    `npm run build`
+
+# File structure
+```
+/
+├── public
+└── src
+    ├── assets      -> logos, photos, fonts, etc.
+    ├── components  -> nav bar, buttons, text box, etc.
+    ├── routes      -> pages that will be accessed by URL (1 .tsx file per page)
+    └── styles      -> stylesheets
+```
