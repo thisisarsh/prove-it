@@ -36,3 +36,19 @@ Requirements:
     ├── routes      -> pages that will be accessed by URL (1 .tsx file per page)
     └── styles      -> stylesheets
 ```
+# API access
+We are storing the API key locally in the environment variables to improve security and reduce risks.
+You can find the API key in the video that HomeTrumpeter shared on Google Drive.\
+\
+You must have the `.env` file in the **root directory**.
+```
+/
+├── .env    -> place the file here
+├── public
+└── src
+    └── ...
+```
+The .env file should contain the following text:
+```
+VITE_HT_API_KEY=<insert api key>
+```
