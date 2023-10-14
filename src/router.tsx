@@ -1,13 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
-
-import { Home } from "./routes/Home";
-import { Login } from "./routes/Login";
-import { ErrorPage } from "./error-page"
-
 /**
  * Router for navigating to various routes in the website
  * All pages MUST go under /src/routes/<page.tsx>
  */
+
+import { createBrowserRouter } from "react-router-dom";
+import { Home } from "./routes/Home";
+import { Login } from "./routes/Login";
+import { ErrorPage } from "./error-page"
+import { Dashboard } from "./routes/Dashboard";
+
+// NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
   {
     path: "/",
@@ -19,4 +21,9 @@ export const Router = createBrowserRouter([
     element: <Login />,
     errorElement: <ErrorPage />
   },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+    errorElement: <ErrorPage />
+  },  
 ]);

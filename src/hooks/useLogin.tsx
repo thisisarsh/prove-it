@@ -1,15 +1,20 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { useAuthContext } from './useAuthContext';
+import { useNavigate } from 'react-router-dom';
 
-const LOGIN_API = 'https://api.htuslab1.com/user/login'
+const LOGIN_API = 'https://api.htuslab1.com/user/login';
 
 export function useLogin() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const {dispatch}: any = useAuthContext();
+  const navigate = useNavigate();
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     
+    // API call
     const response = await fetch(LOGIN_API, {
       method: 'POST',
       headers: {
@@ -20,14 +25,15 @@ export function useLogin() {
     });
     const json = await response.json();
 
+    // Handle BAD/GOOD response
     if(!response.ok) {
       setIsLoading(false);
       setError(json.error);
-    }
-
-    if(response.ok) {
+    } else if(response.ok) {
       setIsLoading(false);
       localStorage.setItem('user', JSON.stringify(json)); // save user data to local storage
+      dispatch({type: 'LOGIN', payload: json});    // use AuthContext
+      navigate('/Dashboard');
     }
   }
 
