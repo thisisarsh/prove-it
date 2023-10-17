@@ -71,7 +71,7 @@ deploy:
     - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' k8s/deployment.yaml
     # - cat k8s/deployment.yaml
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
-    - oc project ht-project 
+    - oc project ht-coop 
     - RESULT=0
     - oc scale deployment -l app.kubernetes.io/instance=ht-website --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
