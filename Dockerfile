@@ -19,4 +19,4 @@ RUN npx vite build
 
 EXPOSE 8080
 
-CMD [ "serve", "-l", "8080", "-s", "dist" ]
+CMD [ "serve", "-l", "8080", "-s", "dist/" ]
