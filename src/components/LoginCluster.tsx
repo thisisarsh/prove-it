@@ -1,39 +1,38 @@
+/**
+ * Login Cluster includes the input box, buttons, checkboxes
+ * 
+ * Sends: A payload to the HT login API endpoint
+ * Receives: Token containing login status (success/fail)
+ */
 import { useState } from 'react';
-
+import { useLogin } from '../hooks/useLogin';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-const LOGIN_ENDPOINT = 'https://api.htuslab1.com/user/login'
-
-async function loginUser(email: String, password: String) {
-  return fetch(LOGIN_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  })
-    .then(data => data.json())
- }
-
+/**
+ * Handles login buttons, input boxes, and remember-me button
+ * @returns Void
+ */
 export function LoginCluster() {
-  const [email, setEmail] = useState(localStorage.getItem("myapp-email") || "");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [email, setEmail] = useState(localStorage.getItem("user-email") || ""); // User email - always retrieve from localStorage if possible
+  const [password, setPassword] = useState("");                                 // User password
+  const [remember, setRemember] = useState(false);                              // Remember-me button state
+  const {login, error, isLoading} = useLogin();
 
+  // Handle login button
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const token = await loginUser(email, password);
-    console.log(token);
-
+    await login(email, password); // Call API endpoint
+    
     // Store user email in local storage as "user-email"
-    if(remember && token.statusCode === 200) {
+    if(remember && !error) {
       localStorage.setItem("user-email", email);
     } else {
-      localStorage.setItem("user-email", "");
+      localStorage.removeItem("user-email");
     }
   }
 
+  // Handle remember-me checkbox
   const handleToggleRemember = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setRemember(!remember);
@@ -44,7 +43,7 @@ export function LoginCluster() {
       {/* Email input */}
       <Form.Group className="mb-3" controlId="formGroupEmail">
         <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" onChange={e => setEmail(e.target.value)} />
+        <Form.Control type="email" placeholder="Enter email" onChange={e => setEmail(e.target.value)} value={email} />
       </Form.Group>
 
       {/* Password input */}
