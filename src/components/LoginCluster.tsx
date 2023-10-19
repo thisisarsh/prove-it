@@ -69,7 +69,7 @@ export function LoginCluster() {
         <Button type="submit" className="login-button">
           Login
         </Button>
-        <Button className="create-account-button" href="https://www.google.ca">
+        <Button type="button" className="login-button" href='./signup'>
           Create Account
         </Button>
       </div>
