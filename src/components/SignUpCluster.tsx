@@ -18,12 +18,18 @@ export function SignUpCluster() {
   const [lastName, setLastName] = useState(localStorage.getItem("user-first-name") || "");             //// User last name - always retrieve from localStorage if possible
   const [email, setEmail] = useState(localStorage.getItem("user-email") || ""); // User email - always retrieve from localStorage if possible
   const [password, setPassword] = useState("");                                 // User password
+  const [confirmPassword, setConfirmPassword] = useState("");                          // User confirm password
   const {signup, error, isLoading} = useSignUp();
 
   // Handle login button
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    await signup(lastName, firstName,email, password); // Call API endpoint
+    await signup(lastName, firstName, email, password); // Call API endpoint
+
+    //check password and confirm password are the same
+    if(password != confirmPassword){
+      alert("Password do not match");
+    }
     
     // Store user email, first namd and last name in local storage
     if(!error) {
@@ -61,6 +67,12 @@ export function SignUpCluster() {
       <Form.Group className="mb-3" controlId="formGroupPassword">
         <Form.Label>Password</Form.Label>
         <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+      </Form.Group>
+
+      {/* Password Confirm input */}
+      <Form.Group className="mb-3" controlId="formGroupPassword">
+        <Form.Label>Confirm Password</Form.Label>
+        <Form.Control type="password" placeholder="Confirm Password" onChange={e => setConfirmPassword(e.target.value)} />
       </Form.Group>
 
       {/* Buttons */}
