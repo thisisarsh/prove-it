@@ -24,7 +24,6 @@ export function useLogin() {
       body: JSON.stringify({ email, password })
     });
     const json = await response.json();
-    console.log("API CALL", json);
 
     // Handle BAD/GOOD response
     if(!json.isSuccess) {
