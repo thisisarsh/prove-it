@@ -24,12 +24,13 @@ export function useLogin() {
       body: JSON.stringify({ email, password })
     });
     const json = await response.json();
+    console.log("API CALL", json);
 
     // Handle BAD/GOOD response
-    if(!response.ok) {
+    if(!json.isSuccess) {
       setIsLoading(false);
       setError(json.error);
-    } else if(response.ok) {
+    } else if(json.isSuccess) {
       setIsLoading(false);
       localStorage.setItem('user', JSON.stringify(json)); // save user data to local storage
       dispatch({type: 'LOGIN', payload: json});    // use AuthContext
