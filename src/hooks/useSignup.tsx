@@ -33,7 +33,7 @@ export function useSignUp() {
     const json = await response.json();
 
     // Handle BAD/GOOD response
-    if(!response.ok) {
+    if(!response.ok || isLoading == false) {
       setIsLoading(false);
       setError(json.error);
     } else if(response.ok) {
