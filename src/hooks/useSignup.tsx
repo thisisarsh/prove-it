@@ -8,9 +8,18 @@ export function useSignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const signup = async (firstName: string, lastName:string ,email: string, password: string) => {
+  const signup = async (firstName: string, lastName:string ,email: string, password: string, confirmPassword: string) => {
     setIsLoading(true);
     setError(null);
+
+    //check password and confirm password are the same and not empty
+    if(password != confirmPassword){
+      alert("Password do not match");
+      setIsLoading(false);
+    }else if(password == ""){
+      alert("Password cannot be empty");
+      setIsLoading(false);
+    };
     
     // API call
     const response = await fetch(SIGNUP_API, {

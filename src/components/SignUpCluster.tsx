@@ -21,15 +21,10 @@ export function SignUpCluster() {
   const [confirmPassword, setConfirmPassword] = useState("");                          // User confirm password
   const {signup, error, isLoading} = useSignUp();
 
-  // Handle login button
+  // Handle signup button
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    await signup(lastName, firstName, email, password); // Call API endpoint
-
-    //check password and confirm password are the same
-    if(password != confirmPassword){
-      alert("Password do not match");
-    }
+    await signup(lastName, firstName, email, password, confirmPassword); // Call API endpoint
     
     // Store user email, first namd and last name in local storage
     if(!error) {
