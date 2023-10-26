@@ -10,8 +10,8 @@ Requirements:
 ### Setting up development environment
 
    1. Clone repository\
-   SSH: `git clone -b react-vite git@gitlab.com:ht6401839/uofw/proveit.git`
-   HTTPS: `git clone -b react-vite https://gitlab.com/ht6401839/uofw/proveit.git`
+   - SSH: `git clone -b react-vite git@gitlab.com:ht6401839/uofw/proveit.git`
+   - HTTPS: `git clone -b react-vite https://gitlab.com/ht6401839/uofw/proveit.git`
 
    2. Install all dependencies\
    `npm install`
