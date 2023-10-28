@@ -37,7 +37,7 @@ test:
     - npm run test
     - npm run security-scan
     - npm run build
-  environment: developent
+  environment: development
 
 release-image:
   extends: .before_script_template
