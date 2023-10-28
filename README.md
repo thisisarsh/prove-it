@@ -1,3 +1,13 @@
+**This branch acts as an intermediate for the code in development and the code in production.
+All other branches are first merged into this branch.
+Other branches will be deleted after merging.
+
+After the final code review and testing, the app will be deployed through the main after merging 'develop' into 'main'.
+
+Do not delete this branch.
+Do not merge other branches directly into 'main'.**
+
+
 # HomeTrumpeter Website (New)
 
 ## Tech Stack
