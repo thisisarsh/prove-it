@@ -39,6 +39,14 @@ test:
     - npm run build
   environment: developent
 
+release-image:
+  extends: .before_script_template
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+
 deploy_staging:
   stage: deploy
   only:
@@ -58,7 +66,7 @@ deploy-prod:
     - main
   script:
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CONTAINER_TEST_IMAGE
+    - export IMAGE=$CONTAINER_RELEASE_IMAGE
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-web-$CI_COMMIT_SHORT_SHA
     - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/deployment.yaml
