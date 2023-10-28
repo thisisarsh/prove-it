@@ -14,9 +14,9 @@ import Button from 'react-bootstrap/Button';
  * @returns Void
  */
 export function SignUpCluster() {
-  const [firstName, setFirstName] = useState(localStorage.getItem("user-first-name") || "");   // User first name - always retrieve from localStorage if possible
-  const [lastName, setLastName] = useState(localStorage.getItem("user-first-name") || "");             //// User last name - always retrieve from localStorage if possible
-  const [email, setEmail] = useState(localStorage.getItem("user-email") || ""); // User email - always retrieve from localStorage if possible
+  const [firstName, setFirstName] = useState("");   // User first name - always retrieve from localStorage if possible
+  const [lastName, setLastName] = useState("");             //// User last name - always retrieve from localStorage if possible
+  const [email, setEmail] = useState(""); // User email - always retrieve from localStorage if possible
   const [password, setPassword] = useState("");                                 // User password
   const [confirmPassword, setConfirmPassword] = useState("");                          // User confirm password
   const {signup, error, isLoading} = useSignUp();

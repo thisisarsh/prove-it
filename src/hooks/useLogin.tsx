@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const LOGIN_API = 'https://api.htuslab1.com/user/login';
+const LOGIN_API = 'https://apiqa.hometrumpeter.com/user/login';
 
 export function useLogin() {
   const [error, setError] = useState(null);
