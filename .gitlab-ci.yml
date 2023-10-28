@@ -5,6 +5,7 @@ services:
 stages:
   - build
   - test
+  - release
   - deploy
 
 variables:
@@ -12,24 +13,49 @@ variables:
   DOCKER_TLS_CERTDIR: "/certs"
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  DOCKER_DRIVER: overlay2
+  IMAGE_TAG: latest
+  WEB_APP_NAME: ht-react
 
 .before_script_template:
   before_script:
-    - docker --version
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 build-job:
   extends: .before_script_template
   stage: build
   script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
+test:
+  stage: test
+  image: node:14
+  script:
+    - npm install
+    - npm run lint
+    - npm run test
+    - npm run security-scan
+    - npm run build
+  environment: developent
+
+deploy_staging:
+  stage: deploy
+  only:
+    - develop
+  image: alpine:latest
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker stop $WEB_APP_NAME || true
+    - docker rm $WEB_APP_NAME || true
+    - docker run -d -p 80:80 --name $WEB_APP_NAME $CONTAINER_TEST_IMAGE
+  environment: development
 
 deploy-prod:
   image: quay.io/openshift/origin-cli
   stage: deploy
+  only:
+    - main
   script:
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$CONTAINER_TEST_IMAGE
@@ -40,8 +66,6 @@ deploy-prod:
     - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' k8s/deployment.yaml
     - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' k8s/deployment.yaml
     - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' k8s/deployment.yaml
-    # - cat k8s/deployment.yaml
-    - echo $OCP_API_SERVER
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
     - oc project ht-coop
     - RESULT=0
