@@ -32,6 +32,11 @@ spec:
       - env:
         - name: name
           value: ht-website
+        - name: VITE_HT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-key-secret
+              key: API_KEY
         image: <PATCH_ME>
         imagePullPolicy: IfNotPresent
         name: ht-website
