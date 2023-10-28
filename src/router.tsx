@@ -4,10 +4,12 @@
  */
 
 import { createBrowserRouter } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute"
 import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
 import { ErrorPage } from "./error-page"
 import { Dashboard } from "./routes/Dashboard";
+import { SignUp } from "./routes/SignUp";
 
 // NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
@@ -23,7 +25,12 @@ export const Router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <ProtectedRoute redirect="/login"><Dashboard /></ProtectedRoute>,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
     errorElement: <ErrorPage />
   },  
 ]);
