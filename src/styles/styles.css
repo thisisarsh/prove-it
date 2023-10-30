@@ -39,7 +39,6 @@
     align-items: center;
     padding-top: 1rem;
 }
-
 .welcome-message {
     text-align:center;
     margin-bottom:2rem;
@@ -59,4 +58,15 @@
 
 #phone-input {
     margin-bottom:1.5rem;
+}
+.sign-up-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: middle;
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.sign-up-button{
+    min-width: 28rem;
 }

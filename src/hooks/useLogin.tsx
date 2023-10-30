@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const LOGIN_API = 'https://api.htuslab1.com/user/login';
+const LOGIN_API = 'https://apiqa.hometrumpeter.com/user/login';
 
 export function useLogin() {
   const [error, setError] = useState(null);
@@ -26,10 +26,10 @@ export function useLogin() {
     const json = await response.json();
 
     // Handle BAD/GOOD response
-    if(!response.ok) {
+    if(!json.isSuccess) {
       setIsLoading(false);
       setError(json.error);
-    } else if(response.ok) {
+    } else if(json.isSuccess) {
       setIsLoading(false);
       localStorage.setItem('user', JSON.stringify(json)); // save user data to local storage
       dispatch({type: 'LOGIN', payload: json});    // use AuthContext
