@@ -9,6 +9,7 @@ import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
 import { ErrorPage } from "./error-page"
 import { Dashboard } from "./routes/Dashboard";
+import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
 
 // NEED TO PROTECT "Dashboard" ROUTE
@@ -32,5 +33,10 @@ export const Router = createBrowserRouter([
     path: "/signup",
     element: <SignUp />,
     errorElement: <ErrorPage />
-  },  
+  },
+  {
+    path: "/verifyphone",
+    element: <VerifyPhone />,
+    errorElement: <ErrorPage />
+  },
 ]);
