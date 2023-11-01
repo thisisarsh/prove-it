@@ -11,6 +11,8 @@ import { ErrorPage } from "./error-page"
 import { Dashboard } from "./routes/Dashboard";
 import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
+import { VerifyOTP } from './routes/VerifyOTP';
+import { SetRole } from './routes/SetRole';
 
 // NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
@@ -39,4 +41,14 @@ export const Router = createBrowserRouter([
     element: <VerifyPhone />,
     errorElement: <ErrorPage />
   },
+  {
+    path: "/verifyotp",
+    element: <VerifyOTP />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/setrole",
+    element: <SetRole />,
+    errorElement: <ErrorPage />
+  }
 ]);

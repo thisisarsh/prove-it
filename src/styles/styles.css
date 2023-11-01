@@ -70,3 +70,58 @@
 .sign-up-button{
     min-width: 28rem;
 }
+
+/*For role selection page*/
+div.select-role-container {
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+div.info-message {
+    width:100%;
+    text-align:center;
+    margin-top:30px;
+    margin-bottom:30px;
+    font-size:18pt;
+}
+
+div.button-options-container {
+    width:100%;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+}
+
+div.button-option-group {
+    display:flex;
+    width: 40%;
+    flex-direction:column;
+    justify-content:flex-start;
+    max-width:500px;
+}
+
+div.option-description {
+    text-align:center;
+}
+
+.standard-button {
+    background-color:#194185;
+    border: 3px outset #194185;
+}
+
+/*For OTP Verification page*/
+.otp-input-cluster {
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.otp-input-control {
+    width:100%;
+    max-width:600px;
+    margin-bottom:20px;
+    text-align:center;
+}

@@ -10,7 +10,10 @@ export function PhoneInputCluster() {
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        verifyPhone(phone);
+        await verifyPhone(phone);
+        if (error) {
+            alert(error);
+        }
     }
 
     function handlePhoneChange(e: React.ChangeEvent<FormControlElement>) {

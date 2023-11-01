@@ -1,8 +1,8 @@
 import { PhoneInputCluster } from "../components/PhoneInputCluster"
 
 /**
- * Login page
- * "/login"
+ * Page for inputting phone number so that an OTP can be sent.
+ * "/verifyphone"
  */
 export function VerifyPhone() {
   return (

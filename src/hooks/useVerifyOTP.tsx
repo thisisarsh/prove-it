@@ -2,41 +2,44 @@ import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const SEND_CONTACT_API = 'https://apiqa.hometrumpeter.com/contact/send';
+const VERIFY_OTP_API = 'https://apiqa.hometrumpeter.com/contact/verify';
 
-export function useVerifyPhone() {
+export function useVerifyOTP() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {user} : any = useAuthContext();
   const {dispatch}: any = useAuthContext();
+  const {user} : any = useAuthContext();
   const navigate = useNavigate();
 
-  const verifyPhone = async (phone: string) => {
+  const verifyOTP = async (otp: string) => {
     setIsLoading(true);
     setError(null);
     
     // API call
-    const response = await fetch(SEND_CONTACT_API, {
+    const response = await fetch(VERIFY_OTP_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'xck': import.meta.env.VITE_HT_API_KEY,
         'Authorization' : 'Bearer ' + user.token
       },
-      body: JSON.stringify({phone, type:"phone"})
+      body: JSON.stringify({otp, email: user.data.user.email, phone:localStorage.getItem('userPhone'), type:"phone"})
     });
     const json = await response.json();
-
+    console.log(json);
     // Handle BAD/GOOD response
     if (response.ok && json.isSuccess) {
       setIsLoading(false);
-      localStorage.setItem('contactSendResponse', JSON.stringify(json));
-      localStorage.setItem('userPhone', phone); // save user data to local storage
-      navigate('/verifyotp');
+      //update that phone has been verified in auth context
+      let userUpdatedPhone = user;
+      userUpdatedPhone.data.user.phoneVerified = true;
+      dispatch({type: 'LOGIN', payload: userUpdatedPhone});
+      navigate('/dashboard');
     } else if (response.ok) {
       setIsLoading(false);
-      localStorage.setItem('contactSendResponse', JSON.stringify(json));
+      localStorage.setItem('verifyOTPRespnose', JSON.stringify(json));
       setError(json.message);
+      console.error(json.message);
     } else {
       setIsLoading(false);
       setError(json.error);
@@ -45,5 +48,5 @@ export function useVerifyPhone() {
     return json;
   }
 
-  return({ verifyPhone, isLoading, error });
+  return({ verifyOTP, isLoading, error });
 }

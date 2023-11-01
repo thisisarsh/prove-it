@@ -2,48 +2,52 @@ import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const SEND_CONTACT_API = 'https://apiqa.hometrumpeter.com/contact/send';
+const VERIFY_OTP_API = 'https://apiqa.hometrumpeter.com/user/set-role';
 
-export function useVerifyPhone() {
+export function useSetRole() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {user} : any = useAuthContext();
-  const {dispatch}: any = useAuthContext();
+  const { user } : any = useAuthContext();
   const navigate = useNavigate();
+  const {dispatch}: any = useAuthContext();
 
-  const verifyPhone = async (phone: string) => {
+  const setRole = async (roleName: string) => {
     setIsLoading(true);
     setError(null);
     
     // API call
-    const response = await fetch(SEND_CONTACT_API, {
+    const response = await fetch(VERIFY_OTP_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'xck': import.meta.env.VITE_HT_API_KEY,
         'Authorization' : 'Bearer ' + user.token
       },
-      body: JSON.stringify({phone, type:"phone"})
+      body: JSON.stringify({roleName, refreshToken:user.refreshToken})
     });
     const json = await response.json();
 
     // Handle BAD/GOOD response
     if (response.ok && json.isSuccess) {
       setIsLoading(false);
-      localStorage.setItem('contactSendResponse', JSON.stringify(json));
-      localStorage.setItem('userPhone', phone); // save user data to local storage
-      navigate('/verifyotp');
+      //re-save the user to authContext with the token returned from the api call.
+      let userUpdatedTokenAndRole = user;
+      userUpdatedTokenAndRole.token = json.data.token;
+      userUpdatedTokenAndRole.data.roleName = roleName;
+      dispatch({type: 'LOGIN', payload: userUpdatedTokenAndRole}); //need to save new token to the auth context.
+      navigate('/verifyphone');
     } else if (response.ok) {
       setIsLoading(false);
-      localStorage.setItem('contactSendResponse', JSON.stringify(json));
+      localStorage.setItem('setRoleResposne', JSON.stringify(json));
       setError(json.message);
     } else {
       setIsLoading(false);
       setError(json.error);
       console.error(json.error);
     }
+
     return json;
   }
 
-  return({ verifyPhone, isLoading, error });
+  return({ setRole, isLoading, error });
 }

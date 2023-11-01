@@ -72,7 +72,7 @@ export function SignUpCluster() {
 
       {/* Buttons */}
       <div className="sign-up-button-container">
-        <Button type="submit" className="sign-up-button">
+        <Button type="submit" className="sign-up-button standard-button">
           Sign Up
         </Button>
       </div>
