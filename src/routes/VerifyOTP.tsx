@@ -1,10 +1,13 @@
-import { OTPVerifyCluster } from "../components/OPTVerifyCluster"
+import { OTPVerifyCluster } from "../components/OPTVerifyCluster";
 
 export function VerifyOTP() {
-    return (
-        <div className="login-container">
-        <img src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg" className="main-logo" />
-        <OTPVerifyCluster />
-        </div>
-    )
+  return (
+    <div className="login-container">
+      <img
+        src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
+        className="main-logo"
+      />
+      <OTPVerifyCluster />
+    </div>
+  );
 }

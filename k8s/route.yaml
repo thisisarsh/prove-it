@@ -11,7 +11,7 @@ metadata:
 spec:
   port:
     targetPort: 8080
-  to: 
+  to:
     kind: Service
     name: ht-website
     weight: 100

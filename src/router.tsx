@@ -4,51 +4,55 @@
  */
 
 import { createBrowserRouter } from "react-router-dom";
-import { ProtectedRoute } from "./components/ProtectedRoute"
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
-import { ErrorPage } from "./error-page"
+import { ErrorPage } from "./error-page";
 import { Dashboard } from "./routes/Dashboard";
 import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
-import { VerifyOTP } from './routes/VerifyOTP';
-import { SetRole } from './routes/SetRole';
+import { VerifyOTP } from "./routes/VerifyOTP";
+import { SetRole } from "./routes/SetRole";
 
 // NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/login",
     element: <Login />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/dashboard",
-    element: <ProtectedRoute redirect="/login"><Dashboard /></ProtectedRoute>,
-    errorElement: <ErrorPage />
+    element: (
+      <ProtectedRoute redirect="/login">
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
   },
   {
     path: "/signup",
     element: <SignUp />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/verifyphone",
     element: <VerifyPhone />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/verifyotp",
     element: <VerifyOTP />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/setrole",
     element: <SetRole />,
-    errorElement: <ErrorPage />
-  }
+    errorElement: <ErrorPage />,
+  },
 ]);

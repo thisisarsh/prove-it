@@ -1,4 +1,4 @@
-import { PhoneInputCluster } from "../components/PhoneInputCluster"
+import { PhoneInputCluster } from "../components/PhoneInputCluster";
 
 /**
  * Page for inputting phone number so that an OTP can be sent.
@@ -7,8 +7,11 @@ import { PhoneInputCluster } from "../components/PhoneInputCluster"
 export function VerifyPhone() {
   return (
     <div className="login-container">
-      <img src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg" className="main-logo" />
+      <img
+        src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
+        className="main-logo"
+      />
       <PhoneInputCluster />
     </div>
-  )
+  );
 }

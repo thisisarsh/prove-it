@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 /**
  * Home page
  * "/"
- * 
+ *
  * WIP: need to add the rest of the page
  */
 export function Home() {
   const navigate = useNavigate();
-  
+
   const handleLogIn = () => {
-    navigate('/login');
-  }
+    navigate("/login");
+  };
 
   const handleSignUp = () => {
-    navigate('/SignUp');
-  }
+    navigate("/SignUp");
+  };
 
   return (
     <div>
@@ -23,6 +23,5 @@ export function Home() {
       <button onClick={handleLogIn}>Log in</button>
       <button onClick={handleSignUp}>Sign up</button>
     </div>
-  )
+  );
 }
-
