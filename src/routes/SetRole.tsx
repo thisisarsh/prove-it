@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 export function SetRole() {
   const { setRole, isLoading, error } = useSetRole();
 
-  let handleOptionClick = async (roleSelection: string) => {
+  const handleOptionClick = async (roleSelection: string) => {
     await setRole(roleSelection);
     if (error) {
       alert(error);
