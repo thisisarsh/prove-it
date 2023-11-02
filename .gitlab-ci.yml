@@ -35,10 +35,6 @@ build-job:
 release-image:
   extends: .before_script_template
   stage: release
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "develop"'
-  only:
-    - merge_requests
   script:
     - docker pull $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
@@ -48,12 +44,10 @@ deploy_staging:
   stage: deploy
   rules:
     - if: '$CI_COMMIT_REF_NAME == "develop"'
-  only:
-    - merge_requests
   image: quay.io/openshift/origin-cli
   script:
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CONTAINER_RELEASE_IMAGE
+    - export IMAGE=$CONTAINER_TEST_IMAGE
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-web-$CI_COMMIT_SHORT_SHA
     - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/deployment.yaml
@@ -77,8 +71,6 @@ deploy-prod:
   stage: deploy
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main"'
-  only:
-    - merge_requests
   script:
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$CONTAINER_RELEASE_IMAGE
