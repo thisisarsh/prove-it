@@ -2,6 +2,7 @@ import { useSetRole } from "../hooks/useSetRole";
 import Button from "react-bootstrap/Button";
 
 export function SetRole() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { setRole, isLoading, error } = useSetRole();
 
   const handleOptionClick = async (roleSelection: string) => {
