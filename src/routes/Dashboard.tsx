@@ -6,14 +6,12 @@
  */
 
 import { useLogout } from "../hooks/useLogout"
+import { DashboardCluster } from "../components/DashboardCluster"
 
 export function Dashboard() {
   const {logout} = useLogout();
 
   return (
-    <>
-      <div>Dashboard</div>
-      <button onClick={logout}>Log out</button>
-    </>
+    <DashboardCluster />
   );
 }  

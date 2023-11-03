@@ -11,7 +11,6 @@ export function useSignUp() {
   const signup = async (firstName: string, lastName:string ,email: string, password: string, confirmPassword: string) => {
     setIsLoading(true);
     setError(null);
-    console.log(isLoading);
 
     //check password and confirm password are the same and not empty
     if(password != confirmPassword){
@@ -32,6 +31,8 @@ export function useSignUp() {
         body: JSON.stringify({"user": {firstName, lastName, email, password }})
       });
       const json = await response.json();
+
+      console.log(json);
 
       // Handle BAD/GOOD response
     if(json.isSuccess == false) {
