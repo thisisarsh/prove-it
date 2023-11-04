@@ -18,7 +18,7 @@ export function PhoneInputCluster() {
 
   function handlePhoneChange(e: React.ChangeEvent<FormControlElement>) {
     //reject non-numeric inputs and inputs above length limit
-    let newInputChar: string = e.target.value.charAt(e.target.value.length - 1);
+    const newInputChar: string = e.target.value.charAt(e.target.value.length - 1);
     if (e.target.value.length > 17 || Number.isNaN(parseInt(newInputChar))) {
       e.target.value = e.target.value.substring(0, e.target.value.length - 1);
     }

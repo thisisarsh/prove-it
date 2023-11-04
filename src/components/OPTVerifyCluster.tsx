@@ -17,7 +17,7 @@ export function OTPVerifyCluster() {
   };
 
   function handleOTPChange(e: React.ChangeEvent<FormControlElement>) {
-    let targetValue = e.target.value;
+    const targetValue = e.target.value;
     let foundNonNumericChar = false;
     let i = 0;
     while (i < targetValue.length && !foundNonNumericChar) {
