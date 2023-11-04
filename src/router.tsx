@@ -16,43 +16,43 @@ import { SetRole } from "./routes/SetRole";
 
 // NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/dashboard",
-    element: (
-      <ProtectedRoute redirect="/login">
-        <Dashboard />
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/signup",
-    element: <SignUp />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/verifyphone",
-    element: <VerifyPhone />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/verifyotp",
-    element: <VerifyOTP />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/setrole",
-    element: <SetRole />,
-    errorElement: <ErrorPage />,
-  },
+    {
+        path: "/",
+        element: <Home />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/login",
+        element: <Login />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/dashboard",
+        element: (
+            <ProtectedRoute redirect="/login">
+                <Dashboard />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/signup",
+        element: <SignUp />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/verifyphone",
+        element: <VerifyPhone />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/verifyotp",
+        element: <VerifyOTP />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/setrole",
+        element: <SetRole />,
+        errorElement: <ErrorPage />,
+    },
 ]);

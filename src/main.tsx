@@ -11,9 +11,9 @@ import "./styles/styles.css";
  * Entry point into the React app
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <AuthContextProvider>
-      <RouterProvider router={Router} />
-    </AuthContextProvider>
-  </React.StrictMode>,
+    <React.StrictMode>
+        <AuthContextProvider>
+            <RouterProvider router={Router} />
+        </AuthContextProvider>
+    </React.StrictMode>,
 );

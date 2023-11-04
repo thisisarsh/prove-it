@@ -8,12 +8,12 @@
 import { useLogout } from "../hooks/useLogout";
 
 export function Dashboard() {
-  const { logout } = useLogout();
+    const { logout } = useLogout();
 
-  return (
-    <>
-      <div>Dashboard</div>
-      <button onClick={logout}>Log out</button>
-    </>
-  );
+    return (
+        <>
+            <div>Dashboard</div>
+            <button onClick={logout}>Log out</button>
+        </>
+    );
 }

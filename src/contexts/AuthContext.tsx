@@ -5,27 +5,27 @@ export const AuthContext = createContext();
 
 // @ts-ignore
 export const authReducer = (state, action) => {
-  switch (action.type) {
-    case "LOGIN":
-      return { user: action.payload };
-    case "LOGOUT":
-      return { user: null };
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case "LOGIN":
+            return { user: action.payload };
+        case "LOGOUT":
+            return { user: null };
+        default:
+            return state;
+    }
 };
 
 // @ts-ignore
 export const AuthContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(authReducer, {
-    user: null,
-  });
+    const [state, dispatch] = useReducer(authReducer, {
+        user: null,
+    });
 
-  console.log("AuthContext state:", state);
+    console.log("AuthContext state:", state);
 
-  return (
-    <AuthContext.Provider value={{ ...state, dispatch }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ ...state, dispatch }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
