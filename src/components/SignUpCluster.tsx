@@ -20,7 +20,7 @@ export function SignUpCluster() {
     const [password, setPassword] = useState(""); // User password
     const [confirmPassword, setConfirmPassword] = useState(""); // User confirm password
     const { signup, error, isLoading } = useSignUp();
-    const [passwordStrengthError, setError] = useState("");
+    const [displayError, setError] = useState("");
 
     // Handle signup button
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
@@ -57,7 +57,7 @@ export function SignUpCluster() {
 
         await signup(lastName, firstName, email, password); // Call API endpoint
 
-        // Store user email, first namd and last name in local storage
+        // Store user email, first name and last name in local storage
         if (!error) {
             localStorage.setItem("user-email", email);
             localStorage.setItem("user-first-name", firstName);
@@ -76,12 +76,18 @@ export function SignUpCluster() {
             <FormGroup label="Email address" type="email" value={email} onChange={(e) => handleInputChange(e, setEmail)} />
             <FormGroup label="Password" type="password" value={password} onChange={(e) => handleInputChange(e, setPassword)} />
             <FormGroup label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => handleInputChange(e, setConfirmPassword)} />
-            {passwordStrengthError && <div className="error">{passwordStrengthError}</div>}
-            <div className="sign-up-button-container">
-                <Button type="submit" className="sign-up-button standard-button">
-                    Sign Up
-                </Button>
-            </div>
+            {displayError && <div className="error">{displayError}</div>}
+            {isLoading ? (
+                <div className="spinner-container"> {/* Create a container for the spinner */}
+                    <div className="spinner"></div> {/* Insert the spinner here */}
+                </div>
+            ) : (
+                <div className="sign-up-button-container">
+                    <Button type="submit" className="sign-up-button standard-button">
+                        Sign Up
+                    </Button>
+                </div>
+            )}
         </Form>
     );
 }

@@ -68,7 +68,7 @@
 .sign-up-button-container {
   display: flex;
   flex-direction: column;
-  justify-content: middle;
+  justify-content: center;
   align-items: center;
   padding-top: 1rem;
 }
@@ -134,5 +134,19 @@ div.option-description {
 
 .no-info-error {
   background-color: #ffcccc; /* Red background color */
-  border: 1px solid #ff0000; /* Red border color */
+  border: 1px solid #b51d18; /* Red border color */
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #194185;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -20,7 +20,7 @@ export function LoginCluster() {
     const [password, setPassword] = useState(""); // User password
     const [remember, setRemember] = useState(false); // Remember-me button state
     const [formSubmitted, setFormSubmitted] = useState(false);
-    const { login, error } = useLogin();
+    const { login, error, isLoading } = useLogin();
     // Handle login button
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -87,14 +87,21 @@ export function LoginCluster() {
             </div>
 
             {/* Buttons */}
-            <div className="login-button-container">
-                <Button type="submit" className="login-button">
-                    Login
-                </Button>
-                <Button type="button" className="login-button" href="./signup">
-                    Create Account
-                </Button>
-            </div>
+            {isLoading ? (
+                <div className="spinner-container"> {/* Create a container for the spinner */}
+                    <div className="spinner"></div> {/* Insert the spinner here */}
+                </div>
+            ) : (
+                <div className="login-button-container">
+                    <Button type="submit" className="login-button">
+                        Login
+                    </Button>
+                    <Button type="button" className="login-button" href="./signup">
+                        Create Account
+                    </Button>
+                </div>
+            )}
+
         </Form>
     );
 }
