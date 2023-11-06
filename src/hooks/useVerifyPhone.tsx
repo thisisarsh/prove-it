@@ -8,7 +8,7 @@ export function useVerifyPhone() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { user }: any = useAuthContext();
-    const { dispatch }: any = useAuthContext();
+    const { dispatch } = useAuthContext();
     const navigate = useNavigate();
 
     const verifyPhone = async (phone: string) => {
@@ -17,6 +17,7 @@ export function useVerifyPhone() {
 
         // API call
         const response = await fetch(SEND_CONTACT_API, {
+
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -25,6 +26,8 @@ export function useVerifyPhone() {
             },
             body: JSON.stringify({ phone, type: "phone" }),
         });
+
+        setIsLoading(true);
         const json = await response.json();
 
         // Handle BAD/GOOD response

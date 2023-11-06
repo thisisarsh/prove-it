@@ -1,16 +1,8 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-
-// Load the TypeScript module dynamically
-import loadSignUpCluster from './loadSignUpCluster';
+import { SignUpCluster } from '../src/components/SignUpCluster';
 
 describe('SignUpCluster', () => {
-    let SignUpCluster;
-
-    beforeAll(async () => {
-        const module = await loadSignUpCluster();
-        SignUpCluster = module.default;
-    });
 
     it('should render the component', () => {
         const { getByText } = render(<SignUpCluster />);

@@ -3,6 +3,16 @@ import { useNavigate } from "react-router-dom";
 
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+const API_KEY = process.env.VITE_HT_API_KEY;
+const headers = new Headers();
+headers.append("Content-Type", "application/json");
+if (API_KEY) {
+    headers.append("xck", API_KEY);
+}
+
 export function useSignUp() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -20,10 +30,7 @@ export function useSignUp() {
 
         const response = await fetch(SIGNUP_API, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
-            },
+            headers: headers,
             body: JSON.stringify({
                 user: { firstName, lastName, email, password },
             }),

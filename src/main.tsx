@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { Router } from "./router";
-import { AuthContextProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/styles.css";
@@ -12,8 +12,8 @@ import "./styles/styles.css";
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <AuthContextProvider>
+        <AuthProvider>
             <RouterProvider router={Router} />
-        </AuthContextProvider>
+        </AuthProvider>
     </React.StrictMode>,
 );

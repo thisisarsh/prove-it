@@ -14,7 +14,6 @@ import { SignUp } from "./routes/SignUp";
 import { VerifyOTP } from "./routes/VerifyOTP";
 import { SetRole } from "./routes/SetRole";
 
-// NEED TO PROTECT "Dashboard" ROUTE
 export const Router = createBrowserRouter([
     {
         path: "/",
