@@ -26,21 +26,6 @@ export function useLogin() {
 
         const json = await response.json();
 
-        // let json = {
-        //     "data": {
-        //         "id": "sh2345",
-        //         "firstName": "Arshjot",
-        //         "lastName": "Singh",
-        //         "email": "arshjots11@gmail.com",
-        //         "userName": "thisisarsh",
-        //         "roleName": "manager",
-        //         "emailVerified": true,
-        //         "phoneVerified": false,
-        //         "isRegistered": true
-        //     },
-        //     "isSuccess": true,
-        //     "error": null,
-        // }
         // Handle BAD/GOOD response
         if (!json.isSuccess) {
             setIsLoading(false);
@@ -48,7 +33,6 @@ export function useLogin() {
         } else if (json.isSuccess) {
             setIsLoading(false);
             localStorage.setItem("user", JSON.stringify(json)); // save user data to local storage
-            console.log(json)
             dispatch({ type: "LOGIN", payload: json }); // use AuthContext
             navigate("/Dashboard");
         }

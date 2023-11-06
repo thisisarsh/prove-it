@@ -88,8 +88,8 @@ export function LoginCluster() {
 
             {/* Buttons */}
             {isLoading ? (
-                <div className="spinner-container"> {/* Create a container for the spinner */}
-                    <div className="spinner"></div> {/* Insert the spinner here */}
+                <div className="spinner-container">
+                    <div className="spinner"></div>
                 </div>
             ) : (
                 <div className="login-button-container">

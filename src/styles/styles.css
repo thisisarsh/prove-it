@@ -22,6 +22,10 @@
   width: 30rem;
 }
 
+.signup-cluster {
+  width: 30rem;
+}
+
 .login-button-container {
   display: flex;
   flex-direction: row;
@@ -149,4 +153,8 @@ div.option-description {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.error{
+  flex: 1;
 }

@@ -19,8 +19,8 @@ export function SignUpCluster() {
     const [email, setEmail] = useState(""); // User email - always retrieve from localStorage if possible
     const [password, setPassword] = useState(""); // User password
     const [confirmPassword, setConfirmPassword] = useState(""); // User confirm password
-    const { signup, error, isLoading } = useSignUp();
-    const [displayError, setError] = useState("");
+    const { signup, error, isLoading, setError} = useSignUp();
+    const [displayError, setDisplayError] = useState("");
 
     // Handle signup button
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
@@ -33,7 +33,7 @@ export function SignUpCluster() {
     };
 
     const clearErrors = () => {
-        setError("");
+        setError(null);
     };
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
@@ -41,17 +41,17 @@ export function SignUpCluster() {
         clearErrors();
 
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
-            setError('All fields must be filled out.');
+            setDisplayError('All fields must be filled out.');
             return;
         }
 
         if (password !== confirmPassword) {
-            setError('Password and Confirm Password do not match.');
+            setDisplayError('Password and Confirm Password do not match.');
             return;
         }
 
         if (!isPasswordStrong(password)) {
-            setError('Password must be 8-14 characters long with 1 special character and 1 uppercase letter.');
+            setDisplayError('Password must be 8-14 characters long with 1 special character and 1 uppercase letter.');
             return;
         }
 
@@ -63,6 +63,7 @@ export function SignUpCluster() {
             localStorage.setItem("user-first-name", firstName);
             localStorage.setItem("user-last-name", lastName);
         } else {
+            setDisplayError(error);
             localStorage.removeItem("user-email");
             localStorage.removeItemItem("user-first-name");
             localStorage.removeItemItem("user-last-name");
@@ -70,7 +71,7 @@ export function SignUpCluster() {
     };
 
     return (
-        <Form className="login-cluster" onSubmit={handleSubmit}>
+        <Form className="signup-cluster" onSubmit={handleSubmit}>
             <FormGroup label="First Name" value={firstName} onChange={(e) => handleInputChange(e, setFirstName)} />
             <FormGroup label="Last Name" value={lastName} onChange={(e) => handleInputChange(e, setLastName)} />
             <FormGroup label="Email address" type="email" value={email} onChange={(e) => handleInputChange(e, setEmail)} />
