@@ -7,9 +7,10 @@ const VERIFY_OTP_API = "https://apiqa.hometrumpeter.com/user/set-role";
 export function useSetRole() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { user }: any = useAuthContext();
+    const { state } = useAuthContext();
+    const { user } = state;
     const navigate = useNavigate();
-    const { dispatch }: any = useAuthContext();
+    const { dispatch } = useAuthContext();
 
     const setRole = async (roleName: string) => {
         setIsLoading(true);
@@ -35,10 +36,10 @@ export function useSetRole() {
             userUpdatedTokenAndRole.token = json.data.token;
             userUpdatedTokenAndRole.data.roleName = roleName;
             dispatch({ type: "LOGIN", payload: userUpdatedTokenAndRole }); //need to save new token to the auth context.
-            navigate("/verifyphone");
+            navigate("/dashboard");
         } else if (response.ok) {
             setIsLoading(false);
-            localStorage.setItem("setRoleResposne", JSON.stringify(json));
+            localStorage.setItem("setRoleResponse", JSON.stringify(json));
             setError(json.message);
         } else {
             setIsLoading(false);

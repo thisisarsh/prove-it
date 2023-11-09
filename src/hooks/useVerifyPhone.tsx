@@ -7,13 +7,15 @@ const SEND_CONTACT_API = "https://apiqa.hometrumpeter.com/contact/send";
 export function useVerifyPhone() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { user }: any = useAuthContext();
+    const { state } = useAuthContext();
+    const { user } = state;
     const navigate = useNavigate();
 
     const verifyPhone = async (phone: string) => {
         setIsLoading(true);
         setError(null);
 
+        console.log(user);
         // API call
         const response = await fetch(SEND_CONTACT_API, {
 

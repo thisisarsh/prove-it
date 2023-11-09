@@ -8,7 +8,8 @@ export function useVerifyOTP() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { dispatch }: any = useAuthContext();
-    const { user }: any = useAuthContext();
+    const { state } = useAuthContext();
+    const { user } = state;
     const navigate = useNavigate();
 
     const verifyOTP = async (otp: string) => {
