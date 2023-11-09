@@ -1,5 +1,6 @@
 FROM node:18-alpine
 
+ARG BUILD_ENV=dev
 # Set the ENV_VAR environment variable based on the build-time variable
 ENV ENV_VAR=$BUILD_ENV
 
@@ -12,7 +13,7 @@ RUN if [ "$ENV_VAR" = "dev" ]; then \
     elif [ "$ENV_VAR" = "prod" ]; then \
         npm install --production; \
     else \
-        echo "Invalid value for MY_ENV_VAR"; exit 1; \
+        echo "Invalid value for ENV_VAR"; exit 1; \
     fi
 
 RUN npm install -g serve
