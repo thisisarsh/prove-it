@@ -124,7 +124,7 @@ deploy-prod:
   image: quay.io/openshift/origin-cli
   stage: deploy
   dependencies:
-    - build-job-prod
+    - build-job-production
     - release-image
   only:
     - main
