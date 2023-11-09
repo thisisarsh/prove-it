@@ -33,6 +33,26 @@ build-job:
 #    - npm run build
 #  environment: development
 
+# npm-tests:
+#   stage: test
+#   image: node:18
+#   script:
+#     - mkdir -p lint-results
+#     - npm install
+#     - npm run lint
+#     - npm audit
+#   rules:
+#     - if: '$CI_COMMIT_REF_NAME == "develop"'
+#       allow_failure: true
+#   artifacts:
+#     paths:
+#       - lint-results/
+
+# vulnerability-scan-image:
+#   stage: test
+#   script: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_TEST_IMAGE
+
+
 release-image:
   extends: .before_script_template
   stage: release
@@ -43,6 +63,7 @@ release-image:
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
   environment: production
+
 
 deploy_staging:
   stage: deploy
@@ -100,4 +121,4 @@ deploy-prod:
       exit 0;
       fi);
     - oc apply -f configs/k8s
-  environment: development
+  environment: production
