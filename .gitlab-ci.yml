@@ -90,10 +90,10 @@ release-image:
   environment: production
 
 
-deploy_staging:
+deploy-staging:
   stage: deploy
   dependencies:
-    - build-job
+    - build-job-testing
   rules:
     - if: '$CI_COMMIT_REF_NAME == "develop"'
   image: quay.io/openshift/origin-cli
@@ -124,7 +124,7 @@ deploy-prod:
   image: quay.io/openshift/origin-cli
   stage: deploy
   dependencies:
-    - build-job
+    - build-job-prod
     - release-image
   only:
     - main
