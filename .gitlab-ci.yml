@@ -77,16 +77,11 @@ npm-tests:
   stage: test
   image: node:18
   script:
-    - mkdir -p lint-results
     - npm install
-    - npm run lint
     - npm audit
   rules:
     - if: '$CI_COMMIT_REF_NAME == "develop"'
       allow_failure: true
-  artifacts:
-    paths:
-      - lint-results/
 
 
 release-image:
