@@ -70,7 +70,7 @@ deploy_staging:
     - (if [ "$RESULT" == 1 ]; then
       exit 0;
       fi);
-    - oc apply -f k8s-dev
+    - oc apply -f configs/k8s-dev
   environment: development
 
 deploy-prod:
@@ -99,5 +99,5 @@ deploy-prod:
     - (if [ "$RESULT" == 1 ]; then
       exit 0;
       fi);
-    - oc apply -f k8s
+    - oc apply -f configs/k8s
   environment: development
