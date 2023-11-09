@@ -9,8 +9,6 @@ stages:
   - deploy
 
 variables:
-  DOCKER_HOST: tcp://docker:2376
-  DOCKER_TLS_CERTDIR: "/certs"
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:prod
 
@@ -93,6 +91,31 @@ deploy-prod:
     - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' CONFIG_PATH
     - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' CONFIG_PATH
     - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' CONFIG_PATH
+    - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
+    - oc project ht-coop
+    - RESULT=0
+    - oc scale deployment -l app.kubernetes.io/instance=ht-website --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - (if [ "$RESULT" == 1 ]; then
+      exit 0;
+      fi);
+    - oc apply -f k8s
+  environment: development
+
+deploy-prod:
+  image: quay.io/openshift/origin-cli
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+  script:
+    - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CONTAINER_RELEASE_IMAGE
+    - export APP_NAME=ht-web-react
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/deployment.yaml
+    - yq -i '.metadata.name = strenv(APP_NAME)' k8s/deployment.yaml
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' k8s/deployment.yaml
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' k8s/deployment.yaml
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' k8s/deployment.yaml
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
     - oc project ht-coop
     - RESULT=0
