@@ -2,55 +2,80 @@ image: docker:19.03.12
 services:
   - docker:19.03.12-dind
 
+
 stages:
+  - lint
   - build
   - test
   - release
   - deploy
 
+
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:prod
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:rel
+  CONTAINER_PROD_IMAGE: $CI_REGISTRY_IMAGE:prod
+
 
 .before_script_template:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-build-job:
+
+lint-job:
+  stage: lint
+  image: node:18
+  script:
+    - mkdir -p lint-results
+    - npm install
+    - npm run lint
+  allow_failure: true
+  artifacts:
+    paths:
+      - lint-results/
+
+
+build-job-testing:
   extends: .before_script_template
   stage: build
   script:
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
+  environment: development
 
 
-#test:
-#  stage: test
-#  image: node:14
-#  script:
-#    - npm install
-#    - npm run test
-#    - npm run build
-#  environment: development
+build-job-production:
+  extends: .before_script_template
+  stage: build
+  script:
+    - docker build --build-arg BUILD_ENV=prod --pull -t $CONTAINER_PROD_IMAGE .
+    - docker push $CONTAINER_PROD_IMAGE
+  environment: production
 
-# npm-tests:
-#   stage: test
-#   image: node:18
-#   script:
-#     - mkdir -p lint-results
-#     - npm install
-#     - npm run lint
-#     - npm audit
-#   rules:
-#     - if: '$CI_COMMIT_REF_NAME == "develop"'
-#       allow_failure: true
-#   artifacts:
-#     paths:
-#       - lint-results/
 
-# vulnerability-scan-image:
-#   stage: test
-#   script: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_TEST_IMAGE
+vulnerability-scan-images:
+  stage: test
+  script:
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_TEST_IMAGE
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_PROD_IMAGE
+  allow_failure: true
+  environment: development
+
+
+npm-tests:
+  stage: test
+  image: node:18
+  script:
+    - mkdir -p lint-results
+    - npm install
+    - npm run lint
+    - npm audit
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "develop"'
+      allow_failure: true
+  artifacts:
+    paths:
+      - lint-results/
 
 
 release-image:
@@ -59,7 +84,8 @@ release-image:
   only:
     - main
   script:
-    - docker build --build-arg BUILD_ENV=prod --pull -t $CONTAINER_RELEASE_IMAGE .
+    - docker pull $CONTAINER_PROD_IMAGE
+    - docker tag $CONTAINER_PROD_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
   environment: production
 
@@ -92,6 +118,7 @@ deploy_staging:
       fi);
     - oc apply -f configs/k8s-dev
   environment: development
+
 
 deploy-prod:
   image: quay.io/openshift/origin-cli
