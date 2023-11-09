@@ -29,25 +29,25 @@ spec:
         app: ht-website
     spec:
       containers:
-      - env:
-        - name: name
-          value: ht-website
-        - name: VITE_HT_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: api-key-secret
-              key: API_KEY
-        image: <PATCH_ME>
-        imagePullPolicy: IfNotPresent
-        name: ht-website
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        - containerPort: 8443
-          protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - env:
+            - name: name
+              value: ht-website
+            - name: VITE_HT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-key-secret
+                  key: API_KEY
+          image: <PATCH_ME>
+          imagePullPolicy: IfNotPresent
+          name: ht-website
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
