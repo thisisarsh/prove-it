@@ -42,7 +42,7 @@ export function useVerifyOTP() {
             navigate("/dashboard");
         } else if (response.ok) {
             setIsLoading(false);
-            localStorage.setItem("verifyOTPRespnose", JSON.stringify(json));
+            localStorage.setItem("verifyOTPResponse", JSON.stringify(json));
             setError(json.message);
             console.error(json.message);
         } else {
