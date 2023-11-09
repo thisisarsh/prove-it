@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 
-
-
 const API_KEY = import.meta.env.VITE_HT_API_KEY;
 const headers = new Headers();
 headers.append("Content-Type", "application/json");

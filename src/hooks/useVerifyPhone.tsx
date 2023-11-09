@@ -8,7 +8,6 @@ export function useVerifyPhone() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { user }: any = useAuthContext();
-    const { dispatch } = useAuthContext();
     const navigate = useNavigate();
 
     const verifyPhone = async (phone: string) => {
