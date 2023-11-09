@@ -1,48 +1,49 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const SIGNUP_API = 'https://apiqa.hometrumpeter.com/user/signup';
+const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
+
+
+
+const API_KEY = import.meta.env.VITE_HT_API_KEY;
+const headers = new Headers();
+headers.append("Content-Type", "application/json");
+if (API_KEY) {
+    headers.append("xck", API_KEY);
+}
 
 export function useSignUp() {
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-  const signup = async (firstName: string, lastName:string ,email: string, password: string, confirmPassword: string) => {
-    setIsLoading(true);
-    setError(null);
-    console.log(isLoading);
+    const signup = async (
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string,
+    ) => {
+        setIsLoading(true);
+        setError(null);
 
-    //check password and confirm password are the same and not empty
-    if(password != confirmPassword){
-      alert("Password do not match");
-      setIsLoading(false);
-    }else if(password == ""){
-      //check empty password
-      alert("Password cannot be empty");
-      setIsLoading(false);
-    }else{ 
-      // API call
-      const response = await fetch(SIGNUP_API, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'xck': import.meta.env.VITE_HT_API_KEY
-        },
-        body: JSON.stringify({"user": {firstName, lastName, email, password }})
-      });
-      const json = await response.json();
-
-      // Handle BAD/GOOD response
-    if(json.isSuccess == false) {
-      setIsLoading(false);
-      setError(json.error);
-    } else if(json.isSuccess == true) {
-      setIsLoading(false);
-      navigate('/Login');
-    }
+        const response = await fetch(SIGNUP_API, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+                user: { firstName, lastName, email, password },
+            }),
+        });
+        const json = await response.json();
+        console.log(json);
+        // Handle BAD/GOOD response
+        if (!json.isSuccess) {
+            setIsLoading(false);
+            setError(json.message);
+        } else{
+            setIsLoading(false);
+            navigate("/Login");
+        }
     };
-  }
 
-  return({ signup, isLoading, error });
+    return { signup, isLoading, error , setError};
 }
