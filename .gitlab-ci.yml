@@ -50,16 +50,27 @@ build-job-production:
   script:
     - docker build --build-arg BUILD_ENV=prod --pull -t $CONTAINER_PROD_IMAGE .
     - docker push $CONTAINER_PROD_IMAGE
+  only:
+    - develop
   environment: production
 
 
-vulnerability-scan-images:
+vulnerability-scan-test-image:
   stage: test
   script:
     - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_TEST_IMAGE
-    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_PROD_IMAGE
   allow_failure: true
   environment: development
+  
+
+vulnerability-scan-prod-image:
+  stage: test
+  script:
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_PROD_IMAGE
+  only:
+    -develop
+  allow_failure: true
+  environment: production
 
 
 npm-tests:
