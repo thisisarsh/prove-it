@@ -57,11 +57,11 @@ deploy_staging:
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
     - export CONFIG_PATH=configs/k8s-dev/deployment.yaml
-    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
     - oc project ht-coop
     - RESULT=0
