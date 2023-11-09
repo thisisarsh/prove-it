@@ -56,7 +56,7 @@ deploy_staging:
     - export IMAGE=$CONTAINER_TEST_IMAGE
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
-    - export CONFIG_PATH=./config/k8s-dev/deployment.yaml
+    - export CONFIG_PATH=configs/k8s-dev/deployment.yaml
     - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' CONFIG_PATH
     - yq -i '.metadata.name = strenv(APP_NAME)' CONFIG_PATH
     - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' CONFIG_PATH
