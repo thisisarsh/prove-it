@@ -27,10 +27,16 @@ Requirements:
 - HTTPS: `git clone -b react-vite https://gitlab.com/ht6401839/uofw/proveit.git`
 
 2.  Install all dependencies\
+    `cd frontend`
     `npm install`
 
 3.  Run the dev environment\
+    `cd frontend`
     `npm run dev`
+    `cd backend`
+    `node index.js`
+
+# BOTH FRONTEND AND BACKEND MUST BE RUNNING AT THE SAME TIME, USE 2 DIFFERENT
 
 ### Building for production
 
@@ -43,16 +49,19 @@ Requirements:
 3.  Run the build command - your files will appear in the `/dist` folder\
     `npm run build`
 
+# Dependencies in backend
+- express
+- axios
+- body-parser
+- cors
+- dotenv
+
 # File structure
 
 ```
 /
-├── public
-└── src
-    ├── assets      -> logos, photos, fonts, etc.
-    ├── components  -> nav bar, buttons, text box, etc.
-    ├── routes      -> pages that will be accessed by URL (1 .tsx file per page)
-    └── styles      -> stylesheets
+├── backend
+└── frontend
 ```
 
 # API access
@@ -60,18 +69,16 @@ Requirements:
 We are storing the API key locally in the environment variables to improve security and reduce risks.
 You can find the API key in the video that HomeTrumpeter shared on Google Drive.\
 \
-You must have the `.env` file in the **root directory**.
+You must have the `.env` file in the /backend.
 
 ```
 /
-├── .env    -> place the file here
-├── public
-└── src
-    └── ...
+└── backend
+    └── .env    -> place the file here
 ```
 
 The .env file should contain the following text:
 
 ```
-VITE_HT_API_KEY=<insert api key>
+API_TOKEN=<insert API key>
 ```
