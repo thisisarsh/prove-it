@@ -44,6 +44,8 @@ build-job-server:
   extends: .before_script_template
   stage: build
   script:
+    - pwd
+    - ls -l
     - docker build --pull -t $CONTAINER_TEST_IMAGE /backend
     - docker push $CONTAINER_TEST_IMAGE
   environment: development
