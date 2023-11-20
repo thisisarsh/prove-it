@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const LOGIN_API = "http://localhost:5000/login";
+const LOGIN_LINK = "http://localhost:5000/login";
 
 export function useLogin() {
     const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ export function useLogin() {
 
         //console.log(import.meta.env.VITE_HT_API_KEY);
         // API call
-        const response = await fetch(LOGIN_API, {
+        const response = await fetch(LOGIN_LINK, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -25,7 +25,6 @@ export function useLogin() {
             body: JSON.stringify({ email, password }),
         });
 
-        console.log(response);
         const json = await response.json();
 
         // Handle BAD/GOOD response
