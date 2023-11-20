@@ -32,6 +32,14 @@ spec:
         - env:
           - name: name
             value: ht-web-server-dev
+          - name: API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: api-key
+                key: API_TOKEN
+
+          - name: name
+            value: ht-web-server-dev
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-web-server-dev
