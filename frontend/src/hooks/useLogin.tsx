@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const LOGIN_LINK = "http://localhost:5000/login";
+const LOGIN_LINK = "http://ht-web-server-dev:5000/login";
 
 export function useLogin() {
     const [error, setError] = useState(null);

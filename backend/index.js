@@ -7,10 +7,11 @@ app.use(cors());
 const routesHandler = require('./routes/handler.js');
 
 var bodyParser = require("body-parser");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/', routesHandler);
 
-var server = app.listen(5000, function () {
+app.listen(5000, function () {
     console.log('Node server is running..');
 });

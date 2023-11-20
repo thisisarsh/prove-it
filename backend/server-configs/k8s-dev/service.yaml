@@ -4,21 +4,18 @@ metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
   labels:
-    app: ht-web-dev
-    app.kubernetes.io/component: ht-web-dev
-    app.kubernetes.io/instance: ht-web-dev
-  name: ht-web-dev
+    app: ht-web-server-dev
+    app.kubernetes.io/component: ht-web-server-dev
+    app.kubernetes.io/instance: ht-web-server-dev
+  name: ht-web-server-dev
 spec:
   ports:
-    - name: 8080-tcp
-      port: 8080
+    - name: 5000-tcp
+      port: 5000
       protocol: TCP
-      targetPort: 8080
-    - name: 8443-tcp
-      port: 8443
-      protocol: TCP
-      targetPort: 8443
+      targetPort: 5000
+
   selector:
-    app: ht-web-dev
+    app: ht-web-server-dev
   sessionAffinity: None
   type: ClusterIP
