@@ -29,14 +29,6 @@ spec:
         app: ht-web-server-dev
     spec:
       containers:
-        - env:
-            - name: name
-              value: ht-web-server-dev
-            - name: VITE_HT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: api-key-secret
-                  key: API_KEY
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-web-server-dev
