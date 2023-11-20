@@ -18,12 +18,8 @@ COPY package.json /usr/src/app/
 
 RUN npm install
 
-RUN npm install -g serve
-
 COPY . /usr/src/app
 
-RUN npx vite build
+EXPOSE 5000
 
-EXPOSE 8080
-
-CMD [ "serve", "-l", "8080", "-s", "dist" ]
+CMD [ "node", "index.js" ]
