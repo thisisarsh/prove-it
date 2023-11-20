@@ -20,7 +20,7 @@ RUN npm install
 
 RUN npm install -g serve
 
-COPY .. /usr/src/app
+COPY . /usr/src/app
 
 RUN npx vite build
 
