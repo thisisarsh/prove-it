@@ -46,7 +46,7 @@ build-job-server:
   script:
     - pwd
     - ls -l
-    - docker build --pull -t $SERVER_CONTAINER_TEST_IMAGE /backend
+    - docker build --pull -t $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
 
@@ -54,7 +54,7 @@ build-job-client:
   extends: .before_script_template
   stage: build
   script:
-    - docker build --pull -t $CLIENT_CONTAINER_TEST_IMAGE /frontend
+    - docker build --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
     - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
 
