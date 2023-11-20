@@ -7,6 +7,10 @@ const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const authToken = process.env.API_TOKEN;
 
+console.log("Env vars -> " + process.env);
+console.log(process.env.API_TOKEN);
+console.log("API Key -> " + authToken);
+
 const headers = {
     'xck': authToken,
     'Content-Type': 'application/json', 
