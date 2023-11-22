@@ -6,6 +6,12 @@
 ## Tech Stack - Backend
 - Node + Express
 
+## Building the project
+Requirements:
+- [Node.js (LTS)](https://nodejs.org/en)
+
+### Setting up development environment
+
 1.  Clone repository
 
 - SSH: `git clone git@gitlab.com:ht6401839/uofw/proveit.git`
