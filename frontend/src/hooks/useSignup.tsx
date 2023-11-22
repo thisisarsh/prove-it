@@ -1,14 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
-
-const API_KEY = import.meta.env.VITE_HT_API_KEY;
-const headers = new Headers();
-headers.append("Content-Type", "application/json");
-if (API_KEY) {
-    headers.append("xck", API_KEY);
-}
+const SIGNUP_LINK = "http://localhost:5000/signup";
 
 export function useSignUp() {
     const [error, setError] = useState(null);
@@ -24,9 +17,8 @@ export function useSignUp() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(SIGNUP_API, {
+        const response = await fetch(SIGNUP_LINK, {
             method: "POST",
-            headers: headers,
             body: JSON.stringify({
                 user: { firstName, lastName, email, password },
             }),

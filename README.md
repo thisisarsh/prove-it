@@ -1,58 +1,37 @@
-\*\*This branch acts as an intermediate for the code in development and the code in production.
-All other branches are first merged into this branch.
-Other branches will be deleted after merging.
+# BOTH FRONTEND AND BACKEND MUST BE RUNNING AT THE SAME TIME, USE 2 DIFFERENT TERMINAL
 
-After the final code review and testing, the app will be deployed through the main after merging 'develop' into 'main'.
+1.  Clone repository
 
-Do not delete this branch.
-Do not merge other branches directly into 'main'.\*\*
+- SSH: `git clone -b develop-feature-backend-login git@gitlab.com:ht6401839/uofw/proveit.git`
+- HTTPS: `git clone -b develop-feature-backend-login https://gitlab.com/ht6401839/uofw/proveit.git`
 
-# HomeTrumpeter Website (New)
+2.  Terminal 1 - frontend
+    ```
+    cd frontend
+    npm install
+    npm run dev
+    ```
 
-## Tech Stack
+3.  Terminal 2 - backend
+    ```
+    cd backend
+    npm install
+    node index.js
+    ```
 
-- React + TypeScript + Vite
-
-## Building the project
-
-Requirements:
-
-- [Node.js (LTS)](https://nodejs.org/en)
-
-### Setting up development environment
-
-1.  Clone repository\
-
-- SSH: `git clone -b react-vite git@gitlab.com:ht6401839/uofw/proveit.git`
-- HTTPS: `git clone -b react-vite https://gitlab.com/ht6401839/uofw/proveit.git`
-
-2.  Install all dependencies\
-    `npm install`
-
-3.  Run the dev environment\
-    `npm run dev`
-
-### Building for production
-
-1.  Clone repository\
-    `git clone -b react-vite git@gitlab.com:ht6401839/uofw/proveit.git`
-
-2.  Install all dependencies\
-    `npm install`
-
-3.  Run the build command - your files will appear in the `/dist` folder\
-    `npm run build`
+# Dependencies in backend
+- express
+- axios
+- body-parser
+- cors
+- dotenv
 
 # File structure
 
 ```
 /
-├── public
-└── src
-    ├── assets      -> logos, photos, fonts, etc.
-    ├── components  -> nav bar, buttons, text box, etc.
-    ├── routes      -> pages that will be accessed by URL (1 .tsx file per page)
-    └── styles      -> stylesheets
+├── backend
+└── frontend
 ```
 
 # API access
@@ -60,18 +39,16 @@ Requirements:
 We are storing the API key locally in the environment variables to improve security and reduce risks.
 You can find the API key in the video that HomeTrumpeter shared on Google Drive.\
 \
-You must have the `.env` file in the **root directory**.
+You must have the `.env` file in the /backend.
 
 ```
 /
-├── .env    -> place the file here
-├── public
-└── src
-    └── ...
+└── backend
+    └── .env    -> place the file here
 ```
 
 The .env file should contain the following text:
 
 ```
-VITE_HT_API_KEY=<insert api key>
+API_TOKEN=<insert API key>
 ```

@@ -1,8 +1,11 @@
 FROM node:18-alpine
 
 ARG BUILD_ENV=dev
+ARG VITE_SERVER
 # Set the ENV_VAR environment variable based on the build-time variable
 ENV ENV_VAR=$BUILD_ENV
+
+ENV VITE_SERVER=$VITE_SERVER
 
 WORKDIR /usr/src/app
 
@@ -26,4 +29,4 @@ RUN npx vite build
 
 EXPOSE 8080
 
-CMD [ "serve", "-l", "8080", "-s", "dist" ]
+CMD [ "serve", "-l", "8080", "dist" ]

@@ -65,8 +65,8 @@ export function SignUpCluster() {
         } else {
             setDisplayError(error);
             localStorage.removeItem("user-email");
-            localStorage.removeItemItem("user-first-name");
-            localStorage.removeItemItem("user-last-name");
+            localStorage.removeItem("user-first-name");
+            localStorage.removeItem("user-last-name");
         }
     };
 

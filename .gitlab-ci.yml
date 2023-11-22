@@ -12,9 +12,22 @@ stages:
 
 
 variables:
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:rel
-  CONTAINER_PROD_IMAGE: $CI_REGISTRY_IMAGE:prod
+  SERVER_CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG
+  CLIENT_CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG
+
+  SERVER_CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:SERVER-rel
+  CLIENT_CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:CLIENT-rel
+
+  SERVER_CONTAINER_PROD_IMAGE: $CI_REGISTRY_IMAGE:SERVER-prod
+  CLIENT_CONTAINER_PROD_IMAGE: $CI_REGISTRY_IMAGE:CLIENT-prod
+
+  PROJECT_TEST_ENV: ht-coop
+  PROJECT_STAGING_ENV: ht-uat-coop
+  PROJECT_PRODUCTION_ENV: ht-prod-coop
+
+  APP_NAME_TEST:
+  APP_NAME_STAGING:
+  APP_NAME_PROD:
 
 
 .before_script_template:
@@ -22,137 +35,314 @@ variables:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 
-lint-job:
-  stage: lint
-  image: node:18
-  script:
-    - mkdir -p lint-results
-    - npm install
-    - npm run lint
-  allow_failure: true
-  artifacts:
-    paths:
-      - lint-results/
+#lint-job:
+#  stage: lint
+#  image: node:18
+#  script:
+#    - cd frontend && mkdir -p lint-results
+#    - npm install
+#    - npm run lint
+#  allow_failure: true
+#  artifacts:
+#    paths:
+#      - lint-results/
 
 
-build-job-testing:
+build-server:
   extends: .before_script_template
   stage: build
   script:
-    - docker build --pull -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+    - docker build --build-arg API_SERVER=API_SERVER --pull -t $SERVER_CONTAINER_TEST_IMAGE ./backend
+    - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
 
-
-build-job-production:
+build-client:
   extends: .before_script_template
   stage: build
   script:
-    - docker build --build-arg BUILD_ENV=prod --pull -t $CONTAINER_PROD_IMAGE .
-    - docker push $CONTAINER_PROD_IMAGE
-  only:
-    - develop
-  environment: production
-
-
-vulnerability-scan-test-image:
-  extends: .before_script_template
-  stage: test
-  script:
-    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_TEST_IMAGE
-  allow_failure: true
+    - docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
-  
 
-vulnerability-scan-prod-image:
+build-server-staging:
   extends: .before_script_template
-  stage: test
+  stage: build
   script:
-    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CONTAINER_PROD_IMAGE
-  allow_failure: true
+    - docker build --build-arg BUILD_ENV=prod --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
+    - docker push $SERVER_CONTAINER_TEST_IMAGE
   only:
     - develop
-  environment: production
+  environment: staging
 
-
-npm-tests:
-  stage: test
-  image: node:18
-  script:
-    - npm install
-    - npm audit
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "develop"'
-      allow_failure: true
-
-
-release-image:
+build-client-staging:
   extends: .before_script_template
-  stage: release
+  stage: build
+  script:
+    - docker build --build-arg BUILD_ENV=prod --pull -t $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+  only:
+    - develop
+  environment: staging
+
+build-server-production:
+  extends: .before_script_template
+  stage: build
+  script:
+    - docker build --build-arg BUILD_ENV=prod --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
+    - docker push $SERVER_CONTAINER_TEST_IMAGE
   only:
     - main
-  script:
-    - docker pull $CONTAINER_PROD_IMAGE
-    - docker tag $CONTAINER_PROD_IMAGE $CONTAINER_RELEASE_IMAGE
-    - docker push $CONTAINER_RELEASE_IMAGE
   environment: production
 
-
-deploy-staging:
-  stage: deploy
-  dependencies:
-    - build-job-testing
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "develop"'
-  image: quay.io/openshift/origin-cli
+build-client-production:
+  extends: .before_script_template
+  stage: build
   script:
+    - docker build --build-arg BUILD_ENV=prod --pull -t $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+  only:
+    - main
+  environment: production
+
+npm-tests:
+   stage: test
+   image: node:18
+   script:
+     - cd frontend && npm install
+     - npm audit
+   rules:
+     - if: '$CI_COMMIT_REF_NAME == "develop"'
+       allow_failure: true
+
+#vulnerability-scan-test-image:
+#   extends: .before_script_template
+#   stage: test
+#   script:
+#     - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CLIENT_CONTAINER_TEST_IMAGE
+#   allow_failure: true
+#   environment: development
+#
+#vulnerability-scan-prod-image:
+#   extends: .before_script_template
+#   stage: test
+#   script:
+#     - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $CLIENT_CONTAINER_PROD_IMAGE
+#   allow_failure: true
+#   only:
+#     - develop
+#   environment: production
+
+release-images:
+   extends: .before_script_template
+   stage: release
+   only:
+     - main
+   script:
+     - docker pull $SERVER_CONTAINER_PROD_IMAGE
+     - docker tag $SERVER_CONTAINER_PROD_IMAGE $SERVER_CONTAINER_RELEASE_IMAGE
+     - docker push $SERVER_CONTAINER_RELEASE_IMAGE
+
+     - docker pull $CLIENT_CONTAINER_PROD_IMAGE
+     - docker tag $CLIENT_CONTAINER_PROD_IMAGE $CLIENT_CONTAINER_RELEASE_IMAGE
+     - docker push $CLIENT_CONTAINER_RELEASE_IMAGE
+   environment: production
+
+deploy-test-server:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-server
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"'
+  script:
+    - cd backend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CONTAINER_TEST_IMAGE
+
+    - export IMAGE=$SERVER_CONTAINER_TEST_IMAGE
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
-    - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
-    - export CONFIG_PATH=configs/k8s-dev/deployment.yaml
+    - export APP_NAME=ht-server-dev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=server-configs/k8s-dev/deployment.yaml
+
     - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
     - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
     - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
     - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
     - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
-    - oc project ht-coop
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - (if [ "$RESULT" == 1 ]; then
+      exit 0;
+      fi);
+    - oc apply -f server-configs/k8s-dev
+  environment: development
+
+deploy-test-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"'
+  script:
+    - cd frontend
+    - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
+
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
+    - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
     - RESULT=0
     - oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - (if [ "$RESULT" == 1 ]; then
       exit 0;
       fi);
-    - oc apply -f configs/k8s-dev
+    - oc apply -f client-configs/k8s-dev
   environment: development
 
-
-deploy-prod:
-  image: quay.io/openshift/origin-cli
+deploy-staging-server:
   stage: deploy
+  image: quay.io/openshift/origin-cli
   dependencies:
-    - build-job-production
-    - release-image
+    - build-server-staging
   only:
-    - main
+    - develop
   script:
+    - cd backend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CONTAINER_RELEASE_IMAGE
-    - export APP_NAME=ht-web-react
-    - export CONFIG_PATH=./config/k8s/deployment.yaml
-    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' CONFIG_PATH
-    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' CONFIG_PATH
+
+    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-server-dev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
     - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
-    - oc project ht-coop
+    - oc project $PROJECT_STAGING_ENV
     - RESULT=0
-    - oc scale deployment -l app.kubernetes.io/instance=ht-website --replicas=0 2> /dev/null || RESULT=$?
+    - oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - (if [ "$RESULT" == 1 ]; then
       exit 0;
       fi);
-    - oc apply -f configs/k8s
+    - oc apply -f server-configs/k8s
+  environment: staging
+
+deploy-staging-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-staging
+  only:
+    - develop
+  script:
+    - cd frontend
+    - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
+    - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - (if [ "$RESULT" == 1 ]; then
+      exit 0;
+      fi);
+    - oc apply -f client-configs/k8s
+  environment: staging
+
+deploy-prod-server:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-server-production
+    - release-images
+  only:
+    - main
+  script:
+    - cd backend
+    - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-server-dev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
+    - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - (if [ "$RESULT" == 1 ]; then
+      exit 0;
+      fi);
+    - oc apply -f server-configs/k8s
+  environment: production
+
+deploy-prod-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-production
+    - release-images
+  only:
+    - main
+  script:
+    - cd frontend
+    - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-webdev-$CI_COMMIT_SHORT_SHA
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+
+    - yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)' $CONFIG_PATH
+
+    - oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - (if [ "$RESULT" == 1 ]; then
+      exit 0;
+      fi);
+    - oc apply -f client-configs/k8s
   environment: production

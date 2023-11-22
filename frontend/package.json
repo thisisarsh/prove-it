@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "bootstrap": "5.3.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "react": "^18.2.0",
     "react-bootstrap": "2.9.0",
     "react-dom": "^18.2.0"
@@ -43,5 +45,21 @@
     "selenium-webdriver": "^4.15.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
-  }
+  },
+  "description": "\\*\\*This branch acts as an intermediate for the code in development and the code in production.\r All other branches are first merged into this branch.\r Other branches will be deleted after merging.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/ht6401839/uofw/proveit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/ht6401839/uofw/proveit/issues"
+  },
+  "homepage": "https://gitlab.com/ht6401839/uofw/proveit#readme"
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
+const LOGIN_LINK = import.meta.env.VITE_SERVER + "/login";
 
 export function useLogin() {
     const [error, setError] = useState(null);
@@ -14,13 +14,11 @@ export function useLogin() {
         setIsLoading(true);
         setError(null);
 
-        console.log(import.meta.env.VITE_HT_API_KEY);
         // API call
-        const response = await fetch(LOGIN_API, {
+        const response = await fetch(LOGIN_LINK, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ email, password }),
         });
