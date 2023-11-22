@@ -1,30 +1,38 @@
-# BOTH FRONTEND AND BACKEND MUST BE RUNNING AT THE SAME TIME, USE 2 DIFFERENT TERMINAL
+# HT React website
+
+## Tech Stack - Frontend
+- React + TypeScript + Vite
+
+## Tech Stack - Backend
+- Node + Express
 
 1.  Clone repository
 
-- SSH: `git clone -b develop-feature-backend-login git@gitlab.com:ht6401839/uofw/proveit.git`
-- HTTPS: `git clone -b develop-feature-backend-login https://gitlab.com/ht6401839/uofw/proveit.git`
+- SSH: `git clone git@gitlab.com:ht6401839/uofw/proveit.git`
+- HTTPS: `git clone https://gitlab.com/ht6401839/uofw/proveit.git`
 
-2.  Terminal 1 - frontend
+2. Install all dependencies\
+    `(cd frontend && npm install) && (cd backend && npm install)`
+
+3. Run the dev environment\
+
+Run two terminals:
+
+- Terminal 1 - frontend(client side)
+
     ```
     cd frontend
-    npm install
     npm run dev
     ```
 
-3.  Terminal 2 - backend
+-  Terminal 2 - backend(server side)
     ```
     cd backend
-    npm install
     node index.js
     ```
 
-# Dependencies in backend
-- express
-- axios
-- body-parser
-- cors
-- dotenv
+### Building for production
+
 
 # File structure
 
@@ -36,19 +44,23 @@
 
 # API access
 
-We are storing the API key locally in the environment variables to improve security and reduce risks.
-You can find the API key in the video that HomeTrumpeter shared on Google Drive.\
-\
-You must have the `.env` file in the /backend.
+You must have `.env` files in the /backend and in the /frontend.
 
 ```
 /
 └── backend
     └── .env    -> place the file here
+└── frontend
+    └── .env    -> place the file here
 ```
 
-The .env file should contain the following text:
+The backend .env file should contain the following text:
 
 ```
 API_TOKEN=<insert API key>
+```
+The frontend .env file should contain the following text:
+
+```
+VITE_SERVER=https://localhost:5000
 ```
