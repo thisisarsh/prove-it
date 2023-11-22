@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const LOGIN_LINK = "http://ht-web-server-dev-ht-uat-coop.apps.prod.htuslab2.com/login";
+const LOGIN_LINK = import.meta.env.VITE_SERVER + "/login";
 
 export function useLogin() {
     const [error, setError] = useState(null);
@@ -14,13 +14,11 @@ export function useLogin() {
         setIsLoading(true);
         setError(null);
 
-        //console.log(import.meta.env.VITE_HT_API_KEY);
         // API call
         const response = await fetch(LOGIN_LINK, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-                //xck: import.meta.env.VITE_HT_API_KEY,
             },
             body: JSON.stringify({ email, password }),
         });

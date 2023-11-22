@@ -30,13 +30,8 @@ spec:
     spec:
       containers:
         - env:
-            - name: name
-              value: ht-website
-            - name: VITE_HT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: api-key-secret
-                  key: API_KEY
+          - name: name
+            value: ht-website
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-website
