@@ -152,6 +152,8 @@ deploy-test-server:
   image: quay.io/openshift/origin-cli
   dependencies:
     - build-server
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"'
   script:
     - cd backend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
@@ -183,6 +185,8 @@ deploy-test-client:
   image: quay.io/openshift/origin-cli
   dependencies:
     - build-client
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"'
   script:
     - cd frontend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
@@ -214,6 +218,8 @@ deploy-staging-server:
   image: quay.io/openshift/origin-cli
   dependencies:
     - build-server-staging
+  only:
+    - develop
   script:
     - cd backend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
@@ -245,6 +251,8 @@ deploy-staging-client:
   image: quay.io/openshift/origin-cli
   dependencies:
     - build-client-staging
+  only:
+    - develop
   script:
     - cd frontend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
@@ -277,6 +285,8 @@ deploy-prod-server:
   dependencies:
     - build-server-production
     - release-images
+  only:
+    - main
   script:
     - cd backend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
@@ -309,6 +319,8 @@ deploy-prod-client:
   dependencies:
     - build-client-production
     - release-images
+  only:
+    - main
   script:
     - cd frontend
     - wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
