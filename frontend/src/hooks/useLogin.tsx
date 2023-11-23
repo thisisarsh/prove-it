@@ -14,6 +14,9 @@ export function useLogin() {
         setIsLoading(true);
         setError(null);
 
+        console.log(import.meta.env.VITE_SERVER);
+        console.log(LOGIN_LINK);
+
         // API call
         const response = await fetch(LOGIN_LINK, {
             method: "POST",
