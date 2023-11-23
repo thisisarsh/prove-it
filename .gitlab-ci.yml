@@ -72,7 +72,7 @@ build-client-staging:
   stage: build
   script:
     - >-
-      docker build --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
       $CLIENT_CONTAINER_PROD_IMAGE ./frontend
     - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
@@ -94,7 +94,7 @@ build-client-production:
   stage: build
   script:
     - >-
-      docker build --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
       $CLIENT_CONTAINER_PROD_IMAGE ./frontend
     - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
