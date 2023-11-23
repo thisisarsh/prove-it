@@ -63,7 +63,7 @@ build-server-staging:
     - >-
       docker build --build-arg BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
-    - docker push $SERVER_CONTAINER_TEST_IMAGE
+    - docker push $SERVER_CONTAINER_PROD_IAMGE
   only:
     - develop
   environment: staging
@@ -74,7 +74,7 @@ build-client-staging:
     - >-
       docker build --build-arg BUILD_ENV=prod --pull -t
       $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
     - develop
   environment: staging
@@ -85,7 +85,7 @@ build-server-production:
     - >-
       docker build --build-arg BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
-    - docker push $SERVER_CONTAINER_TEST_IMAGE
+    - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
     - main
   environment: production
@@ -96,7 +96,7 @@ build-client-production:
     - >-
       docker build --build-arg BUILD_ENV=prod --pull -t
       $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
     - main
   environment: production
