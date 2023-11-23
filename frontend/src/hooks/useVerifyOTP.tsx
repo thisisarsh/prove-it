@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const VERIFY_OTP_API = "https://apiqa.hometrumpeter.com/contact/verify";
+const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/contactverify";
 
 export function useVerifyOTP() {
     const [error, setError] = useState(null);
@@ -21,14 +21,13 @@ export function useVerifyOTP() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
-                Authorization: "Bearer " + user.token,
             },
             body: JSON.stringify({
                 otp,
                 email: user.data.user.email,
                 phone: localStorage.getItem("userPhone"),
                 type: "phone",
+                Authorization: "Bearer " + user.token,
             }),
         });
         const json = await response.json();

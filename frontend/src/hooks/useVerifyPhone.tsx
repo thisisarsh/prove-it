@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const SEND_CONTACT_API = import.meta.env.VITE_SERVER + "/contact/send";
+const SEND_CONTACT_API = import.meta.env.VITE_SERVER + "/contactsend";
 
 export function useVerifyPhone() {
     const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ export function useVerifyPhone() {
 
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ phone, type: "phone", Authorization: "Bearer " + user.token }),
         });
