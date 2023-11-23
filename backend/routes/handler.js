@@ -48,7 +48,7 @@ router.post('/signup', function (req, res) {
 router.post('/contactsend', function (req, res) {
   console.log(req.body);
   let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
-  axios.post(SEND_CONTACT_LINK, req.body, contactHeaders)
+  axios.post(SEND_CONTACT_LINK, {phone: req.body.phone, type: req.body.type}, contactHeaders)
   .then(response => {
     // Handle the data from the API response
     console.log(response.data);
@@ -57,14 +57,14 @@ router.post('/contactsend', function (req, res) {
   .catch(error => {
     // Handle errors
     console.error('Error fetching data:', error);
-    res.send(response.data);      //send API response to frontend
+    //res.send(response.data);      //send API response to frontend
   });
 });
 
 router.post('/contactverify', function (req, res) {
   console.log(req.body);
   let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
-  axios.post(CONTACT_VERIFY_LINK, req.body, contactHeaders)
+  axios.post(CONTACT_VERIFY_LINK, {}, contactHeaders)
   .then(response => {
     // Handle the data from the API response
     console.log(response.data);
