@@ -64,7 +64,7 @@ router.post('/contactsend', function (req, res) {
 router.post('/contactverify', function (req, res) {
   console.log(req.body);
   let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
-  axios.post(SEND_CONTACT_LINK, req.body, contactHeaders)
+  axios.post(CONTACT_VERIFY_LINK, req.body, contactHeaders)
   .then(response => {
     // Handle the data from the API response
     console.log(response.data);
