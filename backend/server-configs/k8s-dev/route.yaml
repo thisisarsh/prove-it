@@ -4,15 +4,15 @@ metadata:
   annotations:
     openshift.io/host.generated: "true"
   labels:
-    app: ht-web-server-dev
-    app.kubernetes.io/component: ht-web-server-dev
-    app.kubernetes.io/instance: ht-web-server-dev
-  name: ht-web-server-dev
+    app: ht-webserver-dev
+    app.kubernetes.io/component: ht-webserver-dev
+    app.kubernetes.io/instance: ht-webserver-dev
+  name: ht-webserver-dev
 spec:
   port:
     targetPort: 5000
   to:
     kind: Service
-    name: ht-web-server-dev
+    name: ht-webserver-dev
     weight: 100
   wildcardPolicy: None
