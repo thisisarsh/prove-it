@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SIGNUP_LINK = "http://localhost:5000/signup";
+const SIGNUP_LINK = import.meta.env.VITE_SERVER + "/signup";
 
 export function useSignUp() {
     const [error, setError] = useState(null);
