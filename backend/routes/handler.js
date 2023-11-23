@@ -7,10 +7,6 @@ const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const authToken = process.env.API_TOKEN;
 
-console.log("Env vars -> " + process.env);
-console.log(process.env.API_TOKEN);
-console.log("API Key -> " + authToken);
-
 const headers = {
     'xck': authToken,
     'Content-Type': 'application/json', 
@@ -36,6 +32,22 @@ router.post('/login', function (req, res) {
 router.post('/signup', function (req, res) {
   console.log(req.body);
   axios.post(SIGNUP_API, req.body, { headers })
+  .then(response => {
+    // Handle the data from the API response
+    console.log(response.data);
+    res.send(response.data);      //send API response to frontend
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error fetching data:', error);
+    res.send(response.data);      //send API response to frontend
+  });
+});
+
+router.post('/contact/send', function (req, res) {
+  console.log(req.body);
+  let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
+  axios.post(SEND_CONTACT_LINK, req.body, contactHeaders)
   .then(response => {
     // Handle the data from the API response
     console.log(response.data);

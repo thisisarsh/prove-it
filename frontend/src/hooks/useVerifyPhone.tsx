@@ -21,11 +21,9 @@ export function useVerifyPhone() {
 
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
-                Authorization: "Bearer " + user.token,
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ phone, type: "phone" }),
+            body: JSON.stringify({ phone, type: "phone", Authorization: "Bearer " + user.token }),
         });
 
         setIsLoading(true);
