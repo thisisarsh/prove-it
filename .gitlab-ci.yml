@@ -265,7 +265,7 @@ deploy-staging-server:
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
@@ -306,7 +306,7 @@ deploy-staging-client:
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0
+      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged --replicas=0
       2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
