@@ -19,6 +19,9 @@ export function useSignUp() {
 
         const response = await fetch(SIGNUP_LINK, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
                 user: { firstName, lastName, email, password },
             }),
