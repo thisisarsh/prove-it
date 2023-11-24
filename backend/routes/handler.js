@@ -78,7 +78,7 @@ router.post('/contactverify', function (req, res) {
   });
 });
 
-router.post('/contactverify', function (req, res) {
+router.post('/set-role', function (req, res) {
   console.log(req.body);
   let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
   axios.post(SET_ROLE_LINK, req.body, {headers: contactHeaders})
