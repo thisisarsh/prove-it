@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const VERIFY_OTP_API = "https://apiqa.hometrumpeter.com/user/set-role";
+const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/set-role";
 
 export function useSetRole() {
     const [error, setError] = useState(null);
