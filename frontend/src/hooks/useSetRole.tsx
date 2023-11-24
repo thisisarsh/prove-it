@@ -21,10 +21,8 @@ export function useSetRole() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
-                Authorization: "Bearer " + user.token,
             },
-            body: JSON.stringify({ roleName, refreshToken: user.refreshToken }),
+            body: JSON.stringify({ roleName, refreshToken: user.refreshToken, Authorization: "Bearer " + user.token }),
         });
         const json = await response.json();
 

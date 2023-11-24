@@ -5,7 +5,8 @@ const axios = require('axios');
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
-const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
+const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify";
+const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role";
 const authToken = process.env.API_TOKEN;
 
 const headers = {
@@ -65,6 +66,22 @@ router.post('/contactverify', function (req, res) {
   console.log(req.body);
   let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
   axios.post(CONTACT_VERIFY_LINK, req.body, {headers: contactHeaders})
+  .then(response => {
+    // Handle the data from the API response
+    console.log(response.data);
+    res.send(response.data);      //send API response to frontend
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error fetching data:', error);
+    res.send(response.data);      //send API response to frontend
+  });
+});
+
+router.post('/contactverify', function (req, res) {
+  console.log(req.body);
+  let contactHeaders = {'xck': authToken, 'Content-Type': 'application/json', Authorization: req.body.Authorization}
+  axios.post(SET_ROLE_LINK, req.body, {headers: contactHeaders})
   .then(response => {
     // Handle the data from the API response
     console.log(response.data);
