@@ -41,7 +41,7 @@ build-server:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
   script:
     - >-
-      docker build --build-arg API_SERVER=API_SERVER --pull -t
+      docker build --build-arg API_SERVER=$API_SERVER --pull -t
       $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
@@ -61,7 +61,7 @@ build-server-staging:
   stage: build
   script:
     - >-
-      docker build --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg API_SERVER=$API_SERVER BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -159,8 +159,7 @@ deploy-test-server:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$SERVER_CONTAINER_TEST_IMAGE
-    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
-    - export APP_NAME=ht-server-$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-webserver-dev-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=server-configs/k8s-dev/deployment.yaml
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
@@ -175,6 +174,10 @@ deploy-test-server:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' server-configs/k8s-dev/service.yaml
+    - yq -i '.spec.selector.app = strenv(APP_NAME)' server-configs/k8s-dev/service.yaml
+    - yq -i '.metadata.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
+    - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
     - >-
       oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
       --insecure-skip-tls-verify
