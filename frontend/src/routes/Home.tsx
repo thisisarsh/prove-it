@@ -3,7 +3,8 @@ import Button from "react-bootstrap/Button";
 import proveitLogo from "../assets/prove-it-logo-200.png"; 
 import htLogo from "../assets/ht-logo.svg";
 import htFullAppsetGraphic from "../assets/ht-appset-full.png";
-import '../styles/homepage.css';
+import '../styles/pages/homepage.css';
+import Footer from "../components/PageFooter.tsx";
 
 /**
  * Home page
@@ -23,7 +24,7 @@ export function Home() {
     return (
         <>
             <div className="homepage-logo-container">
-                <a href="https://hometrumpeter.com/">
+                <a href="https://hometrumpeter.com/" className="ht-logo-link">
                     <img 
                         src={htLogo}
                         className="homepage-ht-logo"
@@ -35,7 +36,7 @@ export function Home() {
                 />
             </div>
 
-            <hr/>
+            <hr className="homepageHr"/>
 
             <div className="homepage-main-container">
                 <div className="homepage-main-left">
@@ -52,17 +53,7 @@ export function Home() {
                 </div>
             </div>
             
-            <div className="homepage-footer">
-                <div className="footer-links">
-                    <div className="footer-link-group">
-                    <a onClick={handleLogIn}>Log in</a>
-                    <a onClick={handleSignUp}>Sign up</a>
-                    </div>
-
-                    <a href="https://google.com">About Us</a>
-                    <a href="https://hometrumpeter.com/">HomeTrumpeter</a>
-                </div>
-            </div>
+            <Footer/>
         </>
     );
 }
