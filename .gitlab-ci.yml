@@ -172,6 +172,9 @@ deploy-test-server:
       yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
+      yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
     - yq -i '.metadata.name = strenv(APP_NAME)' server-configs/k8s-dev/service.yaml
@@ -215,6 +218,9 @@ deploy-test-client:
       $CONFIG_PATH
     - >-
       yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
