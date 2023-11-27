@@ -204,8 +204,7 @@ deploy-test-client:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE
-    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
-    - export APP_NAME=ht-website-$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
