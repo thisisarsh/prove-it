@@ -238,6 +238,8 @@ div.option-description {
     border: 1px solid #b51d18;
 }
 
+/*SPINNER ANIMATION*/
+
 .spinner {
     width: 40px;
     height: 40px;
@@ -252,3 +254,4 @@ div.option-description {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg)}
 }
+
