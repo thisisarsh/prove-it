@@ -5,8 +5,9 @@ const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
 
+//process.env.API_TOKEN
 const HEADERS = {
-  'xck': process.env.API_TOKEN,
+  'xck': 'ooksvm4lw79q3y8bmk4g6tk1q7gdw5',
   'Content-Type': 'application/json', 
 };
 
