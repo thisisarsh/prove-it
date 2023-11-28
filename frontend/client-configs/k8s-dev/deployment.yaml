@@ -31,7 +31,7 @@ spec:
       containers:
         - env:
           - name: name
-            value: ht-web-server-dev
+            value: ht-web-dev
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-web-dev
