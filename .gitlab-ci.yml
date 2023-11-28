@@ -8,12 +8,12 @@ stages:
   - release
   - deploy
 variables:
-  SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG'
-  CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG'
-  SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel'
-  CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel'
-  SERVER_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-prod'
-  CLIENT_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-prod'
+  SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
+  SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
+  SERVER_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-prod-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
   PROJECT_TEST_ENV: ht-coop
   PROJECT_STAGING_ENV: ht-uat-coop
   PROJECT_PRODUCTION_ENV: ht-prod-coop
@@ -51,6 +51,7 @@ build-client:
   rules:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
   script:
+    - echo $VITE_SERVER
     - >-
       docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
       $CLIENT_CONTAINER_TEST_IMAGE ./frontend
@@ -360,7 +361,7 @@ deploy-prod-server:
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
@@ -402,7 +403,7 @@ deploy-prod-client:
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live --replicas=0
       2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
