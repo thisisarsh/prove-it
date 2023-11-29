@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const VERIFY_OTP_API = "https://apiqa.hometrumpeter.com/user/set-role";
+const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/set-role";
 
 export function useSetRole() {
     const [error, setError] = useState(null);
@@ -21,10 +21,8 @@ export function useSetRole() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                xck: import.meta.env.VITE_HT_API_KEY,
-                Authorization: "Bearer " + user.token,
             },
-            body: JSON.stringify({ roleName, refreshToken: user.refreshToken }),
+            body: JSON.stringify({ roleName, refreshToken: user.refreshToken, Authorization: "Bearer " + user.token }),
         });
         const json = await response.json();
 

@@ -3,15 +3,14 @@ import { useAuthContext } from "../hooks/useAuthContext";
 
 export const ProtectedRoute = ({ redirect, children }: { redirect: string; children: React.ReactNode }) => {
     const { state } = useAuthContext();
-    const { user } = state;
-    console.log(user);
+    const user = state.user;
 
+    console.log(user)
     if (!user) {
-        // user is not authenticated
         return <Navigate to={redirect} />;
     } else if (!user.phoneVerified) {
         return <Navigate to="/verifyphone" />;
-    } else if (!user.roleName) {
+    } else if (!user.role) {
         return <Navigate to="/setrole" />;
     }
     return children;

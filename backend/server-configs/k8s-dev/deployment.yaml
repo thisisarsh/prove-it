@@ -37,9 +37,6 @@ spec:
               secretKeyRef:
                 name: api-key
                 key: API_TOKEN
-
-          - name: name
-            value: ht-webserver-dev
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-webserver-dev

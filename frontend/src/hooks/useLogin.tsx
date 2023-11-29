@@ -33,7 +33,7 @@ export function useLogin() {
             navigate("/Dashboard");
         } else {
             setIsLoading(false);
-            setError(json.error);
+            setError(json.message);
         }
     };
 
