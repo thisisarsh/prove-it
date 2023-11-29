@@ -9,9 +9,9 @@ export const ProtectedRoute = ({ redirect, children }: { redirect: string; child
     if (!user) {
         // user is not authenticated
         return <Navigate to={redirect} />;
-    }else if (!user.data.user.phoneVerified) {
+    } else if (!user.phoneVerified) {
         return <Navigate to="/verifyphone" />;
-    } else if (!user.data.roleName) {
+    } else if (!user.roleName) {
         return <Navigate to="/setrole" />;
     }
     return children;
