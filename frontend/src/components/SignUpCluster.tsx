@@ -55,7 +55,7 @@ export function SignUpCluster() {
             return;
         }
 
-        await signup(lastName, firstName, email, password); // Call API endpoint
+        await signup(firstName, lastName, email, password); // Call API endpoint
 
         // Store user email, first name and last name in local storage
         if (!error) {
