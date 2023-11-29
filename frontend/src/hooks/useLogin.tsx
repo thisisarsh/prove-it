@@ -31,7 +31,7 @@ export function useLogin() {
         // Handle BAD/GOOD response
         if (!json.isSuccess) {
             setIsLoading(false);
-            setError(json.error);
+            setError(json.message);
         } else if (json.isSuccess) {
             setIsLoading(false);
             localStorage.setItem("user", JSON.stringify(json)); // save user data to local storage

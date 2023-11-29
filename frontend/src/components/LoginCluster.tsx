@@ -9,6 +9,7 @@ import { useLogin } from "../hooks/useLogin";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
+
 /**
  * Handles login buttons, input boxes, and remember-me button
  * @returns Void
@@ -20,16 +21,28 @@ export function LoginCluster() {
     const [password, setPassword] = useState(""); // User password
     const [remember, setRemember] = useState(false); // Remember-me button state
     const [formSubmitted, setFormSubmitted] = useState(false);
+    const [displayError, setDisplayError] = useState("");
     const { login, error, isLoading } = useLogin();
+
+    //get message from previous page, if any
+    const loginMessage : string | null = localStorage.getItem('LoginClusterMessage')
+
     // Handle login button
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        //clear login message and error
+        localStorage.removeItem('LoginClusterMessage');
         setFormSubmitted(true); // Mark the form as submitted
         if (email && password) {
             await login(email, password);
+            console.log("Error" + error)
             if (remember && !error) {
                 localStorage.setItem("user-email", email);
+            } else if (error) {
+                setDisplayError(error);
             } else {
+                setDisplayError("");
                 localStorage.removeItem("user-email");
             }
         }
@@ -43,8 +56,15 @@ export function LoginCluster() {
     return (
         <Form
             className={`login-cluster ${formSubmitted ? "form-submitted" : ""}`}
-            onSubmit={handleSubmit}
+            onSubmit={e => {handleSubmit(e)}}
         >
+
+            {/*Message to user from previous page*/}
+            {loginMessage ? (
+                <p>{loginMessage}</p>
+            ) : null
+            }
+
             {/* Email input */}
             <Form.Group className={`mb-3`} controlId="formGroupEmail">
                 <Form.Label>Email address</Form.Label>
@@ -101,6 +121,8 @@ export function LoginCluster() {
                     </Button>
                 </div>
             )}
+
+            {!isLoading && displayError && <div className="error">{displayError}</div>}
 
         </Form>
     );
