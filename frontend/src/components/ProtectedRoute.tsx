@@ -5,7 +5,6 @@ export const ProtectedRoute = ({ redirect, children }: { redirect: string; child
     const { state } = useAuthContext();
     const user = state.user;
 
-    console.log(user)
     if (!user) {
         return <Navigate to={redirect} />;
     } else if (!user.phoneVerified) {
