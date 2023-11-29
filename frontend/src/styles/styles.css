@@ -255,3 +255,8 @@ div.option-description {
     100% { transform: rotate(360deg)}
 }
 
+div.error {
+  color:#b51d18;
+  text-align:center;
+  font-weight:bold;
+}
