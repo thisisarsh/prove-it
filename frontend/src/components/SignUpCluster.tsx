@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useSignUp } from "../hooks/useSignup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import ErrorMessageContainer from "./ErrorMessageContainer";
 
 /**
  * Handles signup buttons, input boxes
@@ -20,7 +21,7 @@ export function SignUpCluster() {
     const [password, setPassword] = useState(""); // User password
     const [confirmPassword, setConfirmPassword] = useState(""); // User confirm password
     const { signup, error, isLoading, setError} = useSignUp();
-    const [displayError, setDisplayError] = useState("");
+    const [frontendError, setFrontendError] = useState("");
 
     // Handle signup button
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
@@ -34,6 +35,7 @@ export function SignUpCluster() {
 
     const clearErrors = () => {
         setError(null);
+        setFrontendError("");
     };
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
@@ -41,17 +43,17 @@ export function SignUpCluster() {
         clearErrors();
 
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
-            setDisplayError('All fields must be filled out.');
+            setFrontendError('All fields must be filled out.');
             return;
         }
 
         if (password !== confirmPassword) {
-            setDisplayError('Password and Confirm Password do not match.');
+            setFrontendError('Password and Confirm Password do not match.');
             return;
         }
 
         if (!isPasswordStrong(password)) {
-            setDisplayError('Password must be 8-14 characters long with 1 special character and 1 uppercase letter.');
+            setFrontendError('Password must be 8-14 characters long with 1 special character and 1 uppercase letter.');
             return;
         }
 
@@ -63,7 +65,6 @@ export function SignUpCluster() {
             localStorage.setItem("user-first-name", firstName);
             localStorage.setItem("user-last-name", lastName);
         } else {
-            setDisplayError(error);
             localStorage.removeItem("user-email");
             localStorage.removeItem("user-first-name");
             localStorage.removeItem("user-last-name");
@@ -77,7 +78,10 @@ export function SignUpCluster() {
             <FormGroup label="Email address" type="email" value={email} onChange={(e) => handleInputChange(e, setEmail)} />
             <FormGroup label="Password" type="password" value={password} onChange={(e) => handleInputChange(e, setPassword)} />
             <FormGroup label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => handleInputChange(e, setConfirmPassword)} />
-            {displayError && <div className="error">{displayError}</div>}
+
+            {error && <ErrorMessageContainer message={error}/>}
+            {frontendError && <ErrorMessageContainer message={frontendError}/>}
+
             {isLoading ? (
                 <div className="spinner-container"> {/* Create a container for the spinner */}
                     <div className="spinner"></div> {/* Insert the spinner here */}
