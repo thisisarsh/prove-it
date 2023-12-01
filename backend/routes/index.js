@@ -11,11 +11,11 @@ router.post('/contactverify', controller.contactverify);
 router.get('/state', controllerProperty.state);
 router.post('/setstate', controllerProperty.setState);
 router.get('/city', controllerProperty.city);
-router.get('/setcity', controllerProperty.setCity);
+router.post('/setcity', controllerProperty.setCity);
 router.get('/zip', controllerProperty.zip);
-router.get('/setzip', controllerProperty.setZip);
+router.post('/setzip', controllerProperty.setZip);
 router.get('/propertytype', controllerProperty.propertyType);
-router.get('/setpropertytype', controllerProperty.setPropertyType);
+router.post('/setpropertytype', controllerProperty.setPropertyType);
 router.get('/test', controllerProperty.testLogin);
 router.get('/addproperty', controllerProperty.addProperty);
 

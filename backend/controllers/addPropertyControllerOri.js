@@ -42,9 +42,8 @@ exports.testLogin = (req, res) => {
 
 //process.env.API_TOKEN
 const HEADERS = {
-  'xck': "ooksvm4lw79q3y8bmk4g6tk1q7gdw5",
+  'xck': 'ooksvm4lw79q3y8bmk4g6tk1q7gdw5',
   'Content-Type': 'application/json', 
-  
 };
 
 //"cityId": "",
@@ -85,7 +84,6 @@ exports.state = (req, res) => {
       // Handle the data from the API response
         const rawData = response.data;
         stateData = rawData.data;
-        //console.log(stateData);
         const refinedData = rawData.data.map(item => ({
             name: item.name,
             stateCode: item.stateCode
@@ -106,8 +104,8 @@ exports.state = (req, res) => {
 exports.setState = (req, res) => {
     //using req.body to set statename
     //GOT IT TO WORK
-    //console.log(stateData);
-    //console.log(req.body);
+    console.log(stateData);
+    console.log(req.body);
     const selectedState = stateData.find(item => item.name === req.body.name)
     addPropertyJSON.stateId = selectedState.id;
     console.log(addPropertyJSON);
@@ -139,7 +137,7 @@ exports.city = (req, res) => {
 //select city and put in id
 exports.setCity = (req, res) => {
     //using req.body to set cityname
-    const selectedCity = cityData.find(item => item.name === req.body.name)
+    const selectedCity = cityData.find(item => item.name === 'ABBEVILLE (henry)')
     console.log(selectedCity);
     addPropertyJSON.cityId = selectedCity.id;
     addPropertyJSON.countyId = selectedCity.county.id;
@@ -174,7 +172,7 @@ exports.zip = (req, res) => {
 //select zip and set its id
 exports.setZip = (req, res) => {
     //using req.body to set cityname
-    const selectedZip = zipData.find(item => item.code === req.body.code)
+    const selectedZip = zipData.find(item => item.code === '36310')
     addPropertyJSON.zipcodeId = selectedZip.id;
     console.log(addPropertyJSON);
 }
