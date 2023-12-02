@@ -92,9 +92,15 @@ export function PhoneInputCluster() {
                     onChange={(e) => handlePhoneChange(e)}
                 />
                 {/*Buttons*/}
-                <Button type="submit" className="verify-phone-button">
-                    Verify phone
-                </Button>
+                {isLoading ? (
+                    <div className="spinner-container">
+                        <div className="spinner"></div>
+                    </div>
+                ) : (
+                    <Button type="submit" className="verify-phone-button">
+                        Verify phone
+                    </Button>
+                )}
             </Form>
         </>
     );

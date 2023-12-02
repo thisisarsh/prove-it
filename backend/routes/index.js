@@ -7,5 +7,6 @@ router.post('/login', controller.login);
 router.post('/signup', controller.signup);
 router.post('/contactsend', controller.contactsend);
 router.post('/contactverify', controller.contactverify);
+router.post('/set-role', controller.setRole)
 
 module.exports = router;

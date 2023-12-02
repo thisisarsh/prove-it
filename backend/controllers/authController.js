@@ -1,10 +1,13 @@
 const axios = require('axios');
 const jwt = require("jsonwebtoken");
 
+require('dotenv').config();
+
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
+const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role"
 
 const HEADERS = {
   'xck': process.env.API_TOKEN,
@@ -37,6 +40,9 @@ exports.login = (req, res) => {
     }
 
     let user = response.data.data.user;
+    //Need to pass tokens to frontend for phone verify and set role to work.
+    user.token = response.data.token;
+    user.refreshToken = response.data.refreshToken;
     let role = response.data.rolename;
 
     const token = generateAccessToken({ username: response.data.username });
@@ -102,6 +108,24 @@ exports.contactverify = (req, res) => {
   })
   .catch(error => {
     // Handle errors
+    console.error('Error fetching data:', error);
+    res.send(error);
+  });
+}
+
+exports.setRole = (req, res) => {
+  console.log(req.body);
+
+  let setRoleHeaders = JSON.parse(JSON.stringify(HEADERS));
+  setRoleHeaders.Authorization = req.body.Authorization;
+  let setRoleBody = {roleName: req.body.roleName, refreshToken: req.body.refreshToken}
+
+  axios.post(SET_ROLE_LINK, setRoleBody, { 'headers': setRoleHeaders })
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data);
+  })
+  .catch(error => {
     console.error('Error fetching data:', error);
     res.send(error);
   });

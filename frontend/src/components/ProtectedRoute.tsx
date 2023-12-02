@@ -3,6 +3,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 
 export const ProtectedRoute = ({ redirect, children }: { redirect: string; children: React.ReactNode }) => {
     const { state } = useAuthContext();
+    console.log('STATE:')
     const user = state.user;
 
     if (!user) {

@@ -22,29 +22,37 @@ export function SetRole() {
                 Welcome to HomeTrumpeter! What is your role in property
                 management?
             </div>
-            <div className="button-options-container">
-                <div className="button-option-group">
-                    <Button
-                        className="standard-button"
-                        onClick={() => handleOptionClick("owner")}
-                    >
-                        Homeowner
-                    </Button>
-                    <div className="option-description">I own my own home</div>
-                </div>
-
-                <div className="button-option-group">
-                    <Button
-                        className="standard-button"
-                        onClick={() => handleOptionClick("manager")}
-                    >
-                        Manager
-                    </Button>
-                    <div className="option-description">
-                        I manage properties on behalf of others
+            
+                {isLoading ? (
+                    <div className="spinner-container">
+                        <div className="spinner"></div>
                     </div>
-                </div>
-            </div>
+                ) : (
+                    <div className="button-options-container">
+
+                        <div className="button-option-group">
+                            <Button
+                                className="standard-button"
+                                onClick={() => handleOptionClick("owner")}
+                            >
+                                Homeowner
+                            </Button>
+                            <div className="option-description">I own my own home</div>
+                        </div>
+
+                        <div className="button-option-group">
+                            <Button
+                                className="standard-button"
+                                onClick={() => handleOptionClick("manager")}
+                            >
+                                Manager
+                            </Button>
+                            <div className="option-description">
+                                I manage properties on behalf of others
+                            </div>
+                        </div>
+                    </div>
+                )}
         </div>
     );
 }

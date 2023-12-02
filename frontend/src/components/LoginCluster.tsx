@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import ErrorMessageContainer from "./ErrorMessageContainer";
+import '../styles/pages/loginpage.css';
 
 
 /**
@@ -21,7 +23,6 @@ export function LoginCluster() {
     const [password, setPassword] = useState(""); // User password
     const [remember, setRemember] = useState(false); // Remember-me button state
     const [formSubmitted, setFormSubmitted] = useState(false);
-    const [displayError, setDisplayError] = useState("");
     const { login, error, isLoading } = useLogin();
 
     //get message from previous page, if any
@@ -39,10 +40,7 @@ export function LoginCluster() {
             console.log("Error" + error)
             if (remember && !error) {
                 localStorage.setItem("user-email", email);
-            } else if (error) {
-                setDisplayError(error);
             } else {
-                setDisplayError("");
                 localStorage.removeItem("user-email");
             }
         }
@@ -122,7 +120,7 @@ export function LoginCluster() {
                 </div>
             )}
 
-            {!isLoading && displayError && <div className="error">{displayError}</div>}
+            {error && <ErrorMessageContainer message={error}/>}
 
         </Form>
     );
