@@ -22,7 +22,7 @@ export function useSetRole() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ roleName, refreshToken: user.refreshToken, Authorization: "Bearer " + user.token }),
+            body: JSON.stringify({ roleName, refreshToken: user?.refreshToken, Authorization: "Bearer " + user?.token }),
         });
         const json = await response.json();
 
@@ -30,10 +30,10 @@ export function useSetRole() {
         if (response.ok && json.isSuccess) {
             setIsLoading(false);
             //re-save the user to authContext with the token returned from the api call.
-            const userUpdatedTokenAndRole = user;
+            let userUpdatedTokenAndRole = user ?? {error: 'Could not retrieve user from authContext'};
             userUpdatedTokenAndRole.token = json.data.token;
-            userUpdatedTokenAndRole.data.roleName = roleName;
-            dispatch({ type: "LOGIN", payload: userUpdatedTokenAndRole }); //need to save new token to the auth context.
+            userUpdatedTokenAndRole.role = roleName;
+            dispatch({ type: "LOGIN", payload: {user: userUpdatedTokenAndRole} }); //need to save new token to the auth context.
             navigate("/dashboard");
         } else if (response.ok) {
             setIsLoading(false);
