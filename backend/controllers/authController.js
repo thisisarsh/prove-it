@@ -1,4 +1,5 @@
 const axios = require('axios');
+require('dotenv').config();
 
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
@@ -7,7 +8,7 @@ const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
 
 //process.env.API_TOKEN
 const HEADERS = {
-  'xck': 'ooksvm4lw79q3y8bmk4g6tk1q7gdw5',
+  'xck': process.env.API_TOKEN,
   'Content-Type': 'application/json', 
 };
 

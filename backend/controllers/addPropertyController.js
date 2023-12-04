@@ -5,6 +5,7 @@ testlogin -> propertytype -> setpropertype -> addproperty
 */
 
 const axios = require('axios');
+require('dotenv').config();
 
 const STATE_LINK = "https://apiqa.hometrumpeter.com/location/states";
 const CITY_LINK = "https://apiqa.hometrumpeter.com/location/cities/state/";
@@ -14,6 +15,50 @@ const ADD_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/p
 
 //TESTING ONLY
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
+
+//remove once we have authorization implemented, replace with call to property types api endpoint.
+const PROPERTY_TYPES = [{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdbcd50-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": false,
+  "type": "Ranch"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdbde76-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": false,
+  "type": "Cottage"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdbf919-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": false,
+  "type": "Townhouse"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdc0663-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": false,
+  "type": "House"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdc1182-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": false,
+  "type": "Bungalow"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdc129c-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": true,
+  "type": "Condominium"
+},
+{
+  "createdAt": "2023-09-28 10:17:12",
+  "id": "0cdc1347-f954-11ed-86db-0a580a80022c",
+  "isMultiUnit": true,
+  "type": "Apartment"
+}];
 
 const test_acc = {
     "email": "your email",
@@ -42,9 +87,8 @@ exports.testLogin = (req, res) => {
 
 //process.env.API_TOKEN
 const HEADERS = {
-  'xck': "ooksvm4lw79q3y8bmk4g6tk1q7gdw5",
+  'xck': process.env.API_TOKEN,
   'Content-Type': 'application/json', 
-  
 };
 
 //"cityId": "",
@@ -83,17 +127,7 @@ exports.state = (req, res) => {
     axios.get(STATE_LINK, { 'headers': HEADERS })
     .then(response => {
       // Handle the data from the API response
-        const rawData = response.data;
-        stateData = rawData.data;
-        //console.log(stateData);
-        const refinedData = rawData.data.map(item => ({
-            name: item.name,
-            stateCode: item.stateCode
-        }));
-      
-        console.log(refinedData);
-        //console.log(response.data);
-        res.send(refinedData);
+        res.send(response.data.data);
     })
     .catch(error => {
       // Handle errors
@@ -116,12 +150,15 @@ exports.setState = (req, res) => {
 //all city from selected state
 exports.city = (req, res) => {
     console.log(HEADERS);
-    axios.get(CITY_LINK + addPropertyJSON.stateId,{ 'headers': HEADERS })
+    requestedStateId = req.query.stateId;
+    axios.get(CITY_LINK + requestedStateId,{ 'headers': HEADERS })
     .then(response => {
       // Handle the data from the API response
         const rawData = response.data;
         cityData = rawData.data;
         const refinedData = rawData.data.map(item => ({
+            countyId: item.countyId,
+            cityId: item.id,
             name: item.name,
         }));
       
@@ -149,15 +186,17 @@ exports.setCity = (req, res) => {
 //all zip of selected city
 exports.zip = (req, res) => {
     //console.log(HEADERS);
-    axios.get(ZIP_LINK + addPropertyJSON.cityId,{ 'headers': HEADERS })
+    axios.get(ZIP_LINK + req.query.cityId,{ 'headers': HEADERS })
     .then(response => {
       // Handle the data from the API response
         const rawData = response.data;
-        //console.log(response.data);
+        // console.log('RAW ZIPS');
+        // console.log(response.data);
         zipData = rawData.data;
         console.log(zipData)
         const refinedData = rawData.data.map(item => ({
             code: item.code,
+            zipId: item.id
         }));
       
         console.log(refinedData);
@@ -185,7 +224,7 @@ exports.propertyType = (req, res) => {
     console.log(HEADERS);
     console.log(test_acc_data);
     let contactHeaders = JSON.parse(JSON.stringify(HEADERS));
-    contactHeaders.Authorization = "Bearer " + test_acc_data.token;
+    contactHeaders.Authorization = "Bearer ";
 
     console.log(contactHeaders);
 
@@ -257,4 +296,12 @@ exports.addProperty = (req, res) => {
       console.error('Error fetching data:', error);
       res.send(error);
     });
+
+    exports.getPropertyTypes = (req,res) => {
+      const rawData = PROPERTY_TYPES; //REPLACE WITH API CALL
+      const refinedData = rawData.map(item => ({
+        name: type,
+        propertyTypeId: id
+      }));
+    }
 };
