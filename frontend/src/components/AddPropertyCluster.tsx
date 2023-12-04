@@ -146,22 +146,24 @@ export function AddPropertyCluster() {
   const handleZipSelect = (selectedZipObj) => {
     setSelectedZip(selectedZipObj);
     localStorage.setItem('addPropertySelectedZip', JSON.stringify(selectedZipObj));
-  //   fetch(import.meta.env.VITE_SERVER + "/setzip", {
-  //     method: 'POST',
-  //     headers: {
-  //         'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify(json),
-  // })
-  //     .then(response => {
-  //         if (!response.ok) {
-  //             throw new Error('Network response was not ok');
-  //             }
-  //         console.log(response);
-  //         return response.json();
-  //     })
-  //   .then(data => console.log('Backend response:', data))
-  //   .catch(error => console.error('Error updating data:', error));
+    fetch(import.meta.env.VITE_SERVER + "/propertytypes", {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          },
+  })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+              }
+          console.log(response);
+          return response.json();
+      })
+    .then(returnedPropertyTypes => {
+      console.log('Backend response:', returnedPropertyTypes);
+      setPropertyTypes(returnedPropertyTypes);
+    })
+    .catch(error => console.error('Error updating data:', error));
   };
 
   const handlePropertyTypeSelect = (selectedPropertyType) => {

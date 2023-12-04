@@ -296,12 +296,13 @@ exports.addProperty = (req, res) => {
       console.error('Error fetching data:', error);
       res.send(error);
     });
+};
 
-    exports.getPropertyTypes = (req,res) => {
-      const rawData = PROPERTY_TYPES; //REPLACE WITH API CALL
-      const refinedData = rawData.map(item => ({
-        name: type,
-        propertyTypeId: id
-      }));
-    }
+exports.getPropertyTypes = (req,res) => {
+  const rawData = PROPERTY_TYPES; //REPLACE WITH API CALL
+  const refinedData = rawData.map(item => ({
+    name: item.type,
+    propertyTypeId: item.id
+  }));
+  res.send(refinedData);
 };
