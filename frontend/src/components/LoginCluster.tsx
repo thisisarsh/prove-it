@@ -8,6 +8,9 @@ import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import ErrorMessageContainer from "./ErrorMessageContainer";
+import '../styles/pages/loginpage.css';
+
 
 /**
  * Handles login buttons, input boxes, and remember-me button
@@ -21,12 +24,20 @@ export function LoginCluster() {
     const [remember, setRemember] = useState(false); // Remember-me button state
     const [formSubmitted, setFormSubmitted] = useState(false);
     const { login, error, isLoading } = useLogin();
+
+    //get message from previous page, if any
+    const loginMessage : string | null = localStorage.getItem('LoginClusterMessage')
+
     // Handle login button
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        //clear login message and error
+        localStorage.removeItem('LoginClusterMessage');
         setFormSubmitted(true); // Mark the form as submitted
         if (email && password) {
             await login(email, password);
+            console.log("Error" + error)
             if (remember && !error) {
                 localStorage.setItem("user-email", email);
             } else {
@@ -43,8 +54,15 @@ export function LoginCluster() {
     return (
         <Form
             className={`login-cluster ${formSubmitted ? "form-submitted" : ""}`}
-            onSubmit={handleSubmit}
+            onSubmit={e => {handleSubmit(e)}}
         >
+
+            {/*Message to user from previous page*/}
+            {loginMessage ? (
+                <p>{loginMessage}</p>
+            ) : null
+            }
+
             {/* Email input */}
             <Form.Group className={`mb-3`} controlId="formGroupEmail">
                 <Form.Label>Email address</Form.Label>
@@ -101,6 +119,8 @@ export function LoginCluster() {
                     </Button>
                 </div>
             )}
+
+            {error && <ErrorMessageContainer message={error}/>}
 
         </Form>
     );

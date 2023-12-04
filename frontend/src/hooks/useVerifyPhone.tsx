@@ -23,7 +23,7 @@ export function useVerifyPhone() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ phone, type: "phone", Authorization: "Bearer " + user.token }),
+            body: JSON.stringify({ phone, type: "phone", Authorization: "Bearer " + user?.token }),
         });
 
         setIsLoading(true);

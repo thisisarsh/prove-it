@@ -19,5 +19,6 @@ router.post('/setpropertytype', controllerProperty.setPropertyType);
 router.get('/test', controllerProperty.testLogin);
 router.get('/addproperty', controllerProperty.addProperty);
 router.get('/propertytypes', controllerProperty.getPropertyTypes);
+router.post('/set-role', controller.setRole)
 
 module.exports = router;

@@ -48,12 +48,17 @@ export function OTPVerifyCluster() {
                         handleOTPChange(e);
                     }}
                 />
-                <Button
-                    type="submit"
-                    className="otp-input-control standard-button"
-                >
-                    Verify
-                </Button>
+                {isLoading ? (
+                    <div className="spinner-container">
+                        <div className="spinner"></div>
+                    </div>
+                ) : (
+                    <Button
+                        type="submit"
+                        className="otp-input-control standard-button">
+                        Verify
+                    </Button>  
+                )}
             </Form>
         </>
     );

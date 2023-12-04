@@ -33,6 +33,7 @@ export function useSignUp() {
             setIsLoading(false);
             setError(json.message);
         } else{
+            localStorage.setItem('LoginClusterMessage', 'A confirmation link was sent to your email. Please check your inbox, click the link, and return to this page to complete your account creation');
             setIsLoading(false);
             navigate("/Login");
         }

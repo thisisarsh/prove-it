@@ -16,7 +16,7 @@ export const AuthContext = createContext<{ state: AuthState; dispatch: Dispatch<
 const authReducer = (state: AuthState,  action: AuthAction): AuthState => {
     switch (action.type) {
         case "LOGIN":
-            return { user: action.payload || null }; // Provide a default value of null if action.payload is undefined
+            return { user: action.payload?.user || null }; // Provide a default value of null if action.payload is undefined
         case "LOGOUT":
             return { user: null };
         default:
