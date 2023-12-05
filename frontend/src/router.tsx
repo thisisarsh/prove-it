@@ -13,7 +13,7 @@ import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
 import { VerifyOTP } from "./routes/VerifyOTP";
 import { SetRole } from "./routes/SetRole";
-import { State } from "./routes/State";
+import { AddProperty } from "./routes/AddProperty";
 
 export const Router = createBrowserRouter([
     {
@@ -56,8 +56,9 @@ export const Router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/state",
-        element: <State />,
+        //TODO: Protect this route
+        path: "/addproperty",
+        element: <AddProperty />,
         errorElement: <ErrorPage />,
     },
 ]);

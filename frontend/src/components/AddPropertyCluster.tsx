@@ -2,8 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export function AddPropertyCluster() {
+  //TODO: Abstract the api calls, make this file less cluttered.
+
+  const { state } = useAuthContext();
+  const { user } = state;
+  console.log(user);
+
   const [states, setStates] = useState([]);
   const [selectedState, setSelectedState] = useState(null);
 
@@ -25,9 +32,9 @@ export function AddPropertyCluster() {
     setter(e.target.value);
   };
 
-  //ABSCTRACTION OF THE API CALLS (WIP)
-  //console.log(states);
-  // const fetchData = (method: string, address: string, callback : (res: Response) => void) => {
+  // ABSCTRACTION OF THE API CALLS (WIP)
+  // console.log(states);
+  // const fetchData = (method: string, address: string, callback : (data: () => Promise<any>) => void) => {
   //   console.log('Fetching data...')
   //   fetch(address, {
   //     method: method,
@@ -37,13 +44,14 @@ export function AddPropertyCluster() {
   //     if (!response.ok) {
   //       throw new Error('Network response was not ok');
   //     }
+  //     return response.json;
   //   }))
   //   .then(data => callback(data))
   //   .catch(error => console.error('Error fetching data:', error));
   // }
 
   useEffect(() => {
-    //Fetch data from an API
+    //Implementation of API call abstraction (WIP)
     //const stateAddress = import.meta.env.VITE_SERVER + '/state';
     // fetchData('GET', stateAddress, data => {
     //   console.log(data);
@@ -92,19 +100,6 @@ export function AddPropertyCluster() {
       })
       .catch(error => console.error('Error updating data:', error));
     };
-  
-  // useEffect(() => {
-  //   fetch(import.meta.env.VITE_SERVER + "/city")
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       console.log(response.json);
-  //       return response.json();
-  //     })
-  //     .then(data => setCity(data))
-  //     .catch(error => console.error('Error fetching cities:', error));
-  //  }, []);
 
   const handleCitySelect = (selectedCity) => {
     setSelectedCity(selectedCity);
@@ -129,20 +124,6 @@ export function AddPropertyCluster() {
     .catch(error => console.error('Error updating data:', error));
     };
 
-  // useEffect(() => {
-  //   fetch(import.meta.env.VITE_SERVER + "/zip")
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       console.log(response.json);
-  //       return response.json();
-  //     })
-  //     .then(data => setZip(data))
-  //     .catch(error => console.error('Error fetching cities:', error));
-  
-  // }, []);
-
   const handleZipSelect = (selectedZipObj) => {
     setSelectedZip(selectedZipObj);
     localStorage.setItem('addPropertySelectedZip', JSON.stringify(selectedZipObj));
@@ -150,6 +131,7 @@ export function AddPropertyCluster() {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + user.token,
           },
   })
       .then(response => {
@@ -169,6 +151,53 @@ export function AddPropertyCluster() {
   const handlePropertyTypeSelect = (selectedPropertyType) => {
     setSelectedPropertyType(selectedPropertyType);
     localStorage.setItem('addPropertySelectedType', JSON.stringify(selectedPropertyType));
+  }
+
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    let createPropertyJSON = {
+      countyId: selectedCity?.countyId,
+      cityId: selectedCity?.cityId,
+      stateId: selectedState.id,
+      zipcodeId: selectedZip?.zipId,
+      userId: user?.id,
+      propertyTypeId: selectedPropertyType.propertyTypeId,
+      ownerId: user?.id,
+
+      name: propertyName,
+      streetAddress: address,
+      rent: rentAmnt,
+      isPrimary: true,
+      canTenantInitiate: true,
+      status: "active",
+      registrationFee: 0
+    }
+
+    console.log(createPropertyJSON);
+
+    //Post the property object to the server.
+    fetch(import.meta.env.VITE_SERVER + "/addproperty", {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + user?.token,
+          },
+      body: JSON.stringify(createPropertyJSON),
+  })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+              }
+          console.log(response);
+          return response.json();
+      })
+    .then(responseJson => {
+      console.log('Backend response:', responseJson);
+      if (responseJson.isSuccess) {
+        alert('Property successfully added');
+      }
+    })
+    .catch(error => console.error('Error updating data:', error));
   }
 
   return (
@@ -268,7 +297,7 @@ export function AddPropertyCluster() {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" onClick={(e: React.MouseEvent) => handleSubmit(e)}>
             Submit
           </Button>
         </Form>

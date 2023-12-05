@@ -1,6 +1,6 @@
 import { AddPropertyCluster } from "../components/AddPropertyCluster.tsx";
 
-export function State() {
+export function AddProperty() {
     return (
         <div className="login-container">
             <img
