@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useLogout } from "../hooks/useLogout"
 import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 import '../styles/pages/dashboard.css';
 /**
@@ -23,6 +24,7 @@ export function DashboardCluster() {
 
     const { state } = useAuthContext();
     const  { user } = state;
+    const navigate = useNavigate();
 
     useEffect(() => {
         setIsLoading(true);
@@ -93,7 +95,7 @@ export function DashboardCluster() {
 
                     <tr>
                         <td className="dashboard-empty-property" colSpan={2}> 
-                            <a className="dashboard-link" href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">Add Property...</a>
+                            <a className="dashboard-link" onClick={() => {navigate('/addproperty')}}>Add Property...</a>
                         </td>
                     </tr>
                 </tbody>

@@ -13,6 +13,7 @@ import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
 import { VerifyOTP } from "./routes/VerifyOTP";
 import { SetRole } from "./routes/SetRole";
+import { AddProperty } from "./routes/AddProperty";
 
 export const Router = createBrowserRouter([
     {
@@ -54,4 +55,11 @@ export const Router = createBrowserRouter([
         element: <SetRole />,
         errorElement: <ErrorPage />,
     },
+    {
+        //TODO: Protect this route
+        path: "/addproperty",
+        element: <AddProperty />,
+        errorElement: <ErrorPage />,
+    },
 ]);
+
