@@ -76,21 +76,21 @@ export function DashboardCluster() {
                 </thead>
 
                 <tbody>
-                    {properties ? (
-                        properties.map(userProperty => (
-                            <tr>
-                                <td>{userProperty.name}</td>
-                                <td>{userProperty.streetAddress}</td>
-                            </tr>
-                        ))
+                    {isLoading ? (
+                        <td colSpan={2}>Loading Properties...</td>
                     ) : (
-                        <tr>
-                            {isLoading ? (
-                                <td colSpan={2}>Loading Properties...</td>
-                            ) : (
+                        properties && properties.length > 0 ? (
+                            properties.map(userProperty => (
+                                <tr>
+                                    <td>{userProperty.name}</td>
+                                    <td>{userProperty.streetAddress}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
                                 <td colSpan={2}>You haven't added any properties yet. Start by adding a property!</td>
-                            )}
-                        </tr>
+                            </tr>
+                        )
                     )}
 
                     <tr>
