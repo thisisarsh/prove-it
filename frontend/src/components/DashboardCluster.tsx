@@ -5,12 +5,14 @@
  * Receives: 
  */
 import { useLogout } from "../hooks/useLogout"
+import { useNavigate } from "react-router-dom";
 /**
  * 
  * @returns Void
  */
 export function DashboardCluster() {
     const {logout} = useLogout();
+    const navigate = useNavigate();
 
   return (
     <div className="dashboard-container">
@@ -32,7 +34,7 @@ export function DashboardCluster() {
                     </tr>
                     <tr>
                         <td className="dashboard-empty-property"> 
-                            <a className="dashboard-link" href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">Add Property...</a>
+                            <a onClick={() => navigate('/addproperty')}>Add Property...</a>
                         </td>
                     </tr>
                 </table>

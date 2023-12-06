@@ -2,7 +2,7 @@ import React, { createContext, useReducer, ReactNode, Dispatch } from "react";
 
 export interface AuthState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    user: { [key: string]: any } | null;
+    user: JSON | null;
 }
 
 export interface AuthAction {
@@ -29,8 +29,11 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+    const session = localStorage.getItem("user");
+    const user = session !== null ? JSON.parse(session) : null;
+
     const [state, dispatch] = useReducer(authReducer, {
-        user: null,
+        user: user,
     });
 
     return (

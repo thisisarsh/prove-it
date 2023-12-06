@@ -28,8 +28,8 @@ export function useLogin() {
         // Handle BAD/GOOD response
         if (response.status === 200) {
             setIsLoading(false);
-            localStorage.setItem("token", JSON.stringify(json.token));
-            dispatch({ type: "LOGIN", payload: {user: json.user, role: json.role} }); // use AuthContext
+            localStorage.setItem("user", JSON.stringify(json.user));
+            dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
             navigate("/Dashboard");
         } else {
             setIsLoading(false);
