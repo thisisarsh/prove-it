@@ -3,12 +3,14 @@ import { Dropdown } from 'react-bootstrap';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function AddPropertyCluster() {
   //TODO: Abstract the api calls, make this file less cluttered.
 
   const { state } = useAuthContext();
   const { user } = state;
+  const navigate = useNavigate();
   console.log(user);
 
   const [states, setStates] = useState([]);
@@ -195,6 +197,7 @@ export function AddPropertyCluster() {
       console.log('Backend response:', responseJson);
       if (responseJson.isSuccess) {
         alert('Property successfully added');
+        navigate('/dashboard');
       }
     })
     .catch(error => console.error('Error updating data:', error));

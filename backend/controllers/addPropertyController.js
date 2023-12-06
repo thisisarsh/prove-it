@@ -16,50 +16,6 @@ const ADD_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/p
 //TESTING ONLY
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
 
-//remove once we have authorization implemented, replace with call to property types api endpoint.
-// const PROPERTY_TYPES = [{
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdbcd50-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": false,
-//   "type": "Ranch"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdbde76-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": false,
-//   "type": "Cottage"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdbf919-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": false,
-//   "type": "Townhouse"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdc0663-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": false,
-//   "type": "House"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdc1182-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": false,
-//   "type": "Bungalow"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdc129c-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": true,
-//   "type": "Condominium"
-// },
-// {
-//   "createdAt": "2023-09-28 10:17:12",
-//   "id": "0cdc1347-f954-11ed-86db-0a580a80022c",
-//   "isMultiUnit": true,
-//   "type": "Apartment"
-// }];
-
 //process.env.API_TOKEN
 const HEADERS = {
   'xck': process.env.API_TOKEN,
