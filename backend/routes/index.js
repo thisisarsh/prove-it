@@ -1,5 +1,6 @@
 const express = require('express');
 const controller = require("../controllers/authController");
+const dashboardController = require("../controllers/dashboardController");
 const controllerProperty = require("../controllers/addPropertyController");
 
 const router = express.Router();
@@ -14,5 +15,6 @@ router.get('/zip', controllerProperty.zip);
 router.post('/addproperty', controllerProperty.addProperty);
 router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
+router.get('/properties', dashboardController.getProperties);
 
 module.exports = router;
