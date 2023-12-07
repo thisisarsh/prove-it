@@ -1,0 +1,71 @@
+.main_addProperty {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.main_addProperty::before {
+    content: "Property Info";
+    position: absolute;
+    top: -15px; 
+    left: 10px; 
+    background-color: white;
+    padding: 0 10px; 
+}
+
+#state-dropdown.dropdown-toggle,
+#city-dropdown.dropdown-toggle,
+#zip-dropdown.dropdown-toggle,
+#property-type-dropdown.dropdown-toggle {
+    width: 300px; 
+    background-color: #194185;
+    color: white;
+    margin-bottom: 20px;
+}
+
+#state-dropdown.dropdown-menu,
+#city-dropdown.dropdown-menu,
+#zip-dropdown.dropdown-menu,
+#property-type-dropdown.dropdown-menu {
+    width: 300px; 
+    text-align: left;
+    background-color: #194185;
+    border: 1px solid #194185;
+}
+
+#state-dropdown.locationDropdown.dropdown-item,
+#city-dropdown.locationDropdown.dropdown-item,
+#zip-dropdown.locationDropdown.dropdown-item,
+#property-type-dropdown.locationDropdown.dropdown-item {
+    color: white;
+}
+
+
+.locationDropdown.dropdown-item {
+    color: white;
+}
+
+.forms {
+    width: 300px;
+    margin: 20px;
+}
+
+.submitButton {
+    min-width: 100%;
+    max-width: 300px;
+    background-color: #194185;
+    border: 3px outset #194185;
+    color: white;
+    margin: 20px auto;
+    display: block;
+}
+
+.goBackButton {
+    background-color: #194185;
+    border: 3px outset #194185;
+    color: white;
+}

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { Link } from 'react-router-dom';
 import { useAuthContext } from "../hooks/useAuthContext";
+import '../styles/pages/addProperty.css';
 
 export function AddPropertyCluster() {
   //TODO: Abstract the api calls, make this file less cluttered.
@@ -201,9 +203,9 @@ export function AddPropertyCluster() {
   }
 
   return (
-    <div>
+    <div className = " main_addProperty">
       {/* Dropdown to select the US state */}
-      <Dropdown>
+      <Dropdown className="locationDropdown">
         <Dropdown.Toggle variant="success" id="state-dropdown">
           {selectedState ? selectedState.name : 'Select a State'}
         </Dropdown.Toggle>
@@ -218,7 +220,7 @@ export function AddPropertyCluster() {
 
       {/*Dropdown to select city within the selected state*/}
       {selectedState && (
-        <Dropdown className="mt-2">
+        <Dropdown className="locationDropdown">
           <Dropdown.Toggle variant="success" id="city-dropdown">
             {selectedCity ? selectedCity.name : 'Select a City'}
           </Dropdown.Toggle>
@@ -234,8 +236,8 @@ export function AddPropertyCluster() {
 
       {/*Dropdown to select the ZIP code*/}
       {selectedCity && (
-        <Dropdown className="mt-2">
-          <Dropdown.Toggle variant="success" id="city-dropdown">
+        <Dropdown className="locationDropdown">
+          <Dropdown.Toggle variant="success" id="zip-dropdown">
             {selectedZip ? selectedZip.code : 'Enter a ZIP'}
           </Dropdown.Toggle>
           <Dropdown.Menu>
@@ -250,7 +252,7 @@ export function AddPropertyCluster() {
 
       {/*Dropdown to select the property type*/}
       {selectedZip && (
-        <Dropdown className="mt-2">
+        <Dropdown className="locationDropdown">
           <Dropdown.Toggle variant="success" id="property-type-dropdown">
             {selectedPropertyType ? selectedPropertyType.name : 'Select a Property Type'}
           </Dropdown.Toggle>
@@ -264,8 +266,7 @@ export function AddPropertyCluster() {
         </Dropdown>
       )}
 
-
-      <div className="mt-2">
+      <div className="forms">
         <Form>
           <Form.Group controlId="propertyName">
             <Form.Label>Property Name</Form.Label>
@@ -297,9 +298,14 @@ export function AddPropertyCluster() {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" onClick={(e: React.MouseEvent) => handleSubmit(e)}>
+          <Button variant="primary" type="submit" className="submitButton" onClick={(e: React.MouseEvent) => handleSubmit(e)}>
             Submit
           </Button>
+          <Link to="/dashboard" className="goBackLink">
+            <Button variant="outline-primary" size="sm" className="goBackButton">
+              <span>Go Back</span>
+            </Button>
+          </Link>
         </Form>
       </div>
     </div>
