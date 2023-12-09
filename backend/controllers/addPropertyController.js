@@ -10,8 +10,12 @@ require('dotenv').config();
 const STATE_LINK = "https://apiqa.hometrumpeter.com/location/states";
 const CITY_LINK = "https://apiqa.hometrumpeter.com/location/cities/state/";
 const ZIP_LINK = "https://apiqa.hometrumpeter.com/location/zipcodes/city/";
-const PROPERTY_TYPE_LINK = "https://apiqa.hometrumpeter.com/property-management/property-types"
-const ADD_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/property"
+const PROPERTY_TYPE_LINK = "https://apiqa.hometrumpeter.com/property-management/property-types";
+const ADD_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/property";
+const OWNED_PROPERTIES_LINK = 'https://apiqa.hometrumpeter.com/property-management/properties/owner';
+const VALIDATE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/address/validate';
+const DELETE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
+
 
 //TESTING ONLY
 const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
@@ -50,7 +54,7 @@ exports.city = (req, res) => {
             name: item.name,
         }));
       
-        console.log(refinedData);
+        //console.log(refinedData);
         //console.log(response.data);
         res.send(refinedData);
     })
@@ -68,13 +72,13 @@ exports.zip = (req, res) => {
       // Handle the data from the API response
         const rawData = response.data;
         zipData = rawData.data;
-        console.log(zipData)
+        //console.log(zipData)
         const refinedData = rawData.data.map(item => ({
             code: item.code,
             zipId: item.id
         }));
       
-        console.log(refinedData);
+        //console.log(refinedData);
         res.send(refinedData);
     })
     .catch(error => {
@@ -91,14 +95,77 @@ exports.addProperty = (req, res) => {
     let addPropertyHeaders = JSON.parse(JSON.stringify(HEADERS));
     addPropertyHeaders.Authorization = req.headers.authorization ?? null;
 
-    console.log(addPropertyHeaders);
+    //console.log(addPropertyHeaders);
 
     axios.post(ADD_PROPERTY_LINK, propertyObject,{ 'headers': addPropertyHeaders })
     .then(response => {
       // Handle the data from the API response
         const rawData = response.data;
-        console.log(response);
-        res.send(rawData);
+        console.log(rawData);
+        if (rawData.isSuccess){
+          // Validate address
+          axios.get(OWNED_PROPERTIES_LINK, {'headers': addPropertyHeaders})
+          .then(response => {
+            // Get just added property from owner
+            const propertyData = (response.data.data ?? [])[0];
+            console.log(propertyData);
+            let validatePropertyJSON = {
+              id: propertyData.id,
+              countyId: propertyData.countyId,
+              cityId: propertyData.cityId,
+              stateId: propertyData.id,
+              zipcodeId: propertyData.zipcodeId,
+              propertyTypeId: propertyData.propertyTypeId,
+              ownerId: propertyData.ownerId,
+      
+              name: propertyData.name,
+              streetAddress: propertyData.streetAddress,
+              rent: propertyData.rent,
+              isPrimary: propertyData.isPrimary,
+              canTenantInitiate: propertyData.canTenantInitiate,
+              status: propertyData.status,
+              longitude: 0,
+              latitude: 0,
+              isTenantActive: propertyData.isTenantActive,
+              applicationFeeOnRent: propertyData.applicationFeeOnRent,
+              registrationFee: propertyData.registrationFee
+            }
+            console.log("PROPERTY DATA");
+            console.log(validatePropertyJSON);
+            //post propertyData to validate street address
+            axios.post(VALIDATE_PROPERTY_LINK, validatePropertyJSON,{ 'headers': addPropertyHeaders })
+            .then(response => {
+              console.log(response.data);
+              if (response.data.isSuccess){
+                res.send(response.data);
+              } else if (!response.data.isSuccess){
+                //delete invalid property
+                axios.delete(DELETE_PROPERTY_LINK + validatePropertyJSON.id, { 'headers': addPropertyHeaders })
+                .then(response => {
+                  console.log(response.data);
+                })
+                .catch(error => {
+                  // Handle errors
+                  console.error('Error fetching data:', error);
+                  res.send(error);
+                });
+                //send invail address to front
+                res.send(response.data); 
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+              res.send({error: error.message});
+            })
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+            res.send({error: error.message});
+          })
+        } else if (!rawData.isSuccess){
+            //send error of addproperty to front like existed property name or same street address
+            res.send(rawData);
+        }
     })
     .catch(error => {
       // Handle errors
@@ -113,7 +180,7 @@ exports.getPropertyTypes = (req,res) => {
 
   axios.get(PROPERTY_TYPE_LINK, {'headers': propertyTypesHeaders}).then(response => {
     const rawData = response.data;
-    console.log(rawData);
+    //console.log(rawData);
     const refinedData = rawData.data.map(item => ({
       name: item.type,
       propertyTypeId: item.id

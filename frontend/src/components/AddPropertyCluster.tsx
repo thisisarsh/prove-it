@@ -202,6 +202,8 @@ export function AddPropertyCluster() {
       if (responseJson.isSuccess) {
         alert('Property successfully added');
         navigate('/dashboard');
+      } else if (!responseJson.isSuccess) {
+        alert(responseJson.message);
       }
     })
     .catch(error => console.error('Error updating data:', error));
