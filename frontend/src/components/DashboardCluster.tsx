@@ -129,6 +129,12 @@ export function DashboardCluster() {
                 <tr>
                     <td>You dont have any property added. <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">Start by adding a property</a></td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <a onClick={() => {navigate('/invite/tenant')}}>Invite a tenant</a>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

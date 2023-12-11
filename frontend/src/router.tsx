@@ -14,6 +14,7 @@ import { SignUp } from "./routes/SignUp";
 import { VerifyOTP } from "./routes/VerifyOTP";
 import { SetRole } from "./routes/SetRole";
 import { AddProperty } from "./routes/AddProperty";
+import { InviteTenant } from "./routes/InviteTenant";
 
 export const Router = createBrowserRouter([
     {
@@ -59,6 +60,11 @@ export const Router = createBrowserRouter([
         //TODO: Protect this route
         path: "/addproperty",
         element: <AddProperty />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/invite/tenant",
+        element: <InviteTenant />,
         errorElement: <ErrorPage />,
     },
 ]);
