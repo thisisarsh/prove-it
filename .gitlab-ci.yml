@@ -39,6 +39,7 @@ build-server:
   stage: build
   rules:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
+    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
   script:
     - >-
       docker build --build-arg API_SERVER=$API_SERVER --pull -t
@@ -50,11 +51,15 @@ build-client:
   stage: build
   rules:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
+    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
   script:
     - echo $VITE_SERVER
-    - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
-      $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+    - echo $VITE_SERVER_MERGE
+    - if [ "CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+        docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+      else
+        docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+      fi
     - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
 build-server-staging:
@@ -153,6 +158,7 @@ deploy-test-server:
     - build-server
   rules:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
+    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
   script:
     - cd backend
     - >-
@@ -183,7 +189,18 @@ deploy-test-server:
     - yq -i '.metadata.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-web-server-dev
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s-dev
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_TEST_ENV
     - RESULT=0
@@ -201,6 +218,7 @@ deploy-test-client:
     - build-client
   rules:
     - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
+    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
   script:
     - cd frontend
     - >-
@@ -231,7 +249,18 @@ deploy-test-client:
     - yq -i '.metadata.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-web-dev --replicas=0
+      2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s-dev
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_TEST_ENV
     - RESULT=0
@@ -273,7 +302,18 @@ deploy-staging-server:
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
@@ -314,7 +354,18 @@ deploy-staging-client:
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged --replicas=0
+      2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
@@ -356,7 +407,18 @@ deploy-prod-server:
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
@@ -398,7 +460,18 @@ deploy-prod-client:
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
     - >-
-      oc login --token=$OCP_TOKEN --server=$OCP_API_SERVER
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live --replicas=0
+      2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
