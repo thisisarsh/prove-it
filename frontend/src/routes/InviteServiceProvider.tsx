@@ -1,7 +1,7 @@
 import InviteUserCluster from "../components/InviteUserCluster.tsx";
 import '../styles/pages/addProperty.css';
 
-export function InviteTenant() {
+export function InviteServiceProvider() {
     return (
         <div className="login-container">
             <img
@@ -9,9 +9,9 @@ export function InviteTenant() {
                 className="main-logo"
             />
 
-            <h1>Invite a Tenant</h1>
+            <h1>Invite a Service Provider</h1>
             
-            <InviteUserCluster roleName="tenant"/>
+            <InviteUserCluster roleName="service_provider"/>
         </div>
     );
 }

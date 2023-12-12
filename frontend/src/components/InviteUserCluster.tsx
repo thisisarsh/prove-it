@@ -1,14 +1,18 @@
 import {Form, Button, Dropdown} from "react-bootstrap";
-import Spinner from "../components/Spinner";
+import Spinner from "./Spinner";
 import ErrorMessageContainer from "./ErrorMessageContainer";
 
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 
-import "../styles/pages/inviteTenant.css"
+import "../styles/pages/inviteUser.css"
 import { useNavigate } from "react-router-dom";
 
-export default function InviteTenantCluster() {
+interface InviteUserProps {
+    roleName: string
+}
+
+export default function InviteUserCluster(props: InviteUserProps) {
     const { state } = useAuthContext();
     const  { user } = state;
 
@@ -20,29 +24,32 @@ export default function InviteTenantCluster() {
     const [properties, setProperties] = useState([]);
     const [selectedProperty, setSelectedProperty] = useState(undefined);
 
-    const [tenantFirstName, setTenantFirstName] = useState("");
-    const [tenantLastName, setTenantLastName] = useState("");
-    const [tenantEmail, setTenantEmail] = useState("");
-    const [tenantPhone, setTenantPhone] = useState("");
+    const [invitedFirstName, setInvitedFirstName] = useState("");
+    const [invitedLastName, setInvitedLastName] = useState("");
+    const [invitedEmail, setInvitedEmail] = useState("");
+    const [invitedPhone, setInvitedPhone] = useState("");
 
-    useEffect(() => {
-        fetch(import.meta.env.VITE_SERVER + "/properties", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + user?.token,
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        }).then(data => {
-            console.log(data);
-            setProperties(data);
-        })
-    }, []);
+    //fetch properties if we are inviting a tenant.
+    if (props.roleName == "tenant") {
+        useEffect(() => {
+            fetch(import.meta.env.VITE_SERVER + "/properties", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + user?.token,
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                setProperties(data);
+            })
+        }, []);
+    }
 
     /////
     //EVENT HANDLERS
@@ -57,12 +64,12 @@ export default function InviteTenantCluster() {
         setError(null);
         const inviteUserObject = {
             user: {
-                firstName: tenantFirstName,
-                lastName: tenantLastName,
-                email: tenantEmail,
-                phone: tenantPhone
+                firstName: invitedFirstName,
+                lastName: invitedLastName,
+                email: invitedEmail,
+                phone: invitedPhone
             },
-            roleName: "tenant",
+            roleName: props.roleName,
             propertyId: selectedProperty?.id,
             invite: true
         }
@@ -101,19 +108,22 @@ export default function InviteTenantCluster() {
 
     return (
         <>
-            <Dropdown id="property-dropdown">
-                        <Dropdown.Toggle variant="secondary" id="property-dropdown-toggle">
-                            {selectedProperty ? (selectedProperty.name + ', ' + selectedProperty.streetAddress) : ("Select a property")}
-                        </Dropdown.Toggle>
+            {/*Only display the property selection if we are inviting a tenant*/}
+            {props.roleName == "tenant" && (
+                <Dropdown id="property-dropdown">
+                    <Dropdown.Toggle variant="secondary" id="property-dropdown-toggle">
+                        {selectedProperty ? (selectedProperty.name + ', ' + selectedProperty.streetAddress) : ("Select a property")}
+                    </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                            {properties.map(property => (
-                                <Dropdown.Item onClick={() => {handlePropertySelect(property)}}>
-                                    {property.name + ', ' + property.streetAddress}
-                                </Dropdown.Item>
-                            ))}
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    <Dropdown.Menu>
+                        {properties.map(property => (
+                            <Dropdown.Item onClick={() => {handlePropertySelect(property)}}>
+                                {property.name + ', ' + property.streetAddress}
+                            </Dropdown.Item>
+                        ))}
+                    </Dropdown.Menu>
+                </Dropdown>
+            )}
             <div id="invite-form-container">
                 
 
@@ -124,7 +134,7 @@ export default function InviteTenantCluster() {
                         <Form.Control 
                             type="text" 
                             placeholder="First Name"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setTenantFirstName)}}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setInvitedFirstName)}}
                         />
                     </Form.Group>
 
@@ -133,7 +143,7 @@ export default function InviteTenantCluster() {
                                 <Form.Control
                                     type="text"
                                     placeholder="Last Name"
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setTenantLastName)}}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setInvitedLastName)}}
                                 />
                     </Form.Group>
 
@@ -142,7 +152,7 @@ export default function InviteTenantCluster() {
                         <Form.Control
                             type="email"
                             placeholder="Email"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setTenantEmail)}}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setInvitedEmail)}}
                         />
                     </Form.Group>
 
@@ -151,7 +161,7 @@ export default function InviteTenantCluster() {
                         <Form.Control
                             type="phone"
                             placeholder="Phone"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setTenantPhone)}}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {handleInputChange(e, setInvitedPhone)}}
                         />
                     </Form.Group>
                     
@@ -166,7 +176,7 @@ export default function InviteTenantCluster() {
                 </Form>
             </div>
 
-            {error && <ErrorMessageContainer message="error"/>}
+            {error && <ErrorMessageContainer message={error}/>}
         </>
     )
 }
