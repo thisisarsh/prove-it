@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { State, City, Zip, PropertyType, PropertyJSON } from "../types.ts";
-import SearchableDropdown from "./dropdown.tsx";
+import SearchableDropdown from "./DropDown.tsx";
 import "../styles/pages/addProperty.css";
 
 export function AddPropertyCluster() {

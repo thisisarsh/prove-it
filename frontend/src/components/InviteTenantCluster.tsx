@@ -8,7 +8,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import "../styles/pages/inviteTenant.css";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types.ts";
-import SearchableDropdown from "./dropdown.tsx";
+import SearchableDropdown from "./DropDown.tsx";
 import { FormGroup} from "./Forms.tsx";
 
 export default function InviteTenantCluster() {

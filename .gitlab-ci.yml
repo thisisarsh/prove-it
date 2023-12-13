@@ -23,17 +23,17 @@ variables:
 .before_script_template:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-# lint-job:
-#   stage: lint
-#   image: 'node:18'
-#   script:
-#     - cd frontend && mkdir -p lint-results
-#     - npm install
-#     - npm run lint
-#   allow_failure: true
-#   artifacts:
-#     paths:
-#       - lint-results/
+lint-job:
+  stage: lint
+  image: 'node:18'
+  script:
+    - cd frontend && mkdir -p lint-results
+    - npm install
+    - npm run lint
+  allow_failure: true
+#  artifacts:
+#    paths:
+#      - lint-results/
 build-server:
   extends: .before_script_template
   stage: build
