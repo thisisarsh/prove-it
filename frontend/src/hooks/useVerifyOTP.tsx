@@ -7,7 +7,7 @@ const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/contactverify";
 export function useVerifyOTP() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { dispatch }: any = useAuthContext();
+    const { dispatch } = useAuthContext();
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
@@ -36,8 +36,8 @@ export function useVerifyOTP() {
         if (response.ok && json.isSuccess) {
             setIsLoading(false);
             //update that phone has been verified in auth context
-            let userUpdatedPhone = user ?? {error: 'Could not retrieve user from authContext'};
-            userUpdatedPhone.phoneVerified = true;
+            const userUpdatedPhone = user;
+            userUpdatedPhone!.phoneVerified = true;
             dispatch({ type: "LOGIN", payload: {user: userUpdatedPhone} });
             navigate("/dashboard");
         } else if (response.ok) {

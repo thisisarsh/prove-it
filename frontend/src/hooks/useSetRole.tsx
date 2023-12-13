@@ -30,9 +30,9 @@ export function useSetRole() {
         if (response.ok && json.isSuccess) {
             setIsLoading(false);
             //re-save the user to authContext with the token returned from the api call.
-            let userUpdatedTokenAndRole = user ?? {error: 'Could not retrieve user from authContext'};
-            userUpdatedTokenAndRole.token = json.data.token;
-            userUpdatedTokenAndRole.role = roleName;
+            const userUpdatedTokenAndRole = user;
+            userUpdatedTokenAndRole!.token = json.data.token;
+            userUpdatedTokenAndRole!.role = roleName;
             dispatch({ type: "LOGIN", payload: {user: userUpdatedTokenAndRole} }); //need to save new token to the auth context.
             navigate("/dashboard");
         } else if (response.ok) {

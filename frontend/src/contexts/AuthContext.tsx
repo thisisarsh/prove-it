@@ -1,9 +1,10 @@
 import React, { createContext, useReducer, ReactNode, Dispatch } from "react";
+import { User } from "../types.ts";
 
 export interface AuthState {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    user: JSON | null;
+    user: User | null;
 }
+
 
 export interface AuthAction {
     type: "LOGIN" | "LOGOUT";

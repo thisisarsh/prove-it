@@ -55,9 +55,10 @@ export function OTPVerifyCluster() {
                 ) : (
                     <Button
                         type="submit"
-                        className="otp-input-control standard-button">
+                        className="otp-input-control standard-button"
+                    >
                         Verify
-                    </Button>  
+                    </Button>
                 )}
             </Form>
         </>

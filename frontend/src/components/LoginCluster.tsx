@@ -4,13 +4,14 @@
  * Sends: A payload to the HT login API endpoint
  * Receives: Token containing login status (success/fail)
  */
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import ErrorMessageContainer from "./ErrorMessageContainer";
-import '../styles/pages/loginpage.css';
-
+import "../styles/pages/loginpage.css";
+import {FormGroup} from "./Forms.tsx";
+import Spinner from "./Spinner.tsx";
 
 /**
  * Handles login buttons, input boxes, and remember-me button
@@ -26,18 +27,20 @@ export function LoginCluster() {
     const { login, error, isLoading } = useLogin();
 
     //get message from previous page, if any
-    const loginMessage : string | null = localStorage.getItem('LoginClusterMessage')
+    const loginMessage: string | null = localStorage.getItem(
+        "LoginClusterMessage",
+    );
 
     // Handle login button
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         //clear login message and error
-        localStorage.removeItem('LoginClusterMessage');
+        localStorage.removeItem("LoginClusterMessage");
         setFormSubmitted(true); // Mark the form as submitted
         if (email && password) {
             await login(email, password);
-            console.log("Error" + error)
+            console.log("Error" + error);
             if (remember && !error) {
                 localStorage.setItem("user-email", email);
             } else {
@@ -54,43 +57,31 @@ export function LoginCluster() {
     return (
         <Form
             className={`login-cluster ${formSubmitted ? "form-submitted" : ""}`}
-            onSubmit={e => {handleSubmit(e)}}
+            onSubmit={(e) => {
+                handleSubmit(e);
+            }}
         >
+            {/* Message to user from previous page */}
+            {loginMessage && <p>{loginMessage}</p>}
 
-            {/*Message to user from previous page*/}
-            {loginMessage ? (
-                <p>{loginMessage}</p>
-            ) : null
-            }
-
-            {/* Email input */}
-            <Form.Group className={`mb-3`} controlId="formGroupEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                    className={`${
-                        formSubmitted && !password ? "no-info-error" : ""
-                    }`}
-                    type="email"
-                    placeholder="Enter email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                />
-            </Form.Group>
+            <FormGroup
+                label="Email address"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={formSubmitted && !email ? "no-info-error" : ""}
+            />
 
             {/* Password input */}
-            <Form.Group className={`mb-3`} controlId="formGroupPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    className={`${
-                        formSubmitted && !password ? "no-info-error" : ""
-                    }`}
-                    type="password"
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </Form.Group>
+            <FormGroup
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={formSubmitted && !password ? "no-info-error" : ""}
+            />
 
-            {/* Remember me */}
+
             <div className="remember-forgot-container">
                 <Form.Check
                     type="checkbox"
@@ -104,24 +95,24 @@ export function LoginCluster() {
                 </a>
             </div>
 
-            {/* Buttons */}
             {isLoading ? (
-                <div className="spinner-container">
-                    <div className="spinner"></div>
-                </div>
+                <Spinner/>
             ) : (
                 <div className="login-button-container">
                     <Button type="submit" className="login-button">
                         Login
                     </Button>
-                    <Button type="button" className="login-button" href="./signup">
+                    <Button
+                        type="button"
+                        className="login-button"
+                        href="./signup"
+                    >
                         Create Account
                     </Button>
                 </div>
             )}
 
-            {error && <ErrorMessageContainer message={error}/>}
-
+            {error && <ErrorMessageContainer message={error} />}
         </Form>
     );
 }
