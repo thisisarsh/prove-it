@@ -94,3 +94,33 @@
     border: 3px outset #194185;
     color: white;
 }
+
+.delete-confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 2px solid #194185;
+    padding: 20px;
+    z-index: 1000; /* Above all other elements */
+    text-align: center;
+}
+  
+.delete-confirmation-popup p {
+    margin-bottom: 20px;
+}
+  
+.delete-confirmation-popup button {
+    background-color: #194185;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+  
+.delete-confirmation-popup button:hover {
+    background-color: #15346b;
+}
