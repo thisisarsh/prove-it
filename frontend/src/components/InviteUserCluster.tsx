@@ -5,13 +5,17 @@ import ErrorMessageContainer from "./ErrorMessageContainer";
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 
-import "../styles/pages/inviteTenant.css";
+import "../styles/pages/inviteUser.css"
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types.ts";
 import SearchableDropdown from "./DropDownList.tsx";
 import { FormGroup} from "./Forms.tsx";
 
-export default function InviteTenantCluster() {
+interface InviteUserProps {
+    roleName: string
+}
+
+export default function InviteUserCluster(props: InviteUserProps) {
     const { state } = useAuthContext();
     const { user } = state;
 
@@ -23,20 +27,23 @@ export default function InviteTenantCluster() {
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<Property | undefined>(undefined);
 
-    const [tenantFirstName, setTenantFirstName] = useState("");
-    const [tenantLastName, setTenantLastName] = useState("");
-    const [tenantEmail, setTenantEmail] = useState("");
-    const [tenantPhone, setTenantPhone] = useState("");
+    const [invitedFirstName, setInvitedFirstName] = useState("");
+    const [invitedLastName, setInvitedLastName] = useState("");
+    const [invitedEmail, setInvitedEmail] = useState("");
+    const [invitedPhone, setInvitedPhone] = useState("");
 
+    //fetch properties if we are inviting a tenant.
+    
     useEffect(() => {
-        fetch(import.meta.env.VITE_SERVER + "/properties", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token,
-            },
-        })
-            .then((response) => {
+        if (props.roleName == "tenant") {
+            fetch(import.meta.env.VITE_SERVER + "/properties", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + user?.token,
+                },
+            })
+            .then(response => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
@@ -46,11 +53,12 @@ export default function InviteTenantCluster() {
                 console.log(data);
                 setProperties(data);
             });
-    }, [user?.token]);
+        }
+    }, [user?.token, props.roleName]);
 
-    /////
+    //////
     //EVENT HANDLERS
-    /////
+    //////
     const handlePropertySelect = (property: Property) => {
         setSelectedProperty(property);
     };
@@ -61,12 +69,12 @@ export default function InviteTenantCluster() {
         setError("");
         const inviteUserObject = {
             user: {
-                firstName: tenantFirstName,
-                lastName: tenantLastName,
-                email: tenantEmail,
-                phone: tenantPhone,
+                firstName: invitedFirstName,
+                lastName: invitedLastName,
+                email: invitedEmail,
+                phone: invitedPhone
             },
-            roleName: "tenant",
+            roleName: props.roleName,
             propertyId: selectedProperty?.id,
             invite: true,
         };
@@ -112,37 +120,40 @@ export default function InviteTenantCluster() {
 
     return (
         <>
-            <SearchableDropdown
-                items={properties || []}
-                onSelect={(property) => handlePropertySelect(property)}
-                placeholder={selectedProperty
-                    ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
-                    : "Select a property"}
-                labelKey={"name"} // Assuming you want to search and display by 'name'
-            />
+            {/*Only display property selector if we are inviting a tenant*/}
+            {props.roleName == "tenant" &&
+                <SearchableDropdown
+                    items={properties || []}
+                    onSelect={(property) => handlePropertySelect(property)}
+                    placeholder={selectedProperty
+                        ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
+                        : "Select a property"}
+                    labelKey={"name"} // Assuming you want to search and display by 'name'
+                />
+            }
             <div id="invite-form-container">
                 <Form id="invite-form">
                     <FormGroup
                         label="First Name"
-                        value={tenantFirstName}
-                        onChange={(e) => handleInputChange(e, setTenantFirstName)}
+                        value={invitedFirstName}
+                        onChange={(e) => handleInputChange(e, setInvitedFirstName)}
                     />
                     <FormGroup
                         label="Last Name"
-                        value={tenantLastName}
-                        onChange={(e) => handleInputChange(e, setTenantLastName)}
+                        value={invitedLastName}
+                        onChange={(e) => handleInputChange(e, setInvitedLastName)}
                     />
                     <FormGroup
                         label="Email"
                         type="email"
-                        value={tenantEmail}
-                        onChange={(e) => handleInputChange(e, setTenantEmail)}
+                        value={invitedEmail}
+                        onChange={(e) => handleInputChange(e, setInvitedEmail)}
                     />
                     <FormGroup
                         label="Phone"
                         type="phone"
-                        value={tenantPhone}
-                        onChange={(e) => handleInputChange(e, setTenantPhone)}
+                        value={invitedPhone}
+                        onChange={(e) => handleInputChange(e, setInvitedPhone)}
                     />
 
                     {isLoading ? (

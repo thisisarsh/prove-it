@@ -164,6 +164,16 @@ export function DashboardCluster() {
                             </a>
                         </td>
                     </tr>
+
+                    <tr>
+                        <td>
+                            <a
+                                onClick={() => {navigate("/invite/serviceprovider")}}
+                            >
+                                Invite a service provider
+                            </a>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>

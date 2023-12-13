@@ -7,7 +7,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 2px solid #000000;
+    border: 2px solid #6c757d;
     border-radius: 10px;
     padding: 20px;
     width:90%;
@@ -15,7 +15,7 @@ h1 {
 }
 
 #invite-form-container::before {
-    content: "Tenant Info";
+    content: "Contact Info";
     position: absolute;
     top: -15px; 
     left: 10px; 
