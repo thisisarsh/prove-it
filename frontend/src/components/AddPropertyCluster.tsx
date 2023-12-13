@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useNavigate } from "react-router-dom";
-import { State, City, Zip, PropertyType, PropertyJSON } from "../types.ts";
-import SearchableDropdown from "./DropDown.tsx";
+import {Link, useNavigate} from "react-router-dom";
+import {useAuthContext} from "../hooks/useAuthContext";
+import {City, PropertyJSON, PropertyType, State, Zip} from "../types.ts";
+import SearchableDropdown from "./DropDownList.tsx";
 import "../styles/pages/addProperty.css";
 
 export function AddPropertyCluster() {
     //TODO: Abstract the api calls, make this file less cluttered.
 
-    const { state } = useAuthContext();
-    const { user } = state;
+    const {state} = useAuthContext();
+    const {user} = state;
     const navigate = useNavigate();
     console.log(user);
 
@@ -94,8 +93,8 @@ export function AddPropertyCluster() {
         //Send a POST request to the API with the selected option
         fetch(
             import.meta.env.VITE_SERVER +
-                "/city?" +
-                new URLSearchParams({ stateId: selectedState.id }),
+            "/city?" +
+            new URLSearchParams({stateId: selectedState.id}),
             {
                 method: "GET",
                 headers: {
@@ -125,8 +124,8 @@ export function AddPropertyCluster() {
         );
         fetch(
             import.meta.env.VITE_SERVER +
-                "/zip?" +
-                new URLSearchParams({ cityId: selectedCity.cityId }),
+            "/zip?" +
+            new URLSearchParams({cityId: selectedCity.cityId}),
             {
                 method: "GET",
                 headers: {

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { Dropdown, FormControl } from 'react-bootstrap';
+import {Dropdown, FormControl} from 'react-bootstrap';
 
 interface Stringifiable {
     toString(): string;
 }
+
 interface SearchableDropdownProps<T extends Record<K, Stringifiable>, K extends keyof T> {
     items: T[];
     onSelect: (item: T) => void;
@@ -46,9 +47,12 @@ const SearchableDropdown = <T extends Record<K, Stringifiable>, K extends keyof 
                     onChange={handleSearchChange}
                     value={search}
                 />
-                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                <div style={{maxHeight: '200px', overflowY: 'auto'}}>
                     {filteredItems.map((item, index) => (
-                        <Dropdown.Item key={index} onClick={() => { onSelect(item); setOpen(false); }}>
+                        <Dropdown.Item key={index} onClick={() => {
+                            onSelect(item);
+                            setOpen(false);
+                        }}>
                             {item[labelKey] ? item[labelKey].toString() : ''}
                         </Dropdown.Item>
                     ))}
