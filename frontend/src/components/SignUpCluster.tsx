@@ -4,11 +4,13 @@
  * Sends: A payload to the HT signup API endpoint
  * Receives: Token containing signup status (success/fail)
  */
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSignUp } from "../hooks/useSignup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import ErrorMessageContainer from "./ErrorMessageContainer";
+import { FormGroup } from "./Forms.tsx";
+import Spinner from "./Spinner.tsx";
 
 /**
  * Handles signup buttons, input boxes
@@ -20,11 +22,14 @@ export function SignUpCluster() {
     const [email, setEmail] = useState(""); // User email - always retrieve from localStorage if possible
     const [password, setPassword] = useState(""); // User password
     const [confirmPassword, setConfirmPassword] = useState(""); // User confirm password
-    const { signup, error, isLoading, setError} = useSignUp();
+    const { signup, error, isLoading, setError } = useSignUp();
     const [frontendError, setFrontendError] = useState("");
 
     // Handle signup button
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
         setter(e.target.value);
     };
 
@@ -42,18 +47,26 @@ export function SignUpCluster() {
         e.preventDefault();
         clearErrors();
 
-        if (!firstName || !lastName || !email || !password || !confirmPassword) {
-            setFrontendError('All fields must be filled out.');
+        if (
+            !firstName ||
+            !lastName ||
+            !email ||
+            !password ||
+            !confirmPassword
+        ) {
+            setFrontendError("All fields must be filled out.");
             return;
         }
 
         if (password !== confirmPassword) {
-            setFrontendError('Password and Confirm Password do not match.');
+            setFrontendError("Password and Confirm Password do not match.");
             return;
         }
 
         if (!isPasswordStrong(password)) {
-            setFrontendError('Password must be 8-14 characters long with 1 special character and 1 uppercase letter.');
+            setFrontendError(
+                "Password must be 8-14 characters long with 1 special character and 1 uppercase letter.",
+            );
             return;
         }
 
@@ -73,22 +86,46 @@ export function SignUpCluster() {
 
     return (
         <Form className="signup-cluster" onSubmit={handleSubmit}>
-            <FormGroup label="First Name" value={firstName} onChange={(e) => handleInputChange(e, setFirstName)} />
-            <FormGroup label="Last Name" value={lastName} onChange={(e) => handleInputChange(e, setLastName)} />
-            <FormGroup label="Email address" type="email" value={email} onChange={(e) => handleInputChange(e, setEmail)} />
-            <FormGroup label="Password" type="password" value={password} onChange={(e) => handleInputChange(e, setPassword)} />
-            <FormGroup label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => handleInputChange(e, setConfirmPassword)} />
+            <FormGroup
+                label="First Name"
+                value={firstName}
+                onChange={(e) => handleInputChange(e, setFirstName)}
+            />
+            <FormGroup
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => handleInputChange(e, setLastName)}
+            />
+            <FormGroup
+                label="Email address"
+                type="email"
+                value={email}
+                onChange={(e) => handleInputChange(e, setEmail)}
+            />
+            <FormGroup
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => handleInputChange(e, setPassword)}
+            />
+            <FormGroup
+                label="Confirm Password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => handleInputChange(e, setConfirmPassword)}
+            />
 
-            {error && <ErrorMessageContainer message={error}/>}
-            {frontendError && <ErrorMessageContainer message={frontendError}/>}
+            {error && <ErrorMessageContainer message={error} />}
+            {frontendError && <ErrorMessageContainer message={frontendError} />}
 
             {isLoading ? (
-                <div className="spinner-container"> {/* Create a container for the spinner */}
-                    <div className="spinner"></div> {/* Insert the spinner here */}
-                </div>
+                <Spinner/>
             ) : (
                 <div className="sign-up-button-container">
-                    <Button type="submit" className="sign-up-button standard-button">
+                    <Button
+                        type="submit"
+                        className="sign-up-button standard-button"
+                    >
                         Sign Up
                     </Button>
                 </div>
@@ -97,18 +134,3 @@ export function SignUpCluster() {
     );
 }
 
-interface FormGroupProps {
-    label: string;
-    type?: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-function FormGroup({ label, type = 'text', value, onChange }: FormGroupProps) {
-    return (
-        <Form.Group className="mb-3" controlId={`formGroup${label.replace(/\s+/g, '')}`}>
-            <Form.Label>{label}</Form.Label>
-            <Form.Control type={type} placeholder={`Enter ${label}`} value={value} onChange={onChange} />
-        </Form.Group>
-    );
-}
