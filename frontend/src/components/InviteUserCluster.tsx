@@ -33,8 +33,9 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [invitedPhone, setInvitedPhone] = useState("");
 
     //fetch properties if we are inviting a tenant.
-    if (props.roleName == "tenant") {
-        useEffect(() => {
+    
+    useEffect(() => {
+        if (props.roleName == "tenant") {
             fetch(import.meta.env.VITE_SERVER + "/properties", {
                 method: "GET",
                 headers: {
@@ -52,8 +53,8 @@ export default function InviteUserCluster(props: InviteUserProps) {
                 console.log(data);
                 setProperties(data);
             });
-        }, [user?.token]);
-    }
+        }
+    }, [user?.token, props.roleName]);
 
     //////
     //EVENT HANDLERS
