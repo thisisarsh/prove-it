@@ -38,8 +38,7 @@ build-server:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
-    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_MESSAGE =~ /^deploy-test:/
   script:
     - >-
       docker build --build-arg API_SERVER=$API_SERVER --pull -t
@@ -50,12 +49,12 @@ build-client:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
-    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_MESSAGE =~ /^deploy-test:/
   script:
     - echo $VITE_SERVER
     - echo $VITE_SERVER_MERGE
-    - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+    - >
+     if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
       else
         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
@@ -157,8 +156,7 @@ deploy-test-server:
   dependencies:
     - build-server
   rules:
-    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
-    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_MESSAGE =~ /^deploy-test:/
   script:
     - cd backend
     - >-
@@ -217,8 +215,7 @@ deploy-test-client:
   dependencies:
     - build-client
   rules:
-    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop"
-    - if: $CI_COMMIT_MESSAGE =~ /^deploy-test-/
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_MESSAGE =~ /^deploy-test:/
   script:
     - cd frontend
     - >-
