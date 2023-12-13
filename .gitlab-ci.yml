@@ -55,7 +55,7 @@ build-client:
   script:
     - echo $VITE_SERVER
     - echo $VITE_SERVER_MERGE
-    - if [ "CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+    - if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
       else
         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
