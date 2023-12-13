@@ -55,9 +55,9 @@ export default function InviteUserCluster(props: InviteUserProps) {
         }, [user?.token]);
     }
 
-    /////
+    //////
     //EVENT HANDLERS
-    /////
+    //////
     const handlePropertySelect = (property: Property) => {
         setSelectedProperty(property);
     };
