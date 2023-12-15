@@ -55,7 +55,7 @@ export function DashboardCluster() {
             });
     }, [user?.token]);
 
-    console.log(properties);
+    //console.log(properties);
 
     // Function to handle the "Delete" button click
     const handleDeleteClick = (property: Property) => {

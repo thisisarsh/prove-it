@@ -13,7 +13,7 @@ export function AddPropertyCluster() {
     const {state} = useAuthContext();
     const {user} = state;
     const navigate = useNavigate();
-    console.log(user);
+    //console.log(user);
 
     const [states, setStates] = useState<State[]>([]);
     const [selectedState, setSelectedState] = useState<State | null>(null);
@@ -75,15 +75,15 @@ export function AddPropertyCluster() {
             })
             .then((data) => {
                 setStates(data);
-                console.log(data);
+                //console.log(data);
             })
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
     const handleStateSelect = (selectedState: State) => {
         setSelectedState(selectedState);
-        console.log("SELECTED STATE");
-        console.log(selectedState);
+        //console.log("SELECTED STATE");
+        //console.log(selectedState);
 
         localStorage.setItem(
             "addPropertySelectedState",
@@ -137,11 +137,11 @@ export function AddPropertyCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                console.log(response);
+                //console.log(response);
                 return response.json();
             })
             .then((returnedZipObjects) => {
-                console.log("Backend response:", returnedZipObjects);
+                //console.log("Backend response:", returnedZipObjects);
                 setZipsInCity(returnedZipObjects);
             })
             .catch((error) => console.error("Error updating data:", error));
@@ -164,11 +164,11 @@ export function AddPropertyCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                console.log(response);
+                //console.log(response);
                 return response.json();
             })
             .then((returnedPropertyTypes) => {
-                console.log("Backend response:", returnedPropertyTypes);
+                //console.log("Backend response:", returnedPropertyTypes);
                 setPropertyTypes(returnedPropertyTypes);
             })
             .catch((error) => console.error("Error updating data:", error));
@@ -201,7 +201,7 @@ export function AddPropertyCluster() {
             registrationFee: 0,
         };
 
-        console.log(createPropertyJSON);
+        //console.log(createPropertyJSON);
 
         //Post the property object to the server.
         fetch(import.meta.env.VITE_SERVER + "/addproperty", {
@@ -216,11 +216,11 @@ export function AddPropertyCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                console.log(response);
+                //console.log(response);
                 return response.json();
             })
             .then((responseJson) => {
-                console.log("Backend response:", responseJson);
+                //console.log("Backend response:", responseJson);
                 if (responseJson.isSuccess) {
                     alert("Property successfully added");
                     navigate("/dashboard");
