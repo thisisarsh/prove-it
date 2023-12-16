@@ -17,8 +17,10 @@ router.post('/addproperty', controllerProperty.addProperty);
 router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
 router.get('/properties', dashboardController.getProperties);
+router.delete('/deleteproperty', dashboardController.deleteProperties);
 router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
 router.post('/survey/tenant', controller.tenantSurvey);
+
 
 module.exports = router;
