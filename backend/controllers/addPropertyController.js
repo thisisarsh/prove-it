@@ -17,9 +17,6 @@ const VALIDATE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-managem
 const DELETE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
 
 
-//TESTING ONLY
-const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
-
 //process.env.API_TOKEN
 const HEADERS = {
   'xck': process.env.API_TOKEN,

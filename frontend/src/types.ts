@@ -52,3 +52,9 @@ export interface Property {
     name: string;
     streetAddress: string;
 }
+
+export interface TenantProperty {
+    name: string;
+    streetAddress: string;
+    owner: string;
+}

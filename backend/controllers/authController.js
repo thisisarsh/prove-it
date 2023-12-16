@@ -26,8 +26,8 @@ function generateAccessToken(username) {
 }
 
 exports.login = (req, res) => {
-  console.log(HEADERS);
-  console.log(req.body);
+  //console.log(HEADERS);
+  //console.log(req.body);
   axios.post(LOGIN_API, req.body, { 'headers': HEADERS })
   .then(response => {
     // Handle the data from the API response
@@ -47,7 +47,7 @@ exports.login = (req, res) => {
     let role = response.data.rolename;
 
     const token = generateAccessToken({ username: response.data.username });
-    console.log(response.data.data.user);
+    //console.log(response.data.data.user);
     res.json({
       user: user,
       role: role,
