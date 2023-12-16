@@ -31,7 +31,7 @@ exports.login = (req, res) => {
   axios.post(LOGIN_API, req.body, { 'headers': HEADERS })
   .then(response => {
     // Handle the data from the API response
-    console.log(response.data.isSuccess === true);
+    //console.log(response.data.isSuccess === true);
 
     if(!response.data.isSuccess) {
       return res.status(401).send({
