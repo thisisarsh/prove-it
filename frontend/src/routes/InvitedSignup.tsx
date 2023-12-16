@@ -1,20 +1,14 @@
 import { SignUpCluster } from "../components/SignUpCluster";
 
-/**
- * Signup page
- * "/signup"
- */
-export function SignUp() {
+export function InvitedSignup() {
     return (
         <div className="login-container">
             <img
                 src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
                 className="main-logo"
             />
-            <h1>
-                Homeowner / Manager Signup
-            </h1>
-            <SignUpCluster signupType="manager"/>
+            <h1>Tenant / Service Provider Signup</h1>
+            <SignUpCluster signupType="invited"/>
         </div>
     );
 }

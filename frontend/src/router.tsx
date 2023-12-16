@@ -16,6 +16,9 @@ import { SetRole } from "./routes/SetRole";
 import { AddProperty } from "./routes/AddProperty";
 import { InviteTenant } from "./routes/InviteTenant";
 import { InviteServiceProvider } from "./routes/InviteServiceProvider";
+import { InvitedSignup } from "./routes/InvitedSignup";
+import { TenantOnboarding } from "./routes/TenantOnboarding";
+import { SignupRole } from "./routes/SignupRole";
 
 export const Router = createBrowserRouter([
     {
@@ -39,7 +42,7 @@ export const Router = createBrowserRouter([
     },
     {
         path: "/signup",
-        element: <SignUp />,
+        element: <SignupRole />,
         errorElement: <ErrorPage />,
     },
     {
@@ -73,4 +76,19 @@ export const Router = createBrowserRouter([
         element: <InviteServiceProvider />,
         errorElement: <ErrorPage />
     },
+    {
+        path: "/signup/invited",
+        element: <InvitedSignup/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path: "/signup/owner",
+        element: <SignUp/>,
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/onboarding/tenant",
+        element: <TenantOnboarding/>,
+        errorElement: <ErrorPage />
+    }
 ]);

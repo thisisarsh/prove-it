@@ -52,3 +52,5 @@ export interface Property {
     name: string;
     streetAddress: string;
 }
+
+export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

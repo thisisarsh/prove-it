@@ -7,7 +7,9 @@ const LOGIN_API = "https://apiqa.hometrumpeter.com/user/login";
 const SIGNUP_API = "https://apiqa.hometrumpeter.com/user/signup";
 const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
-const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role"
+const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role";
+const INVITED_SIGNUP_LINK = "https://apiqa.hometrumpeter.com/user/invited/signup";
+const TENANT_SURVEY_LINK = "https://apiqa.hometrumpeter.com/customer/tenant/signup"
 
 //process.env.API_TOKEN
 const HEADERS = {
@@ -130,4 +132,32 @@ exports.setRole = (req, res) => {
     console.error('Error fetching data:', error);
     res.send(error);
   });
+}
+
+exports.invitedSignup = (req, res) => {
+  console.log(req.body);
+
+  axios.post(INVITED_SIGNUP_LINK, req.body, {headers: HEADERS})
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    res.send('Error: ' + error.message);
+  })
+}
+
+exports.tenantSurvey = (req, res) => {
+  console.log(req.body);
+
+  axios.post(TENANT_SURVEY_LINK, req.body, {headers:HEADERS})
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    res.send('Error: ' + error.message);
+  })
 }
