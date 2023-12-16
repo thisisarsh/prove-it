@@ -58,3 +58,5 @@ export interface TenantProperty {
     streetAddress: string;
     owner: string;
 }
+
+export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
