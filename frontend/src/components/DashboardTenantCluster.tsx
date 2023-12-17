@@ -54,7 +54,7 @@ export function DashboardTenantCluster() {
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
-    });
+    }, [user?.token]);
 
     return (
         <div className="dashboard-container">
