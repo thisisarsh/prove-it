@@ -11,19 +11,27 @@ import Button from "react-bootstrap/Button";
 import ErrorMessageContainer from "./ErrorMessageContainer";
 import { FormGroup } from "./Forms.tsx";
 import Spinner from "./Spinner.tsx";
+import { Dropdown } from "react-bootstrap";
+import "../styles/components/signupCluster.css"
 
 /**
  * Handles signup buttons, input boxes
  * @returns Void
  */
-export function SignUpCluster() {
+interface SignUpProps {
+    signupType: string
+}
+
+export function SignUpCluster(props: SignUpProps) {
     const [firstName, setFirstName] = useState(""); // User first name - always retrieve from localStorage if possible
     const [lastName, setLastName] = useState(""); //// User last name - always retrieve from localStorage if possible
     const [email, setEmail] = useState(""); // User email - always retrieve from localStorage if possible
     const [password, setPassword] = useState(""); // User password
     const [confirmPassword, setConfirmPassword] = useState(""); // User confirm password
-    const { signup, error, isLoading, setError } = useSignUp();
+    const { signup, invitedSignup, error, isLoading, setError } = useSignUp();
     const [frontendError, setFrontendError] = useState("");
+    const [roleName, setRoleName] = useState("");
+    const [roleDisplayName, setRoleDisplayName] = useState("");
 
     // Handle signup button
     const handleInputChange = (
@@ -32,6 +40,16 @@ export function SignUpCluster() {
     ) => {
         setter(e.target.value);
     };
+
+    //handle role dropdown selection
+    const handleRoleSelect = (selectedRoleName : string) => {
+        setRoleName(selectedRoleName);
+        if (selectedRoleName == "tenant") {
+            setRoleDisplayName("Tenant")
+        } else if (selectedRoleName == "service_provider") {
+            setRoleDisplayName("Service Provider")
+        }
+    }
 
     const isPasswordStrong = (password: string): boolean => {
         const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&]).{8,14}$/;
@@ -48,12 +66,25 @@ export function SignUpCluster() {
         clearErrors();
 
         if (
+            props.signupType == "manager" && (
             !firstName ||
             !lastName ||
             !email ||
             !password ||
-            !confirmPassword
+            !confirmPassword)
         ) {
+            setFrontendError("All fields must be filled out.");
+            return;
+        }
+
+        if (
+            props.signupType == "invited" &&
+            !email ||
+            !password ||
+            !confirmPassword ||
+            !roleName
+        ) {
+            console.log('Failing invited field check');
             setFrontendError("All fields must be filled out.");
             return;
         }
@@ -70,7 +101,11 @@ export function SignUpCluster() {
             return;
         }
 
-        await signup(firstName, lastName, email, password); // Call API endpoint
+        if (props.signupType == "invited") {
+            await invitedSignup(email, password, roleName);
+        } else {
+            await signup(firstName, lastName, email, password); 
+        }
 
         // Store user email, first name and last name in local storage
         if (!error) {
@@ -86,16 +121,38 @@ export function SignUpCluster() {
 
     return (
         <Form className="signup-cluster" onSubmit={handleSubmit}>
-            <FormGroup
-                label="First Name"
-                value={firstName}
-                onChange={(e) => handleInputChange(e, setFirstName)}
-            />
-            <FormGroup
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => handleInputChange(e, setLastName)}
-            />
+            {props.signupType == "invited" &&
+                <Form.Group>
+                    <Dropdown>
+                        <Dropdown.Toggle className="role-dropdown">{roleDisplayName ? (roleDisplayName) : ("Select your role")}</Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => handleRoleSelect('tenant')}>
+                                Tenant
+                            </Dropdown.Item>
+
+                            <Dropdown.Item onClick={() => handleRoleSelect('service_provider')}>
+                                Service Provider
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Form.Group>
+            }
+
+            {props.signupType == "manager" &&
+                <FormGroup
+                    label="First Name"
+                    value={firstName}
+                    onChange={(e) => handleInputChange(e, setFirstName)}
+                />
+            }
+            {props.signupType == "manager" &&
+                <FormGroup
+                    label="Last Name"
+                    value={lastName}
+                    onChange={(e) => handleInputChange(e, setLastName)}
+                />
+            }
             <FormGroup
                 label="Email address"
                 type="email"

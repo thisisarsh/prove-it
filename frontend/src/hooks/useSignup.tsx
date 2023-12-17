@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "./useAuthContext";
 
 const SIGNUP_LINK = import.meta.env.VITE_SERVER + "/signup";
+const INVITED_SIGNUP_LINK = import.meta.env.VITE_SERVER + "/signup/invited"
 
 export function useSignUp() {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
+    const { dispatch } = useAuthContext();
 
     const signup = async (
         firstName: string,
@@ -39,5 +43,40 @@ export function useSignUp() {
         }
     };
 
-    return { signup, isLoading, error , setError};
+    const invitedSignup = async (
+        email: string,
+        password: string,
+        roleName: string
+    ) => {
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await fetch(INVITED_SIGNUP_LINK, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                user: { email, password },
+                roleName
+            }),
+        });
+
+        if (response.ok) {
+            const responseJson = await response.json();
+            if (responseJson.isSuccess) {
+                setIsLoading(false);
+                dispatch({type: "LOGIN", payload:{user: responseJson.data}}); //update authContext with new user data
+                navigate('/onboarding/tenant');
+            } else {
+                setIsLoading(false);
+                setError(responseJson.message);
+            }
+        } else {
+            setIsLoading(false);
+            setError(response.statusText);
+        }
+    }
+
+    return { signup, invitedSignup, isLoading, error , setError};
 }
