@@ -32,29 +32,31 @@ export function DashboardTenantCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/properties-tenant", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token,
-            },
-            body: JSON.stringify(user)
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                //console.log(response.json);
-                return response.json();
+        if(user){
+            fetch(import.meta.env.VITE_SERVER + "/properties-tenant", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + user?.token,
+                },
+                body: JSON.stringify(user)
             })
-            .then((data) => {
-                setIsLoading(false);
-                setProperties(data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data: " + error);
-            });
-    }, [user?.token]);
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    //console.log(response.json);
+                    return response.json();
+                })
+                .then((data) => {
+                    setIsLoading(false);
+                    setProperties(data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data: " + error);
+                });
+        }
+    }, [user]);
 
     return (
         <div className="dashboard-container">
