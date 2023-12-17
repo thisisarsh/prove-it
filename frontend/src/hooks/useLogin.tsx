@@ -25,12 +25,21 @@ export function useLogin() {
 
         const json = await response.json();
 
+        console.log(json.user.role.role);
+
         // Handle BAD/GOOD response
         if (response.status === 200) {
-            setIsLoading(false);
-            localStorage.setItem("user", JSON.stringify(json.user));
-            dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
-            navigate("/Dashboard");
+            if (json.user.role.role == "owner"){
+                setIsLoading(false);
+                localStorage.setItem("user", JSON.stringify(json.user));
+                dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
+                navigate("/DashboardOwner");
+            } else if (json.user.role.role == "tenant"){
+                setIsLoading(false);
+                localStorage.setItem("user", JSON.stringify(json.user));
+                dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
+                navigate("/DashboardTenant");
+            }
         } else {
             setIsLoading(false);
             setError(json.message);

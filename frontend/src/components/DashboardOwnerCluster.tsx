@@ -6,9 +6,9 @@
  */
 import { useEffect } from "react";
 
-import { useLogout } from "../hooks/useLogout";
+import { useLogout } from "../hooks/useLogout.tsx";
 import { useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types.ts";
 
@@ -17,7 +17,7 @@ import "../styles/pages/dashboard.css";
  *
  * @returns Void
  */
-export function DashboardCluster() {
+export function DashboardOwnerCluster() {
     const { logout } = useLogout();
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ export function DashboardCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/properties", {
+        fetch(import.meta.env.VITE_SERVER + "/properties-owner", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export function DashboardCluster() {
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
-    }, [user?.token]);
+    });
 
     //console.log(properties);
 
@@ -88,6 +88,7 @@ export function DashboardCluster() {
                     //reload page to show update
                     window.location.reload();
                 } else if (!responseJson.isSuccess) {
+                    console.log(responseJson);
                     alert(responseJson.message);
                 }
             })
