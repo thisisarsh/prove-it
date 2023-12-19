@@ -1,5 +1,5 @@
 import InviteUserCluster from "../clusters/InviteUserCluster.tsx";
-import '../styles/pages/addProperty.css';
+import "../styles/pages/addProperty.css";
 
 export function InviteTenant() {
     return (
@@ -10,8 +10,8 @@ export function InviteTenant() {
             />
 
             <h1>Invite a Tenant</h1>
-            
-            <InviteUserCluster roleName="tenant"/>
+
+            <InviteUserCluster roleName="tenant" />
         </div>
     );
 }

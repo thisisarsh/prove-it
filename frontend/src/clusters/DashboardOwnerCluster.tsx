@@ -23,7 +23,9 @@ export function DashboardOwnerCluster() {
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<Property[] | null>(null);
 
-    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+        null,
+    );
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const { state } = useAuthContext();
@@ -69,22 +71,21 @@ export function DashboardOwnerCluster() {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + user?.token,
+                Authorization: "Bearer " + user?.token,
             },
             body: JSON.stringify(selectedProperty),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error("Network response was not ok");
                 }
-            //console.log(response.json);
-            return response.json();
-        
-             })
-            .then(responseJson => {
+                //console.log(response.json);
+                return response.json();
+            })
+            .then((responseJson) => {
                 //console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
-                    alert('Successfully Deleted Property');
+                    alert("Successfully Deleted Property");
                     //reload page to show update
                     window.location.reload();
                 } else if (!responseJson.isSuccess) {
@@ -92,9 +93,9 @@ export function DashboardOwnerCluster() {
                     alert(responseJson.message);
                 }
             })
-        .catch(error => {
-            console.error('Error fetching data: ' + error);
-        })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
         //console.log(selectedProperty);
 
         // After deletion, close the confirmation popup
@@ -137,16 +138,22 @@ export function DashboardOwnerCluster() {
                         <tbody>
                             {isLoading ? (
                                 <td colSpan={2}>Loading Properties...</td>
-                            ) : Array.isArray(properties) && properties.length > 0 ? (
+                            ) : Array.isArray(properties) &&
+                              properties.length > 0 ? (
                                 properties.map((userProperty) => (
                                     <tr key={userProperty.id}>
                                         <td>{userProperty.name}</td>
                                         <td>{userProperty.streetAddress}</td>
                                         <td>
                                             <button
-                                            onClick={() => handleDeleteClick(userProperty)}
-                                            className="delete-button">
-                                            Delete
+                                                onClick={() =>
+                                                    handleDeleteClick(
+                                                        userProperty,
+                                                    )
+                                                }
+                                                className="delete-button"
+                                            >
+                                                Delete
                                             </button>
                                         </td>
                                     </tr>
@@ -229,7 +236,9 @@ export function DashboardOwnerCluster() {
                     <tr>
                         <td>
                             <a
-                                onClick={() => {navigate("/invite/serviceprovider")}}
+                                onClick={() => {
+                                    navigate("/invite/serviceprovider");
+                                }}
                             >
                                 Invite a service provider
                             </a>
@@ -240,13 +249,14 @@ export function DashboardOwnerCluster() {
 
             {/* Delete Confirmation Popup */}
             {showDeleteConfirmation && (
-            <div className="delete-confirmation-popup">
-                <p>
-                    Are you sure to delete "{selectedProperty?.name}" property?
-                </p>
-                <button onClick={handleConfirmDelete}>Yes</button>
-                <button onClick={handleCancelDelete}>No</button>
-            </div>
+                <div className="delete-confirmation-popup">
+                    <p>
+                        Are you sure to delete "{selectedProperty?.name}"
+                        property?
+                    </p>
+                    <button onClick={handleConfirmDelete}>Yes</button>
+                    <button onClick={handleCancelDelete}>No</button>
+                </div>
             )}
         </div>
     );

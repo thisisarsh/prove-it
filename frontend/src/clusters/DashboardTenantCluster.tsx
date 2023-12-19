@@ -32,14 +32,14 @@ export function DashboardTenantCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        if(user){
+        if (user) {
             fetch(import.meta.env.VITE_SERVER + "/properties-tenant", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + user?.token,
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(user),
             })
                 .then((response) => {
                     if (!response.ok) {
@@ -88,13 +88,13 @@ export function DashboardTenantCluster() {
                         <tbody>
                             {isLoading ? (
                                 <td colSpan={2}>Loading Properties...</td>
-                            ) : Array.isArray(properties) && properties.length > 0 ? (
+                            ) : Array.isArray(properties) &&
+                              properties.length > 0 ? (
                                 properties.map((userProperty) => (
                                     <tr>
                                         <td>{userProperty.name}</td>
                                         <td>{userProperty.streetAddress}</td>
                                         <td>{userProperty.owner}</td>
-                                        
                                     </tr>
                                 ))
                             ) : (
@@ -137,7 +137,7 @@ export function DashboardTenantCluster() {
                     </tr>
                     <tr>
                         <td>
-                            Need maintenance. You might want to {" "}
+                            Need maintenance. You might want to{" "}
                             <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
                                 create a service request.
                             </a>
@@ -159,7 +159,9 @@ export function DashboardTenantCluster() {
                     <tr>
                         <td>
                             <a
-                                onClick={() => {navigate("/invite/serviceprovider")}}
+                                onClick={() => {
+                                    navigate("/invite/serviceprovider");
+                                }}
                             >
                                 Invite a service provider
                             </a>

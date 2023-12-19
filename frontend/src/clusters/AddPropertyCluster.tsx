@@ -1,16 +1,15 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {Link, useNavigate} from "react-router-dom";
-import {useAuthContext} from "../hooks/useAuthContext.tsx";
-import {City, PropertyJSON, PropertyType, State, Zip} from "../types.ts";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { City, PropertyJSON, PropertyType, State, Zip } from "../types.ts";
 import SearchableDropdown from "../components/DropDownList.tsx";
 import "../styles/pages/addProperty.css";
 
 export function AddPropertyCluster() {
-
-    const {state} = useAuthContext();
-    const {user} = state;
+    const { state } = useAuthContext();
+    const { user } = state;
     const navigate = useNavigate();
 
     const [states, setStates] = useState<State[]>([]);
@@ -38,34 +37,38 @@ export function AddPropertyCluster() {
         setter(e.target.value);
     };
 
-    const fetchData = useCallback(async (url : string, method = 'GET') => {
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
+    const fetchData = useCallback(
+        async (url: string, method = "GET") => {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
 
-        if (user) {
-            headers.append("Authorization", `Bearer ${user.token}`);
-        }
-        const requestOptions = {
-            method: method,
-            headers: headers,
-        };
-
-        try {
-            const response = await fetch(url, requestOptions);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (user) {
+                headers.append("Authorization", `Bearer ${user.token}`);
             }
-            return response.json();
-        } catch (error) {
-            console.error("Error:", error);
-            throw error;
-        }
-    }, [user]);
+            const requestOptions = {
+                method: method,
+                headers: headers,
+            };
 
+            try {
+                const response = await fetch(url, requestOptions);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            } catch (error) {
+                console.error("Error:", error);
+                throw error;
+            }
+        },
+        [user],
+    );
 
     useEffect(() => {
         const url = import.meta.env.VITE_SERVER + "/state";
-        fetchData(url).then(data => setStates(data)).catch(error => console.error("Error fetching data:", error));
+        fetchData(url)
+            .then((data) => setStates(data))
+            .catch((error) => console.error("Error fetching data:", error));
     }, [fetchData]);
 
     const handleStateSelect = (selectedState: State) => {
@@ -78,8 +81,13 @@ export function AddPropertyCluster() {
         );
 
         //Send a POST request to the API with the selected option
-        const url = import.meta.env.VITE_SERVER + "/city?" + new URLSearchParams({stateId: selectedState.id});
-        fetchData(url).then(data => setCitiesInState(data)).catch(error => console.error("Error fetching data:", error));
+        const url =
+            import.meta.env.VITE_SERVER +
+            "/city?" +
+            new URLSearchParams({ stateId: selectedState.id });
+        fetchData(url)
+            .then((data) => setCitiesInState(data))
+            .catch((error) => console.error("Error fetching data:", error));
     };
 
     const handleCitySelect = (selectedCity: City) => {
@@ -90,8 +98,13 @@ export function AddPropertyCluster() {
             JSON.stringify(selectedCity),
         );
 
-        const url = import.meta.env.VITE_SERVER + "/zip?" + new URLSearchParams({cityId: selectedCity.cityId});
-        fetchData(url).then(data => setZipsInCity(data)).catch(error => console.error("Error fetching data:", error));
+        const url =
+            import.meta.env.VITE_SERVER +
+            "/zip?" +
+            new URLSearchParams({ cityId: selectedCity.cityId });
+        fetchData(url)
+            .then((data) => setZipsInCity(data))
+            .catch((error) => console.error("Error fetching data:", error));
     };
 
     const handleZipSelect = (selectedZipObj: Zip) => {
@@ -102,7 +115,9 @@ export function AddPropertyCluster() {
         );
 
         const url = import.meta.env.VITE_SERVER + "/propertytypes";
-        fetchData(url).then(data => setPropertyTypes(data)).catch(error => console.error("Error fetching data:", error));
+        fetchData(url)
+            .then((data) => setPropertyTypes(data))
+            .catch((error) => console.error("Error fetching data:", error));
     };
 
     const handlePropertyTypeSelect = (selectedPropertyType: PropertyType) => {
@@ -164,7 +179,9 @@ export function AddPropertyCluster() {
             <SearchableDropdown
                 items={states}
                 onSelect={handleStateSelect}
-                placeholder={selectedState ? selectedState.name : "Select a State"}
+                placeholder={
+                    selectedState ? selectedState.name : "Select a State"
+                }
                 labelKey="name"
             />
 
@@ -173,7 +190,9 @@ export function AddPropertyCluster() {
                 <SearchableDropdown
                     items={citiesInState}
                     onSelect={handleCitySelect}
-                    placeholder={selectedCity ? selectedCity.name : "Select a City"}
+                    placeholder={
+                        selectedCity ? selectedCity.name : "Select a City"
+                    }
                     labelKey="name"
                 />
             )}
@@ -193,7 +212,11 @@ export function AddPropertyCluster() {
                 <SearchableDropdown
                     items={propertyTypes}
                     onSelect={handlePropertyTypeSelect}
-                    placeholder={selectedPropertyType ? selectedPropertyType.name : "Select a Property Type"}
+                    placeholder={
+                        selectedPropertyType
+                            ? selectedPropertyType.name
+                            : "Select a Property Type"
+                    }
                     labelKey="name"
                 />
             )}

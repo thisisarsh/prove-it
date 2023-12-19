@@ -24,10 +24,13 @@ export function useVerifyOTP() {
             },
             body: JSON.stringify({
                 otp,
-                email: user?.email ?? 'Could not retrieve email from authContext',
+                email:
+                    user?.email ?? "Could not retrieve email from authContext",
                 phone: localStorage.getItem("userPhone"),
                 type: "phone",
-                Authorization: "Bearer " + user?.token ?? 'Could not retrieve authorization from authContext',
+                Authorization:
+                    "Bearer " + user?.token ??
+                    "Could not retrieve authorization from authContext",
             }),
         });
         const json = await response.json();
@@ -38,7 +41,7 @@ export function useVerifyOTP() {
             //update that phone has been verified in auth context
             const userUpdatedPhone = user;
             userUpdatedPhone!.phoneVerified = true;
-            dispatch({ type: "LOGIN", payload: {user: userUpdatedPhone} });
+            dispatch({ type: "LOGIN", payload: { user: userUpdatedPhone } });
             navigate("/dashboard");
         } else if (response.ok) {
             setIsLoading(false);

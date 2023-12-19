@@ -22,7 +22,11 @@ export function useSetRole() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ roleName, refreshToken: user?.refreshToken, Authorization: "Bearer " + user?.token }),
+            body: JSON.stringify({
+                roleName,
+                refreshToken: user?.refreshToken,
+                Authorization: "Bearer " + user?.token,
+            }),
         });
         const json = await response.json();
 
@@ -33,7 +37,10 @@ export function useSetRole() {
             const userUpdatedTokenAndRole = user;
             userUpdatedTokenAndRole!.token = json.data.token;
             userUpdatedTokenAndRole!.role = roleName;
-            dispatch({ type: "LOGIN", payload: {user: userUpdatedTokenAndRole} }); //need to save new token to the auth context.
+            dispatch({
+                type: "LOGIN",
+                payload: { user: userUpdatedTokenAndRole },
+            }); //need to save new token to the auth context.
             navigate("/dashboard");
         } else if (response.ok) {
             setIsLoading(false);

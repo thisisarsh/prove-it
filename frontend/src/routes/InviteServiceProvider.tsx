@@ -1,5 +1,5 @@
 import InviteUserCluster from "../clusters/InviteUserCluster.tsx";
-import '../styles/pages/addProperty.css';
+import "../styles/pages/addProperty.css";
 
 export function InviteServiceProvider() {
     return (
@@ -10,8 +10,8 @@ export function InviteServiceProvider() {
             />
 
             <h1>Invite a Service Provider</h1>
-            
-            <InviteUserCluster roleName="service_provider"/>
+
+            <InviteUserCluster roleName="service_provider" />
         </div>
     );
 }

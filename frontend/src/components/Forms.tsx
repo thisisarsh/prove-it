@@ -9,14 +9,13 @@ interface FormGroupProps {
     className?: string; // Added optional className prop
 }
 
-
 export function FormGroup({
-                              label,
-                              type = "text",
-                              value,
-                              onChange,
-                              className = "" // Default to empty string if not provided
-                          }: FormGroupProps) {
+    label,
+    type = "text",
+    value,
+    onChange,
+    className = "", // Default to empty string if not provided
+}: FormGroupProps) {
     return (
         <Form.Group
             className={`mb-3 ${className}`}

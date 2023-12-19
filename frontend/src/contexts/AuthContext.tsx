@@ -5,16 +5,17 @@ export interface AuthState {
     user: User | null;
 }
 
-
 export interface AuthAction {
     type: "LOGIN" | "LOGOUT";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload?: { [key: string]: any } | null;
 }
 
-export const AuthContext = createContext<{ state: AuthState; dispatch: Dispatch<AuthAction> } | undefined>(undefined);
+export const AuthContext = createContext<
+    { state: AuthState; dispatch: Dispatch<AuthAction> } | undefined
+>(undefined);
 
-const authReducer = (state: AuthState,  action: AuthAction): AuthState => {
+const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     switch (action.type) {
         case "LOGIN":
             return { user: action.payload?.user || null }; // Provide a default value of null if action.payload is undefined
@@ -43,4 +44,3 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-

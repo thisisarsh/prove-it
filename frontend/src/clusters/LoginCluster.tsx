@@ -10,7 +10,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 import "../styles/pages/loginpage.css";
-import {FormGroup} from "../components/Forms.tsx";
+import { FormGroup } from "../components/Forms.tsx";
 import Spinner from "../components/Spinner.tsx";
 
 /**
@@ -81,7 +81,6 @@ export function LoginCluster() {
                 className={formSubmitted && !password ? "no-info-error" : ""}
             />
 
-
             <div className="remember-forgot-container">
                 <Form.Check
                     type="checkbox"
@@ -96,7 +95,7 @@ export function LoginCluster() {
             </div>
 
             {isLoading ? (
-                <Spinner/>
+                <Spinner />
             ) : (
                 <div className="login-button-container">
                     <Button type="submit" className="login-button">

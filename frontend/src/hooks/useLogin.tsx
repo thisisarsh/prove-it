@@ -18,7 +18,7 @@ export function useLogin() {
         const response = await fetch(LOGIN_LINK, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ email, password }),
         });
@@ -29,15 +29,15 @@ export function useLogin() {
 
         // Handle BAD/GOOD response
         if (response.status === 200) {
-            if (json.user.role.role == "owner"){
+            if (json.user.role.role == "owner") {
                 setIsLoading(false);
                 localStorage.setItem("user", JSON.stringify(json.user));
-                dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
+                dispatch({ type: "LOGIN", payload: { user: json.user } }); // use AuthContext
                 navigate("/DashboardOwner");
-            } else if (json.user.role.role == "tenant"){
+            } else if (json.user.role.role == "tenant") {
                 setIsLoading(false);
                 localStorage.setItem("user", JSON.stringify(json.user));
-                dispatch({ type: "LOGIN", payload: {user: json.user} }); // use AuthContext
+                dispatch({ type: "LOGIN", payload: { user: json.user } }); // use AuthContext
                 navigate("/DashboardTenant");
             }
         } else {

@@ -8,7 +8,7 @@ export function InvitedSignup() {
                 className="main-logo"
             />
             <h1>Tenant / Service Provider Signup</h1>
-            <SignUpCluster signupType="invited"/>
+            <SignUpCluster signupType="invited" />
         </div>
     );
 }

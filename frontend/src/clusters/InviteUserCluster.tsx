@@ -1,18 +1,18 @@
-import { Form, Button} from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import Spinner from "../components/Spinner.tsx";
 import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext.tsx";
 
-import "../styles/pages/inviteUser.css"
+import "../styles/pages/inviteUser.css";
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types.ts";
 import SearchableDropdown from "../components/DropDownList.tsx";
-import { FormGroup} from "../components/Forms.tsx";
+import { FormGroup } from "../components/Forms.tsx";
 
 interface InviteUserProps {
-    roleName: string
+    roleName: string;
 }
 
 export default function InviteUserCluster(props: InviteUserProps) {
@@ -25,7 +25,9 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [error, setError] = useState("");
 
     const [properties, setProperties] = useState<Property[] | null>(null);
-    const [selectedProperty, setSelectedProperty] = useState<Property | undefined>(undefined);
+    const [selectedProperty, setSelectedProperty] = useState<
+        Property | undefined
+    >(undefined);
 
     const [invitedFirstName, setInvitedFirstName] = useState("");
     const [invitedLastName, setInvitedLastName] = useState("");
@@ -33,26 +35,26 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [invitedPhone, setInvitedPhone] = useState("");
 
     //fetch properties if we are inviting a tenant.
-    
+
     useEffect(() => {
         if (props.roleName == "tenant") {
             fetch(import.meta.env.VITE_SERVER + "/properties", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + user?.token,
+                    Authorization: "Bearer " + user?.token,
                 },
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                setProperties(data);
-            });
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    setProperties(data);
+                });
         }
     }, [user?.token, props.roleName]);
 
@@ -72,7 +74,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
                 firstName: invitedFirstName,
                 lastName: invitedLastName,
                 email: invitedEmail,
-                phone: invitedPhone
+                phone: invitedPhone,
             },
             roleName: props.roleName,
             propertyId: selectedProperty?.id,
@@ -121,27 +123,33 @@ export default function InviteUserCluster(props: InviteUserProps) {
     return (
         <>
             {/*Only display property selector if we are inviting a tenant*/}
-            {props.roleName == "tenant" &&
+            {props.roleName == "tenant" && (
                 <SearchableDropdown
                     items={properties || []}
                     onSelect={(property) => handlePropertySelect(property)}
-                    placeholder={selectedProperty
-                        ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
-                        : "Select a property"}
+                    placeholder={
+                        selectedProperty
+                            ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
+                            : "Select a property"
+                    }
                     labelKey={"name"} // Assuming you want to search and display by 'name'
                 />
-            }
+            )}
             <div id="invite-form-container">
                 <Form id="invite-form">
                     <FormGroup
                         label="First Name"
                         value={invitedFirstName}
-                        onChange={(e) => handleInputChange(e, setInvitedFirstName)}
+                        onChange={(e) =>
+                            handleInputChange(e, setInvitedFirstName)
+                        }
                     />
                     <FormGroup
                         label="Last Name"
                         value={invitedLastName}
-                        onChange={(e) => handleInputChange(e, setInvitedLastName)}
+                        onChange={(e) =>
+                            handleInputChange(e, setInvitedLastName)
+                        }
                     />
                     <FormGroup
                         label="Email"

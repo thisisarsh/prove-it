@@ -6,7 +6,7 @@ import { FormControlElement } from "../types.ts";
 import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 import Spinner from "../components/Spinner.tsx";
 
-import "../styles/components/onboardTenant.css"
+import "../styles/components/onboardTenant.css";
 
 export default function TenantOnboardingCluster() {
     const [monthlyIncome, setMonthlyIncome] = useState("");
@@ -22,7 +22,7 @@ export default function TenantOnboardingCluster() {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
-    
+
     const handleInputChange = (
         e: React.ChangeEvent<FormControlElement>,
         setter: React.Dispatch<React.SetStateAction<string>>,
@@ -37,7 +37,7 @@ export default function TenantOnboardingCluster() {
 
         //frontend validation
         if (!user?.id) {
-            setError('Could not retrieve userId from AuthContext!');
+            setError("Could not retrieve userId from AuthContext!");
             setIsLoading(false);
             return;
         }
@@ -49,25 +49,27 @@ export default function TenantOnboardingCluster() {
             hasPets === undefined ||
             isSmoker === undefined
         ) {
-            setError('All fields must be filled out!');
+            setError("All fields must be filled out!");
             setIsLoading(false);
             return;
         }
 
-        if (isNaN(parseInt(numFamily)) || 
-            parseInt(numFamily) < 0 || 
-            parseInt(numFamily) > 19) 
-        {
-            setError('Invalid number of family members!');
+        if (
+            isNaN(parseInt(numFamily)) ||
+            parseInt(numFamily) < 0 ||
+            parseInt(numFamily) > 19
+        ) {
+            setError("Invalid number of family members!");
             setIsLoading(false);
             return;
         }
 
-        if (isNaN(parseInt(monthlyIncome)) ||
+        if (
+            isNaN(parseInt(monthlyIncome)) ||
             parseInt(monthlyIncome) > 1000000 ||
-            parseInt(monthlyIncome) < 0) 
-        {
-            setError('Invalid monthly income!');
+            parseInt(monthlyIncome) < 0
+        ) {
+            setError("Invalid monthly income!");
             setIsLoading(false);
             return;
         }
@@ -84,24 +86,33 @@ export default function TenantOnboardingCluster() {
             isRegFeePaid: true,
             questions: {},
             registrationFee: 0,
-            questionStatus: 0
-        }
+            questionStatus: 0,
+        };
 
-        const response = await fetch(import.meta.env.VITE_SERVER + "/survey/tenant", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
+        const response = await fetch(
+            import.meta.env.VITE_SERVER + "/survey/tenant",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
             },
-            body: JSON.stringify(requestBody)
-        });
+        );
 
         if (response.ok) {
             const responseJson = await response.json();
             if (responseJson.isSuccess) {
                 setIsLoading(false);
-                dispatch({type: "LOGIN", payload:{user: responseJson.data}})
-                localStorage.setItem('LoginClusterMessage', 'Your account has been created! You can now use your email and password to login to HomeTrumpeter');
-                navigate('/login');
+                dispatch({
+                    type: "LOGIN",
+                    payload: { user: responseJson.data },
+                });
+                localStorage.setItem(
+                    "LoginClusterMessage",
+                    "Your account has been created! You can now use your email and password to login to HomeTrumpeter",
+                );
+                navigate("/login");
             } else {
                 setIsLoading(false);
                 setError(responseJson.message);
@@ -110,101 +121,102 @@ export default function TenantOnboardingCluster() {
             setIsLoading(false);
             setError(response.statusText);
         }
-    }
+    };
 
     return (
-      <div id="onboard-tenant-form-container">
-        <Form className="onboard-tenant">
-            <Form.Group controlId="monthly-income" className="form-group">
-                <Form.Label>
-                    What is your monthly income?
-                </Form.Label>
+        <div id="onboard-tenant-form-container">
+            <Form className="onboard-tenant">
+                <Form.Group controlId="monthly-income" className="form-group">
+                    <Form.Label>What is your monthly income?</Form.Label>
 
-                <Form.Control
-                    placeholder="Monthly Income"
-                    type="number"
-                    value={monthlyIncome}
-                    onChange={e => handleInputChange(e, setMonthlyIncome)}
-                />
-            </Form.Group>
+                    <Form.Control
+                        placeholder="Monthly Income"
+                        type="number"
+                        value={monthlyIncome}
+                        onChange={(e) => handleInputChange(e, setMonthlyIncome)}
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="work-detail" className="form-group">
-                <Form.Label>
-                    What is your occupation?
-                </Form.Label>
+                <Form.Group controlId="work-detail" className="form-group">
+                    <Form.Label>What is your occupation?</Form.Label>
 
-                <Form.Control
-                    placeholder="Occupation"
-                    value={workDetail}
-                    onChange={e => handleInputChange(e, setWorkDetail)}
-                />
-            </Form.Group>
+                    <Form.Control
+                        placeholder="Occupation"
+                        value={workDetail}
+                        onChange={(e) => handleInputChange(e, setWorkDetail)}
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="num-family" className="form-group">
-                <Form.Label>
-                    How many family members will be living with you?
-                </Form.Label>
+                <Form.Group controlId="num-family" className="form-group">
+                    <Form.Label>
+                        How many family members will be living with you?
+                    </Form.Label>
 
-                <Form.Control
-                    type="number"
-                    placeholder="# Family members"
-                    value={numFamily ?? ""}
-                    max={10}
-                    onChange={e => handleInputChange(e, setNumFamily)}
-                />
-            </Form.Group>
+                    <Form.Control
+                        type="number"
+                        placeholder="# Family members"
+                        value={numFamily ?? ""}
+                        max={10}
+                        onChange={(e) => handleInputChange(e, setNumFamily)}
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="has-pets" className="form-group radio-group">
-                <Form.Label>
-                    Do you have any pets?
-                </Form.Label>
+                <Form.Group
+                    controlId="has-pets"
+                    className="form-group radio-group"
+                >
+                    <Form.Label>Do you have any pets?</Form.Label>
 
-                <Form.Check 
-                    type="radio" 
-                    name="has-pets"
-                    onClick={() => setHasPets(true)}
-                    label="Yes"
-                />
+                    <Form.Check
+                        type="radio"
+                        name="has-pets"
+                        onClick={() => setHasPets(true)}
+                        label="Yes"
+                    />
 
-                <Form.Check
-                    type="radio"
-                    name="has-pets"
-                    onClick={() => setHasPets(false)}
-                    label="No"
-                />
-            </Form.Group>
+                    <Form.Check
+                        type="radio"
+                        name="has-pets"
+                        onClick={() => setHasPets(false)}
+                        label="No"
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="is-smoker" className="form-group radio-group">
-                <Form.Label>
-                    Do you smoke?
-                </Form.Label>
+                <Form.Group
+                    controlId="is-smoker"
+                    className="form-group radio-group"
+                >
+                    <Form.Label>Do you smoke?</Form.Label>
 
-                <Form.Check
-                    type="radio"
-                    name="is-smoker"
-                    onClick={() => setIsSmoker(true)}
-                    label="Yes"
-                />
+                    <Form.Check
+                        type="radio"
+                        name="is-smoker"
+                        onClick={() => setIsSmoker(true)}
+                        label="Yes"
+                    />
 
-                <Form.Check
-                    type="radio"
-                    name="is-smoker"
-                    onClick={() => setIsSmoker(false)}
-                    label="No"
-                />
-            </Form.Group>
+                    <Form.Check
+                        type="radio"
+                        name="is-smoker"
+                        onClick={() => setIsSmoker(false)}
+                        label="No"
+                    />
+                </Form.Group>
 
-            {isLoading ? (
-                <Spinner/>
-            ) : (
-                <Button type="submit" className="submit-button" onClick={(e) => handleSubmit(e)}>
-                    Continue
-                </Button>
-            )}
-            
-        </Form>
+                {isLoading ? (
+                    <Spinner />
+                ) : (
+                    <Button
+                        type="submit"
+                        className="submit-button"
+                        onClick={(e) => handleSubmit(e)}
+                    >
+                        Continue
+                    </Button>
+                )}
+            </Form>
 
-        {error && <ErrorMessageContainer message={error}/>}
-      </div>
+            {error && <ErrorMessageContainer message={error} />}
+        </div>
     );
 }

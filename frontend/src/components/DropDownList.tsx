@@ -1,25 +1,31 @@
-import React, {useEffect, useState} from 'react';
-import {Dropdown, FormControl} from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Dropdown, FormControl } from "react-bootstrap";
 
 interface Stringifiable {
     toString(): string;
 }
 
-interface SearchableDropdownProps<T extends Record<K, Stringifiable>, K extends keyof T> {
+interface SearchableDropdownProps<
+    T extends Record<K, Stringifiable>,
+    K extends keyof T,
+> {
     items: T[];
     onSelect: (item: T) => void;
     placeholder: string;
     labelKey: K;
 }
 
-const SearchableDropdown = <T extends Record<K, Stringifiable>, K extends keyof T>({
-                                                                                       items,
-                                                                                       onSelect,
-                                                                                       placeholder,
-                                                                                       labelKey
-                                                                                   }: SearchableDropdownProps<T, K>) => {
+const SearchableDropdown = <
+    T extends Record<K, Stringifiable>,
+    K extends keyof T,
+>({
+    items,
+    onSelect,
+    placeholder,
+    labelKey,
+}: SearchableDropdownProps<T, K>) => {
     const [open, setOpen] = useState(false);
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState("");
     const [filteredItems, setFilteredItems] = useState<T[]>(items);
 
     useEffect(() => {
@@ -28,13 +34,21 @@ const SearchableDropdown = <T extends Record<K, Stringifiable>, K extends keyof 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toLowerCase();
         setSearch(value);
-        setFilteredItems(items.filter(item =>
-            item[labelKey] && item[labelKey].toString().toLowerCase().includes(value)
-        ));
+        setFilteredItems(
+            items.filter(
+                (item) =>
+                    item[labelKey] &&
+                    item[labelKey].toString().toLowerCase().includes(value),
+            ),
+        );
     };
 
     return (
-        <Dropdown className="searchableDropdown" show={open} onToggle={() => setOpen(!open)}>
+        <Dropdown
+            className="searchableDropdown"
+            show={open}
+            onToggle={() => setOpen(!open)}
+        >
             <Dropdown.Toggle variant="success" id="dropdown-custom-components">
                 {placeholder}
             </Dropdown.Toggle>
@@ -47,13 +61,16 @@ const SearchableDropdown = <T extends Record<K, Stringifiable>, K extends keyof 
                     onChange={handleSearchChange}
                     value={search}
                 />
-                <div style={{maxHeight: '200px', overflowY: 'auto'}}>
+                <div style={{ maxHeight: "200px", overflowY: "auto" }}>
                     {filteredItems.map((item, index) => (
-                        <Dropdown.Item key={index} onClick={() => {
-                            onSelect(item);
-                            setOpen(false);
-                        }}>
-                            {item[labelKey] ? item[labelKey].toString() : ''}
+                        <Dropdown.Item
+                            key={index}
+                            onClick={() => {
+                                onSelect(item);
+                                setOpen(false);
+                            }}
+                        >
+                            {item[labelKey] ? item[labelKey].toString() : ""}
                         </Dropdown.Item>
                     ))}
                 </div>

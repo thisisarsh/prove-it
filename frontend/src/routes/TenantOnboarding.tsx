@@ -11,7 +11,7 @@ export function TenantOnboarding() {
             <h1>Tenant Onboarding</h1>
 
             <p>Let's get to know you! We have just a few questions.</p>
-            <TenantOnboardingCluster/>
+            <TenantOnboardingCluster />
         </div>
-    )
+    );
 }

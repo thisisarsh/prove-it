@@ -12,14 +12,14 @@ import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 import { FormGroup } from "../components/Forms.tsx";
 import Spinner from "../components/Spinner.tsx";
 import { Dropdown } from "react-bootstrap";
-import "../styles/components/signupCluster.css"
+import "../styles/components/signupCluster.css";
 
 /**
  * Handles signup buttons, input boxes
  * @returns Void
  */
 interface SignUpProps {
-    signupType: string
+    signupType: string;
 }
 
 export function SignUpCluster(props: SignUpProps) {
@@ -42,14 +42,14 @@ export function SignUpCluster(props: SignUpProps) {
     };
 
     //handle role dropdown selection
-    const handleRoleSelect = (selectedRoleName : string) => {
+    const handleRoleSelect = (selectedRoleName: string) => {
         setRoleName(selectedRoleName);
         if (selectedRoleName == "tenant") {
-            setRoleDisplayName("Tenant")
+            setRoleDisplayName("Tenant");
         } else if (selectedRoleName == "service_provider") {
-            setRoleDisplayName("Service Provider")
+            setRoleDisplayName("Service Provider");
         }
-    }
+    };
 
     const isPasswordStrong = (password: string): boolean => {
         const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&]).{8,14}$/;
@@ -66,25 +66,20 @@ export function SignUpCluster(props: SignUpProps) {
         clearErrors();
 
         if (
-            props.signupType == "manager" && (
-            !firstName ||
-            !lastName ||
-            !email ||
-            !password ||
-            !confirmPassword)
+            props.signupType == "manager" &&
+            (!firstName || !lastName || !email || !password || !confirmPassword)
         ) {
             setFrontendError("All fields must be filled out.");
             return;
         }
 
         if (
-            props.signupType == "invited" &&
-            !email ||
+            (props.signupType == "invited" && !email) ||
             !password ||
             !confirmPassword ||
             !roleName
         ) {
-            console.log('Failing invited field check');
+            console.log("Failing invited field check");
             setFrontendError("All fields must be filled out.");
             return;
         }
@@ -104,7 +99,7 @@ export function SignUpCluster(props: SignUpProps) {
         if (props.signupType == "invited") {
             await invitedSignup(email, password, roleName);
         } else {
-            await signup(firstName, lastName, email, password); 
+            await signup(firstName, lastName, email, password);
         }
 
         // Store user email, first name and last name in local storage
@@ -121,38 +116,48 @@ export function SignUpCluster(props: SignUpProps) {
 
     return (
         <Form className="signup-cluster" onSubmit={handleSubmit}>
-            {props.signupType == "invited" &&
+            {props.signupType == "invited" && (
                 <Form.Group>
                     <Dropdown>
-                        <Dropdown.Toggle className="role-dropdown">{roleDisplayName ? (roleDisplayName) : ("Select your role")}</Dropdown.Toggle>
+                        <Dropdown.Toggle className="role-dropdown">
+                            {roleDisplayName
+                                ? roleDisplayName
+                                : "Select your role"}
+                        </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => handleRoleSelect('tenant')}>
+                            <Dropdown.Item
+                                onClick={() => handleRoleSelect("tenant")}
+                            >
                                 Tenant
                             </Dropdown.Item>
 
-                            <Dropdown.Item onClick={() => handleRoleSelect('service_provider')}>
+                            <Dropdown.Item
+                                onClick={() =>
+                                    handleRoleSelect("service_provider")
+                                }
+                            >
                                 Service Provider
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </Form.Group>
-            }
+            )}
 
-            {props.signupType == "manager" &&
+            {props.signupType == "manager" && (
                 <FormGroup
                     label="First Name"
                     value={firstName}
                     onChange={(e) => handleInputChange(e, setFirstName)}
                 />
-            }
-            {props.signupType == "manager" &&
+            )}
+            {props.signupType == "manager" && (
                 <FormGroup
                     label="Last Name"
                     value={lastName}
                     onChange={(e) => handleInputChange(e, setLastName)}
                 />
-            }
+            )}
             <FormGroup
                 label="Email address"
                 type="email"
@@ -176,7 +181,7 @@ export function SignUpCluster(props: SignUpProps) {
             {frontendError && <ErrorMessageContainer message={frontendError} />}
 
             {isLoading ? (
-                <Spinner/>
+                <Spinner />
             ) : (
                 <div className="sign-up-button-container">
                     <Button
@@ -190,4 +195,3 @@ export function SignUpCluster(props: SignUpProps) {
         </Form>
     );
 }
-

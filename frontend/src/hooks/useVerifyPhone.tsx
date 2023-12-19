@@ -18,12 +18,15 @@ export function useVerifyPhone() {
         console.log(user);
         // API call
         const response = await fetch(SEND_CONTACT_API, {
-
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ phone, type: "phone", Authorization: "Bearer " + user?.token }),
+            body: JSON.stringify({
+                phone,
+                type: "phone",
+                Authorization: "Bearer " + user?.token,
+            }),
         });
 
         setIsLoading(true);
