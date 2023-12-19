@@ -34,9 +34,9 @@ lint-job:
     key: '${CI_COMMIT_REF_SLUG}'
     paths:
       - frontend/node_modules/
-    artifacts:
-      paths:
-        - frontend/node_modules/
+  artifacts:
+    paths:
+      - frontend/node_modules/
   allow_failure: true
 build-server:
   extends: .before_script_template
