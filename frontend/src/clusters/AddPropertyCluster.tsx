@@ -2,9 +2,9 @@ import React, {useCallback, useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {Link, useNavigate} from "react-router-dom";
-import {useAuthContext} from "../hooks/useAuthContext";
+import {useAuthContext} from "../hooks/useAuthContext.tsx";
 import {City, PropertyJSON, PropertyType, State, Zip} from "../types.ts";
-import SearchableDropdown from "./DropDownList.tsx";
+import SearchableDropdown from "../components/DropDownList.tsx";
 import "../styles/pages/addProperty.css";
 
 export function AddPropertyCluster() {

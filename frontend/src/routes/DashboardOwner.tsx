@@ -5,7 +5,7 @@
  * WIP: need to add the rest of the page
  */
 
-import { DashboardOwnerCluster } from "../components/DashboardOwnerCluster"
+import { DashboardOwnerCluster } from "../clusters/DashboardOwnerCluster.tsx"
 
 export function DashboardOwner() {
 

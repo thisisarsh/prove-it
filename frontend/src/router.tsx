@@ -84,21 +84,21 @@ export const Router = createBrowserRouter([
     {
         path: "/invite/serviceprovider",
         element: <InviteServiceProvider />,
-        errorElement: <ErrorPage />
+        errorElement: <ErrorPage />,
     },
     {
         path: "/signup/invited",
-        element: <InvitedSignup/>,
-        errorElement: <ErrorPage />
+        element: <InvitedSignup />,
+        errorElement: <ErrorPage />,
     },
     {
         path: "/signup/owner",
-        element: <SignUp/>,
-        errorElement: <ErrorPage/>,
+        element: <SignUp />,
+        errorElement: <ErrorPage />,
     },
     {
         path: "/onboarding/tenant",
-        element: <TenantOnboarding/>,
-        errorElement: <ErrorPage />
-    }
+        element: <TenantOnboarding />,
+        errorElement: <ErrorPage />,
+    },
 ]);

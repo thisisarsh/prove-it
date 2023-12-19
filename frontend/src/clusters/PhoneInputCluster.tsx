@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
-import { useVerifyPhone } from "../hooks/useVerifyPhone";
+import { useVerifyPhone } from "../hooks/useVerifyPhone.tsx";
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 
 export function PhoneInputCluster() {

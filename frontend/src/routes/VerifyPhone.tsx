@@ -1,4 +1,4 @@
-import { PhoneInputCluster } from "../components/PhoneInputCluster";
+import { PhoneInputCluster } from "../clusters/PhoneInputCluster.tsx";
 
 /**
  * Page for inputting phone number so that an OTP can be sent.

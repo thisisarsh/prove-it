@@ -1,4 +1,4 @@
-import { AddPropertyCluster } from "../components/AddPropertyCluster.tsx";
+import { AddPropertyCluster } from "../clusters/AddPropertyCluster.tsx";
 import '../styles/pages/addProperty.css';
 
 export function AddProperty() {

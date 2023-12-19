@@ -1,15 +1,15 @@
 import { Form, Button} from "react-bootstrap";
-import Spinner from "../components/Spinner";
-import ErrorMessageContainer from "./ErrorMessageContainer";
+import Spinner from "../components/Spinner.tsx";
+import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 
 import React, { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../hooks/useAuthContext.tsx";
 
 import "../styles/pages/inviteUser.css"
 import { useNavigate } from "react-router-dom";
 import { Property } from "../types.ts";
-import SearchableDropdown from "./DropDownList.tsx";
-import { FormGroup} from "./Forms.tsx";
+import SearchableDropdown from "../components/DropDownList.tsx";
+import { FormGroup} from "../components/Forms.tsx";
 
 interface InviteUserProps {
     roleName: string

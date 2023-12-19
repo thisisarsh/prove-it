@@ -5,12 +5,12 @@
  * Receives: Token containing signup status (success/fail)
  */
 import React, { useState } from "react";
-import { useSignUp } from "../hooks/useSignup";
+import { useSignUp } from "../hooks/useSignup.tsx";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import ErrorMessageContainer from "./ErrorMessageContainer";
-import { FormGroup } from "./Forms.tsx";
-import Spinner from "./Spinner.tsx";
+import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
+import { FormGroup } from "../components/Forms.tsx";
+import Spinner from "../components/Spinner.tsx";
 import { Dropdown } from "react-bootstrap";
 import "../styles/components/signupCluster.css"
 

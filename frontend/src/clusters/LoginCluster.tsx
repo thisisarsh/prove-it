@@ -5,13 +5,13 @@
  * Receives: Token containing login status (success/fail)
  */
 import React, { useState } from "react";
-import { useLogin } from "../hooks/useLogin";
+import { useLogin } from "../hooks/useLogin.tsx";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import ErrorMessageContainer from "./ErrorMessageContainer";
+import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 import "../styles/pages/loginpage.css";
-import {FormGroup} from "./Forms.tsx";
-import Spinner from "./Spinner.tsx";
+import {FormGroup} from "../components/Forms.tsx";
+import Spinner from "../components/Spinner.tsx";
 
 /**
  * Handles login buttons, input boxes, and remember-me button

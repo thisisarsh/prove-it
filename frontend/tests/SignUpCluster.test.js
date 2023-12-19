@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import SignUpCluster from '../src/components/SignUpCluster';
+import SignUpCluster from '../src/clusters/SignUpCluster.js';
 
 describe('SignUpCluster', () => {
     let component;

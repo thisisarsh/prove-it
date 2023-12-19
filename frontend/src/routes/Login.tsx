@@ -1,4 +1,4 @@
-import { LoginCluster } from "../components/LoginCluster";
+import { LoginCluster } from "../clusters/LoginCluster.tsx";
 
 /**
  * Login page

@@ -1,4 +1,4 @@
-import { SignUpCluster } from "../components/SignUpCluster";
+import { SignUpCluster } from "../clusters/SignUpCluster.tsx";
 
 export function InvitedSignup() {
     return (
