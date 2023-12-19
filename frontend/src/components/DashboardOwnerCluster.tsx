@@ -53,7 +53,7 @@ export function DashboardOwnerCluster() {
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
-    });
+    }, [user?.token]);
 
     //console.log(properties);
 

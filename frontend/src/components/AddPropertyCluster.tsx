@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {Link, useNavigate} from "react-router-dom";
@@ -38,7 +38,7 @@ export function AddPropertyCluster() {
         setter(e.target.value);
     };
 
-    const fetchData = async (url : string, method = 'GET') => {
+    const fetchData = useCallback(async (url : string, method = 'GET') => {
         const headers = new Headers();
         headers.append("Content-Type", "application/json");
 
@@ -60,13 +60,13 @@ export function AddPropertyCluster() {
             console.error("Error:", error);
             throw error;
         }
-    };
+    }, [user]);
 
 
     useEffect(() => {
         const url = import.meta.env.VITE_SERVER + "/state";
         fetchData(url).then(data => setStates(data)).catch(error => console.error("Error fetching data:", error));
-    }, []);
+    }, [fetchData]);
 
     const handleStateSelect = (selectedState: State) => {
         setSelectedState(selectedState);
