@@ -8,12 +8,10 @@ import SearchableDropdown from "./DropDownList.tsx";
 import "../styles/pages/addProperty.css";
 
 export function AddPropertyCluster() {
-    //TODO: Abstract the api calls, make this file less cluttered.
 
     const {state} = useAuthContext();
     const {user} = state;
     const navigate = useNavigate();
-    //console.log(user);
 
     const [states, setStates] = useState<State[]>([]);
     const [selectedState, setSelectedState] = useState<State | null>(null);
@@ -40,143 +38,76 @@ export function AddPropertyCluster() {
         setter(e.target.value);
     };
 
-    // ABSCTRACTION OF THE API CALLS (WIP)
-    // console.log(states);
-    // const fetchData = (method: string, address: string, callback : (data: () => Promise<any>) => void) => {
-    //   console.log('Fetching data...')
-    //   fetch(address, {
-    //     method: method,
-    //     headers: {'Content-Type': 'application/json'}
-    //   })
-    //   .then((response => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     return response.json;
-    //   }))
-    //   .then(data => callback(data))
-    //   .catch(error => console.error('Error fetching data:', error));
-    // }
+    const fetchData = async (url : string, method = 'GET') => {
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+
+        if (user) {
+            headers.append("Authorization", `Bearer ${user.token}`);
+        }
+        const requestOptions = {
+            method: method,
+            headers: headers,
+        };
+
+        try {
+            const response = await fetch(url, requestOptions);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        } catch (error) {
+            console.error("Error:", error);
+            throw error;
+        }
+    };
+
 
     useEffect(() => {
-        //Implementation of API call abstraction (WIP)
-        //const stateAddress = import.meta.env.VITE_SERVER + '/state';
-        // fetchData('GET', stateAddress, data => {
-        //   console.log(data);
-        //   setStates(data);
-        // });
-        fetch(import.meta.env.VITE_SERVER + "/state")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                console.log(response.json);
-                return response.json();
-            })
-            .then((data) => {
-                setStates(data);
-                //console.log(data);
-            })
-            .catch((error) => console.error("Error fetching data:", error));
+        const url = import.meta.env.VITE_SERVER + "/state";
+        fetchData(url).then(data => setStates(data)).catch(error => console.error("Error fetching data:", error));
     }, []);
 
     const handleStateSelect = (selectedState: State) => {
         setSelectedState(selectedState);
-        //console.log("SELECTED STATE");
-        //console.log(selectedState);
-
-        localStorage.setItem(
+        setSelectedCity(null);
+        setSelectedZip(null);
+        sessionStorage.setItem(
             "addPropertySelectedState",
             JSON.stringify(selectedState),
         );
 
         //Send a POST request to the API with the selected option
-        fetch(
-            import.meta.env.VITE_SERVER +
-            "/city?" +
-            new URLSearchParams({stateId: selectedState.id}),
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            },
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                console.log(response);
-                return response.json();
-            })
-            .then((returnedCities) => {
-                console.log("Backend response:", returnedCities);
-                setCitiesInState(returnedCities);
-            })
-            .catch((error) => console.error("Error updating data:", error));
+        const url = import.meta.env.VITE_SERVER + "/city?" + new URLSearchParams({stateId: selectedState.id});
+        fetchData(url).then(data => setCitiesInState(data)).catch(error => console.error("Error fetching data:", error));
     };
 
     const handleCitySelect = (selectedCity: City) => {
         setSelectedCity(selectedCity);
-        localStorage.setItem(
+        setSelectedZip(null);
+        sessionStorage.setItem(
             "addPropertySelectedCity",
             JSON.stringify(selectedCity),
         );
-        fetch(
-            import.meta.env.VITE_SERVER +
-            "/zip?" +
-            new URLSearchParams({cityId: selectedCity.cityId}),
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            },
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                //console.log(response);
-                return response.json();
-            })
-            .then((returnedZipObjects) => {
-                //console.log("Backend response:", returnedZipObjects);
-                setZipsInCity(returnedZipObjects);
-            })
-            .catch((error) => console.error("Error updating data:", error));
+
+        const url = import.meta.env.VITE_SERVER + "/zip?" + new URLSearchParams({cityId: selectedCity.cityId});
+        fetchData(url).then(data => setZipsInCity(data)).catch(error => console.error("Error fetching data:", error));
     };
 
     const handleZipSelect = (selectedZipObj: Zip) => {
         setSelectedZip(selectedZipObj);
-        localStorage.setItem(
+        sessionStorage.setItem(
             "addPropertySelectedZip",
             JSON.stringify(selectedZipObj),
         );
-        fetch(import.meta.env.VITE_SERVER + "/propertytypes", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user!.token,
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                //console.log(response);
-                return response.json();
-            })
-            .then((returnedPropertyTypes) => {
-                //console.log("Backend response:", returnedPropertyTypes);
-                setPropertyTypes(returnedPropertyTypes);
-            })
-            .catch((error) => console.error("Error updating data:", error));
+
+        const url = import.meta.env.VITE_SERVER + "/propertytypes";
+        fetchData(url).then(data => setPropertyTypes(data)).catch(error => console.error("Error fetching data:", error));
     };
 
     const handlePropertyTypeSelect = (selectedPropertyType: PropertyType) => {
         setSelectedPropertyType(selectedPropertyType);
-        localStorage.setItem(
+        sessionStorage.setItem(
             "addPropertySelectedType",
             JSON.stringify(selectedPropertyType),
         );
@@ -201,8 +132,6 @@ export function AddPropertyCluster() {
             registrationFee: 0,
         };
 
-        //console.log(createPropertyJSON);
-
         //Post the property object to the server.
         fetch(import.meta.env.VITE_SERVER + "/addproperty", {
             method: "POST",
@@ -216,11 +145,9 @@ export function AddPropertyCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                //console.log(response);
                 return response.json();
             })
             .then((responseJson) => {
-                //console.log("Backend response:", responseJson);
                 if (responseJson.isSuccess) {
                     alert("Property successfully added");
                     navigate("/dashboard");
