@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest",
-    "format": "prettier-eslint --write **/*.tsx",
+    "format": "prettier-eslint --write 'src/**/*.tsx'",
     "integration-tests": "jest integration-tests"
   },
   "dependencies": {
