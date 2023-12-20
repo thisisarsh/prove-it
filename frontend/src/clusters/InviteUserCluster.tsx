@@ -90,25 +90,28 @@ export default function InviteUserCluster(props: InviteUserProps) {
             },
             body: JSON.stringify(inviteUserObject),
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     setError("Server response was not ok when inviting user");
-                    throw new Error(
-                        "Network response was not ok when inviting user",
-                    );
+                    return response.json().then(json => Promise.reject(json));
                 }
                 return response.json();
             })
-            .then((responseJson) => {
+            .then(responseJson => {
                 if (responseJson.isSuccess) {
                     alert("User has been invited successfully");
                     navigate("/dashboard");
                 } else {
                     setError(responseJson.message);
                 }
-
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                setError(err.message || "An error occurred");
                 setIsLoading(false);
             });
+
     };
 
     //change handler for all text inputs

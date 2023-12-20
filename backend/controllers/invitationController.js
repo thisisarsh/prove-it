@@ -17,19 +17,23 @@ const transporter = nodemailer.createTransport({
 });
 
 function sendEmail(to, subject, htmlContent) {
-    const mailOptions = {
-        from: 'acs4901group1@gmail.com',
-        to: to,
-        subject: subject,
-        html: htmlContent,
-    };
+    return new Promise((resolve, reject) => {
+        const mailOptions = {
+            from: 'acs4901group1@gmail.com',
+            to: to,
+            subject: subject,
+            html: htmlContent,
+        };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log('Error sending email:', error);
-        } else {
-            console.log('Email sent:', info.response);
-        }
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email:', error);
+                reject(error);
+            } else {
+                console.log('Email sent:', info.response);
+                resolve(info);
+            }
+        });
     });
 }
 
@@ -43,9 +47,14 @@ exports.inviteUser = (req, res) => {
                <p>You have been invited to join our HomeTrumpeter.</p>
                <a href="${process.env.FRONT_URL}/signup/invited?email=${req.body.user.email}&role=${req.body.roleName}">Join Now</a>`;
 
-    sendEmail(recipient, subject, htmlContent);
-
-    res.send('Invite sent');
+    sendEmail(recipient, subject, htmlContent)
+        .then(() => {
+            res.json({ message: 'Invite sent successfully' });
+        })
+        .catch(error => {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Error sending invite' });
+        });
 
     // axios.post(INVITE_USER_LINK, req.body, {
     //     headers: {
