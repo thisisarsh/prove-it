@@ -42,10 +42,15 @@ export function useVerifyOTP() {
             const userUpdatedPhone = user;
             userUpdatedPhone!.phoneVerified = true;
             dispatch({ type: "LOGIN", payload: { user: userUpdatedPhone } });
-            navigate("/dashboard");
+            
+            if (user?.role) {
+                navigate('/dashboard');
+            } else {
+                navigate('/setrole');
+            }
+
         } else if (response.ok) {
             setIsLoading(false);
-            localStorage.setItem("verifyOTPResponse", JSON.stringify(json));
             setError(json.message);
             console.error(json.message);
         } else {

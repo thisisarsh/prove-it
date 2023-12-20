@@ -26,8 +26,12 @@ export interface User {
     refreshToken: string;
     id: string;
     phoneVerified: boolean;
-    role: string;
+    role: Role;
+}
 
+export interface Role {
+    id: string;
+    role: string;
 }
 
 export interface PropertyJSON {

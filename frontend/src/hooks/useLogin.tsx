@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
+import { User } from "../types"
 
 const LOGIN_LINK = import.meta.env.VITE_SERVER + "/login";
 
 export function useLogin() {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { dispatch } = useAuthContext();
     const navigate = useNavigate();
 
     const login = async (email: string, password: string) => {
         setIsLoading(true);
-        setError(null);
+        setError("");
 
         // API call
         const response = await fetch(LOGIN_LINK, {
@@ -25,22 +26,23 @@ export function useLogin() {
 
         const json = await response.json();
 
-        console.log(json.user.role.role);
-
         // Handle BAD/GOOD response
         if (response.status === 200) {
-            if (json.user.role.role == "owner") {
-                setIsLoading(false);
-                localStorage.setItem("user", JSON.stringify(json.user));
-                dispatch({ type: "LOGIN", payload: { user: json.user } }); // use AuthContext
-                navigate("/DashboardOwner");
-            } else if (json.user.role.role == "tenant") {
-                setIsLoading(false);
-                localStorage.setItem("user", JSON.stringify(json.user));
-                dispatch({ type: "LOGIN", payload: { user: json.user } }); // use AuthContext
-                navigate("/DashboardTenant");
+            setIsLoading(false);
+
+            const user : User = json.user;
+            console.log(user);
+            dispatch({ type: "LOGIN", payload: { user } });
+            
+            if (user.phoneVerified && user.role?.role) {
+                navigate('/dashboard');
+            } else if (user.phoneVerified) {
+                navigate('/setrole');
+            } else {
+                navigate('/verifyphone');
             }
         } else {
+            console.log("Login failure")
             setIsLoading(false);
             setError(json.message);
         }

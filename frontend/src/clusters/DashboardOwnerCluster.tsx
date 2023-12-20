@@ -132,6 +132,7 @@ export function DashboardOwnerCluster() {
                             <tr>
                                 <th>Name</th>
                                 <th>Address</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
 
@@ -160,7 +161,7 @@ export function DashboardOwnerCluster() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={2}>
+                                    <td colSpan={3}>
                                         You haven't added any properties yet.
                                         Start by adding a property!
                                     </td>
@@ -170,7 +171,7 @@ export function DashboardOwnerCluster() {
                             <tr>
                                 <td
                                     className="dashboard-empty-property"
-                                    colSpan={2}
+                                    colSpan={3}
                                 >
                                     <a
                                         className="dashboard-link"
