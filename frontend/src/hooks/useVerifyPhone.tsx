@@ -35,12 +35,10 @@ export function useVerifyPhone() {
         // Handle BAD/GOOD response
         if (response.ok && json.isSuccess) {
             setIsLoading(false);
-            localStorage.setItem("contactSendResponse", JSON.stringify(json));
             localStorage.setItem("userPhone", phone); // save user data to local storage
             navigate("/verifyotp");
         } else if (response.ok) {
             setIsLoading(false);
-            localStorage.setItem("contactSendResponse", JSON.stringify(json));
             setError(json.message);
         } else {
             setIsLoading(false);
