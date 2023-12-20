@@ -24,5 +24,6 @@ router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
 router.post('/survey/tenant', controller.tenantSurvey);
 
+router.post('/send-invite', invitationController.inviteUser);
 
 module.exports = router;

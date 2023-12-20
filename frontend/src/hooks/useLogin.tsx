@@ -29,7 +29,7 @@ export function useLogin() {
 
         // Handle BAD/GOOD response
         if (response.status === 200) {
-            if (json.user.role.role == "owner") {
+            if (json.user.role.role == "owner" || json.user.role.role == "manager") {
                 setIsLoading(false);
                 localStorage.setItem("user", JSON.stringify(json.user));
                 dispatch({ type: "LOGIN", payload: { user: json.user } }); // use AuthContext

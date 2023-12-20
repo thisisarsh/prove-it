@@ -38,7 +38,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
 
     useEffect(() => {
         if (props.roleName == "tenant") {
-            fetch(import.meta.env.VITE_SERVER + "/properties", {
+            fetch(import.meta.env.VITE_SERVER + "/properties-owner", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
         };
         console.log(inviteUserObject);
 
-        fetch(import.meta.env.VITE_SERVER + "/inviteuser", {
+        fetch(import.meta.env.VITE_SERVER + "/send-invite", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
             })
             .then((responseJson) => {
                 if (responseJson.isSuccess) {
-                    alert("User has been invited sucessfully");
+                    alert("User has been invited successfully");
                     navigate("/dashboard");
                 } else {
                     setError(responseJson.message);

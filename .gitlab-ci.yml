@@ -47,7 +47,7 @@ build-server:
         $CI_COMMIT_MESSAGE =~ /^deploy-test:/
   script:
     - >-
-      docker build --build-arg API_SERVER=$API_SERVER --pull -t
+      docker build --build-arg FRONT_URL=$FRONT_URL --pull -t
       $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
@@ -74,7 +74,7 @@ build-server-staging:
   stage: build
   script:
     - >-
-      docker build --build-arg API_SERVER=$API_SERVER --build-arg BUILD_ENV=prod
+      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod
       --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -97,7 +97,7 @@ build-server-production:
   stage: build
   script:
     - >-
-      docker build --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:

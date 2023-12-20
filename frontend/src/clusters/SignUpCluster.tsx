@@ -4,7 +4,7 @@
  * Sends: A payload to the HT signup API endpoint
  * Receives: Token containing signup status (success/fail)
  */
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useSignUp } from "../hooks/useSignup.tsx";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,16 +13,17 @@ import { FormGroup } from "../components/Forms.tsx";
 import Spinner from "../components/Spinner.tsx";
 import { Dropdown } from "react-bootstrap";
 import "../styles/components/signupCluster.css";
+import {useSearchParams} from "react-router-dom";
 
 /**
  * Handles signup buttons, input boxes
  * @returns Void
  */
-interface SignUpProps {
+
+interface SignUpTypeProps {
     signupType: string;
 }
-
-export function SignUpCluster(props: SignUpProps) {
+export function SignUpCluster(props: SignUpTypeProps) {
     const [firstName, setFirstName] = useState(""); // User first name - always retrieve from localStorage if possible
     const [lastName, setLastName] = useState(""); //// User last name - always retrieve from localStorage if possible
     const [email, setEmail] = useState(""); // User email - always retrieve from localStorage if possible
@@ -32,6 +33,20 @@ export function SignUpCluster(props: SignUpProps) {
     const [frontendError, setFrontendError] = useState("");
     const [roleName, setRoleName] = useState("");
     const [roleDisplayName, setRoleDisplayName] = useState("");
+
+    const [searchParams] = useSearchParams();
+
+
+    useEffect(() => {
+        const email = searchParams.get('email');
+        const role = searchParams.get('role');
+        if (email) {
+            setEmail(email);
+        }
+        if (role) {
+           handleRoleSelect(role);
+        }
+    }, [searchParams]);
 
     // Handle signup button
     const handleInputChange = (
