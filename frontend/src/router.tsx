@@ -8,8 +8,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
 import { ErrorPage } from "./error-page";
-import { DashboardOwner } from "./routes/DashboardOwner";
-import { DashboardTenant } from "./routes/DashboardTenant";
+import { Dashboard } from "./routes/Dashboard";
 import { VerifyPhone } from "./routes/VerifyPhone";
 import { SignUp } from "./routes/SignUp";
 import { VerifyOTP } from "./routes/VerifyOTP";
@@ -33,19 +32,10 @@ export const Router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/dashboardowner",
+        path: "/dashboard",
         element: (
             <ProtectedRoute redirect="/login">
-                <DashboardOwner />
-            </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/dashboardtenant",
-        element: (
-            <ProtectedRoute redirect="/login">
-                <DashboardTenant />
+                <Dashboard />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,

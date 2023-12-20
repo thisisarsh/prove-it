@@ -89,10 +89,11 @@ export function SignUpCluster(props: SignUpTypeProps) {
         }
 
         if (
-            (props.signupType == "invited" && !email) ||
+            props.signupType == "invited" && (
+            !email ||
             !password ||
             !confirmPassword ||
-            !roleName
+            !roleName)
         ) {
             console.log("Failing invited field check");
             setFrontendError("All fields must be filled out.");

@@ -13,10 +13,6 @@ export const ProtectedRoute = ({
 
     if (!user) {
         return <Navigate to={redirect} />;
-    } else if (!user.phoneVerified) {
-        return <Navigate to="/verifyphone" />;
-    } else if (!user.role) {
-        return <Navigate to="/setrole" />;
     }
     return children;
 };

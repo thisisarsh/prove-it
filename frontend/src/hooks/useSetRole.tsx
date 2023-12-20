@@ -1,16 +1,27 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
+import { User } from "../types";
 
 const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/set-role";
 
+function getRoleId(roleName: string) {
+    switch (roleName) {
+        case "manager": return "21360403-e8c1-9ae2-11ec-a8bc125fac1b";
+        case "owner": return "61381180-e6c3-11ec-9ae7-b8bc264eea1c";
+        default: throw new Error('Role ID not found!');
+    }
+}
+
 export function useSetRole() {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
     const { dispatch } = useAuthContext();
+
+
 
     const setRole = async (roleName: string) => {
         setIsLoading(true);
@@ -30,26 +41,32 @@ export function useSetRole() {
         });
         const json = await response.json();
 
-        // Handle BAD/GOOD response
         if (response.ok && json.isSuccess) {
             setIsLoading(false);
-            //re-save the user to authContext with the token returned from the api call.
-            const userUpdatedTokenAndRole = user;
-            userUpdatedTokenAndRole!.token = json.data.token;
-            userUpdatedTokenAndRole!.role = roleName;
-            dispatch({
-                type: "LOGIN",
-                payload: { user: userUpdatedTokenAndRole },
-            }); //need to save new token to the auth context.
-            navigate("/dashboard");
+
+            if (user) {
+                //if the role is set successfully, we need to update the user's token and role
+                const userUpdatedTokenAndRole : User = user;
+                const roleId = getRoleId(roleName);
+                userUpdatedTokenAndRole!.token = json.data.token;
+                userUpdatedTokenAndRole!.role = {role: roleName, id: roleId};
+
+                //re-save the user to authContext with the new token.
+                dispatch({ type: "LOGIN", payload: {user: userUpdatedTokenAndRole} });
+                
+                navigate('/dashboard');
+            } else {
+                setError('Could not retrieve user from AuthContext. Please Log in again!');
+            }
+            
         } else if (response.ok) {
+            //if the response is ok, but the operation is not a success, display an error
             setIsLoading(false);
-            localStorage.setItem("setRoleResponse", JSON.stringify(json));
             setError(json.message);
         } else {
+            //if the response is not okay, display an error
             setIsLoading(false);
             setError(json.error);
-            console.error(json.error);
         }
 
         return json;

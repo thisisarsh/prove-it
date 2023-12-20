@@ -38,7 +38,7 @@ exports.login = (req, res) => {
     if(!response.data.isSuccess) {
       return res.status(401).send({
         accessToken: null,
-        message: "Invalid Password!"
+        message: response.data.message ?? "Invalid Username or Password"
       });
     }
 
