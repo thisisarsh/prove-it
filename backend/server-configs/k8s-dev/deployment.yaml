@@ -37,6 +37,21 @@ spec:
               secretKeyRef:
                 name: api-key
                 key: API_TOKEN
+          - name: OAUTH_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: CLIENT_ID
+          - name: OAUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: CLIENT_SECRET
+          - name: OAUTH_REFRESH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: REFRESH_TOKEN
           image: <PATCH_ME>
           imagePullPolicy: Always
           name: ht-webserver-dev

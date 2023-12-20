@@ -78,6 +78,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
             },
             roleName: props.roleName,
             propertyId: selectedProperty?.id,
+            propertyName: selectedProperty?.streetAddress,
             invite: true,
         };
         console.log(inviteUserObject);
