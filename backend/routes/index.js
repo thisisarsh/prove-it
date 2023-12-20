@@ -20,7 +20,7 @@ router.post('/set-role', controller.setRole)
 router.get('/properties-owner', dashboardOwnerController.getProperties);
 router.post('/properties-tenant', dashboardTenantController.getProperties)
 router.delete('/deleteproperty', dashboardOwnerController.deleteProperties);
-router.post('/inviteuser', invitationController.inviteUser);
+// router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
 router.post('/survey/tenant', controller.tenantSurvey);
 

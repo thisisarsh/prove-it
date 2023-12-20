@@ -1,6 +1,7 @@
 FROM node:18-alpine
 
 ARG BUILD_ENV=dev
+ARG FRONT_URL
 # Set the ENV_VAR environment variable based on the build-time variable
 ENV ENV_VAR=$BUILD_ENV
 ENV FRONT_URL=$FRONT_URL
