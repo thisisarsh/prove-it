@@ -26,6 +26,10 @@ variables:
 lint-job:
   stage: lint
   image: 'node:18'
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+      when: never
+    - when: always
   script:
     - cd frontend && mkdir -p lint-results
     - npm install
@@ -121,6 +125,9 @@ npm-audit:
     - cd frontend
     - npm audit
   rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+      when: never
+    - when: always
     - if: $CI_COMMIT_REF_NAME == "develop"
       allow_failure: true
   cache:
@@ -134,6 +141,9 @@ jest-unit-tests:
     - cd frontend
     - npm run test
   rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+      when: never
+    - when: always
     - if: $CI_COMMIT_REF_NAME == "develop"
       allow_failure: true
   cache:
