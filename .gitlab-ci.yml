@@ -7,6 +7,7 @@ stages:
   - test
   - release
   - deploy
+  - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
@@ -504,3 +505,25 @@ deploy-prod-client:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
   environment: production
+clear-test-env:
+  stage: cleanup
+  image: quay.io/openshift/origin-cli
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /--cleanup-test/'
+      when: on_success
+    - when: never
+  script:
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - oc delete deployment --all
+    - oc delete svc --all
+    - oc delete route --all
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - oc delete deployment --all
+    - oc delete svc --all
+    - oc delete route --all
+
