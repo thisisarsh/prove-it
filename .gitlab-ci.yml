@@ -125,7 +125,7 @@ npm-audit:
     - cd frontend
     - npm audit
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test:/'
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
       when: never
     - when: always
     - if: $CI_COMMIT_REF_NAME == "develop"
