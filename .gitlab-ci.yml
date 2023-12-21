@@ -513,6 +513,7 @@ clear-test-env:
       when: on_success
     - when: never
   script:
+    - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
     - oc project $PROJECT_TEST_ENV
