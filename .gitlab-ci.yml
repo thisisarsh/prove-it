@@ -27,7 +27,7 @@ lint-job:
   stage: lint
   image: 'node:18'
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
       when: never
     - when: always
   script:
@@ -48,7 +48,7 @@ build-server:
   rules:
     - if: >-
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /^deploy-test:/
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - >-
       docker build --build-arg FRONT_URL=$FRONT_URL --pull -t
@@ -61,7 +61,7 @@ build-client:
   rules:
     - if: >-
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /^deploy-test:/
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - echo $VITE_SERVER
     - echo $VITE_SERVER_MERGE
@@ -125,7 +125,7 @@ npm-audit:
     - cd frontend
     - npm audit
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test:/'
       when: never
     - when: always
     - if: $CI_COMMIT_REF_NAME == "develop"
@@ -141,7 +141,7 @@ jest-unit-tests:
     - cd frontend
     - npm run test
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /^skip-stage-test:/'
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
       when: never
     - when: always
     - if: $CI_COMMIT_REF_NAME == "develop"
@@ -171,7 +171,7 @@ deploy-test-server:
   rules:
     - if: >-
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /^deploy-test:/
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - cd backend
     - >-
@@ -236,7 +236,7 @@ deploy-test-client:
   rules:
     - if: >-
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /^deploy-test:/
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - cd frontend
     - >-

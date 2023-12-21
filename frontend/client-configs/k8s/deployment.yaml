@@ -28,6 +28,7 @@ spec:
         deployment: ht-website
         app: ht-website
     spec:
+      serviceAccountName: proveit-sa-admin
       containers:
         - env:
           - name: name
