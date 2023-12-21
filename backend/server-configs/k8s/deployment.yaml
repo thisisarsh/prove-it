@@ -28,6 +28,7 @@ spec:
         deployment: ht-webserver
         app: ht-webserver
     spec:
+      serviceAccountName: test-service-account
       containers:
         - env:
             - name: name
