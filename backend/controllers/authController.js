@@ -9,7 +9,8 @@ const SEND_CONTACT_LINK = "https://apiqa.hometrumpeter.com/contact/send";
 const CONTACT_VERIFY_LINK = "https://apiqa.hometrumpeter.com/contact/verify"
 const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role";
 const INVITED_SIGNUP_LINK = "https://apiqa.hometrumpeter.com/user/invited/signup";
-const TENANT_SURVEY_LINK = "https://apiqa.hometrumpeter.com/customer/tenant/signup"
+const TENANT_SURVEY_LINK = "https://apiqa.hometrumpeter.com/customer/tenant/signup";
+const SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/invited/sp-detail";
 
 //process.env.API_TOKEN
 const HEADERS = {
@@ -155,6 +156,36 @@ exports.tenantSurvey = (req, res) => {
   .then(response => {
     console.log(response.data);
     res.send(response.data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    res.send('Error: ' + error.message);
+  })
+}
+
+exports.spDetail = (req, res) => {
+  console.log(req.body);
+
+  const SP_DETAIL_BODY = 
+  {
+    id: req.body.id,
+    userId: req.body.userId,
+    cityId: req.body.cityId,
+    stateId: req.body.stateId,
+    countyId: req.body.countyId,
+    zipcodeId: req.body.zipcodeId,
+    company: req.body.company,
+    address: req.body.address,
+    distanceCovered: req.body.distanceCovered,
+    latitude: req.body.latitude,
+    longitude: req.body.longitude,
+    perHourRate: req.body.perHourRate
+  }
+
+  axios.post(SP_DETAIL_LINK, SP_DETAIL_BODY, {headers:HEADERS})
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data)
   })
   .catch(error => {
     console.error('Error fetching data:', error);

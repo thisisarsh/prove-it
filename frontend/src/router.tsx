@@ -19,6 +19,8 @@ import { InviteServiceProvider } from "./routes/InviteServiceProvider";
 import { InvitedSignup } from "./routes/InvitedSignup";
 import { TenantOnboarding } from "./routes/TenantOnboarding";
 import { SignupRole } from "./routes/SignupRole";
+import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
+
 
 export const Router = createBrowserRouter([
     {
@@ -91,4 +93,9 @@ export const Router = createBrowserRouter([
         element: <TenantOnboarding />,
         errorElement: <ErrorPage />,
     },
+    {
+        path: "/onboarding/serviceprovider",
+        element: <ServiceProviderOnboarding/>,
+        errorElement: <ErrorPage />
+    }
 ]);

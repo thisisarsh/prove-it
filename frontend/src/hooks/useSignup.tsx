@@ -73,7 +73,11 @@ export function useSignUp() {
                     type: "LOGIN",
                     payload: { user: responseJson.data },
                 }); //update authContext with new user data
-                navigate("/onboarding/tenant");
+                if (roleName == "service_provider") {
+                    navigate('/onboarding/serviceprovider');
+                } else {
+                    navigate('/onboarding/tenant');
+                }
             } else {
                 setIsLoading(false);
                 setError(responseJson.message);
