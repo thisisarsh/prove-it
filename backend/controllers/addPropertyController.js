@@ -185,3 +185,15 @@ exports.getPropertyTypes = (req,res) => {
     res.send(refinedData);
   })
 };
+
+exports.validateAddress = (req, res) => {
+  axios.post(VALIDATE_PROPERTY_LINK, req.body, {'headers': HEADERS})
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error)
+    res.send('Error:', error.message);
+  });
+}

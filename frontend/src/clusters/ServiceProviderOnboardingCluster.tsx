@@ -25,6 +25,7 @@ export function ServiceProviderOnboardingCluster() {
     const [distanceCovered, setDistanceCovered] = useState<number>(0);
     const [perHourRate, setPerHourRate] = useState<number>(0);
     const [company, setCompany] = useState<string | null>(null);
+    const [address, setAddress] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -115,7 +116,36 @@ export function ServiceProviderOnboardingCluster() {
         setError(null);
         setIsLoading(true);
 
-        let spDetailBody = {
+        //validate the address given by the provider
+        const addressValidateBody = {
+            cityId: selectedCity?.cityId,
+            stateId: selectedState?.id,
+            zipcodeId: selectedZip?.zipId,
+            streetAddress: address,
+        }
+        const addressValidateResponse = await fetch(
+            import.meta.env.VITE_SERVER + '/address/validate',
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(addressValidateBody)
+            }
+        )
+        
+        const addressValidateJson = await addressValidateResponse.json();
+        let latitude, longitude;
+        if (addressValidateJson.isSuccess) {
+            latitude = addressValidateJson.data.latitude;
+            longitude = addressValidateJson.data.longitude;
+        } else {
+            setError('Failed to validate address. Please enter a valid address')
+            setIsLoading(false);
+            return;
+        }
+
+        const spDetailBody = {
             userId: user?.id,
             company:company,
             cityId: selectedCity?.cityId,
@@ -123,8 +153,9 @@ export function ServiceProviderOnboardingCluster() {
             countyId: selectedCity?.countyId,
             zipcodeId: selectedZip?.zipId,
             distanceCovered: distanceCovered,
-            latitude: 0,
-            longitude: 0,
+            address: address,
+            latitude: latitude,
+            longitude: longitude,
             perHourRate: perHourRate
         }
 
@@ -232,6 +263,7 @@ export function ServiceProviderOnboardingCluster() {
 
                         <Form.Control
                             placeholder="Address"
+                            onChange={e => setAddress(e.target.value)}
                         />
                 </Form.Group>
 
