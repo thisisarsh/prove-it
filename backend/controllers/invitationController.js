@@ -96,7 +96,7 @@ exports.inviteUser = (req, res) => {
                                         <div class="content">
                                             <p>Hello ${req.body.user.firstName} ${req.body.user.lastName},</p>
                                             <p>You have been invited to join as a ${req.body.roleName} for ${req.body.propertyName} at HomeTrumpeter.</p>
-                                            <a href="${process.env.FRONT_URL}/signup/invited?email=${req.body.user.email}&role=${req.body.roleName}" class="button">Join Now</a>
+                                            <a href="${process.env.FRONT_URL}/signup/invited?email=${encodeURIComponent(req.body.user.email)}&role=${req.body.roleName}" class="button">Join Now</a>
                                         </div>
                                     </div>
                                 </body>

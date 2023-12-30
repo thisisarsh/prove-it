@@ -41,7 +41,7 @@ export function SignUpCluster(props: SignUpTypeProps) {
         const email = searchParams.get('email');
         const role = searchParams.get('role');
         if (email) {
-            setEmail(email);
+            setEmail(decodeURIComponent(email));
         }
         if (role) {
            handleRoleSelect(role);
