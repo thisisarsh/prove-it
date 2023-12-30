@@ -27,5 +27,6 @@ router.post('/survey/tenant', controller.tenantSurvey);
 router.post('/send-invite', invitationController.inviteUser);
 router.post('/invited/sp-detail', controller.spDetail);
 router.post('/address/validate', controllerProperty.validateAddress);
+router.post('/forgotpassword', controller.forgotPassword);
 
 module.exports = router;

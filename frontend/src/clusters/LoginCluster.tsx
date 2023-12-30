@@ -12,6 +12,7 @@ import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
 import "../styles/pages/loginpage.css";
 import { FormGroup } from "../components/Forms.tsx";
 import Spinner from "../components/Spinner.tsx";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Handles login buttons, input boxes, and remember-me button
@@ -25,6 +26,7 @@ export function LoginCluster() {
     const [remember, setRemember] = useState(false); // Remember-me button state
     const [formSubmitted, setFormSubmitted] = useState(false);
     const { login, error, isLoading } = useLogin();
+    const navigate = useNavigate();
 
     //get message from previous page, if any
     const loginMessage: string | null = localStorage.getItem(
@@ -89,7 +91,7 @@ export function LoginCluster() {
                     label="Remember me"
                     onChange={handleToggleRemember}
                 />
-                <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
+                <a className="navigate-link" onClick={() => navigate('/forgot-password')}>
                     Forgot password?
                 </a>
             </div>
