@@ -13,6 +13,11 @@ jest.mock('../src/hooks/useLogin.tsx', () => ({
     }),
 }));
 
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => jest.fn(),
+}));
+
 describe('LoginCluster', () => {
     beforeEach(() => {
         render(<LoginCluster />);
