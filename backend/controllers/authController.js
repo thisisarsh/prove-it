@@ -11,6 +11,7 @@ const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role";
 const INVITED_SIGNUP_LINK = "https://apiqa.hometrumpeter.com/user/invited/signup";
 const TENANT_SURVEY_LINK = "https://apiqa.hometrumpeter.com/customer/tenant/signup";
 const SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/invited/sp-detail";
+const FORGOT_PASSWORD_LINK = "https://apiqa.hometrumpeter.com/user/forgot/password"
 
 //process.env.API_TOKEN
 const HEADERS = {
@@ -190,5 +191,19 @@ exports.spDetail = (req, res) => {
   .catch(error => {
     console.error('Error fetching data:', error);
     res.send('Error: ' + error.message);
+  })
+}
+
+exports.forgotPassword = (req, res) => {
+  console.log(req.body);
+
+  axios.post(FORGOT_PASSWORD_LINK, req.body, {headers:HEADERS})
+  .then(response => {
+    console.log(response.data);
+    res.send(response.data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    res.send('Error: ' + error.message);  
   })
 }

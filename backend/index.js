@@ -1,7 +1,9 @@
 const express = require('express');
 const router = require('./routes'); // Router
 const cors = require('cors'); // CORS fix
-const bodyParser = require('body-parser');      
+const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
+
 require('dotenv').config();         // Environment variables from .env
 
 const app = express();
@@ -22,3 +24,10 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20 // limit each IP to 20 requests per windowMs
+});
+
+app.use(limiter);
