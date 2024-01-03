@@ -4,6 +4,7 @@ const dashboardOwnerController = require("../controllers/dashboardOwnerControlle
 const dashboardTenantController = require("../controllers/dashboardTenantController")
 const controllerProperty = require("../controllers/addPropertyController");
 const invitationController = require("../controllers/invitationController.js");
+const serviceRequestController = require("../controllers/serviceRequestController.js");
 
 const router = express.Router();
 
@@ -28,5 +29,10 @@ router.post('/send-invite', invitationController.inviteUser);
 router.post('/invited/sp-detail', controller.spDetail);
 router.post('/address/validate', controllerProperty.validateAddress);
 router.post('/forgotpassword', controller.forgotPassword);
+
+router.get('/general-service-types', serviceRequestController.generalServiceTypes);
+router.get('/specific-service-types', serviceRequestController.specificServiceTypes);
+router.get('/tenant-property', serviceRequestController.tenantProperty);
+router.get('/request-timelines', serviceRequestController.requestTimelines);
 
 module.exports = router;

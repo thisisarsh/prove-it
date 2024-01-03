@@ -120,7 +120,7 @@ export function DashboardTenantCluster() {
                         </tr>
                         <tr>
                             <td className="dashboard-empty-service" colSpan={3}>
-                                <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
+                                <a className="dashboard-link" onClick={() => {navigate("/request-service")}}>
                                     Request a Service
                                 </a>
                             </td>
