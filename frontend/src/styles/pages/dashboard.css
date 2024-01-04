@@ -1,126 +1,246 @@
-.dashboard-logo {
-    width: 20vw;
+@import 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css';
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+/* Main dashboard container */
+.dashboard-container {
+    background: #f4f7fa;
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #495057;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+    overflow: auto;
+}
+
+/* Header styles */
+.header {
+    background-color: #194185; 
+    width: 100%;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Title styles */
+.dashboard-title {
+    font-weight: bold;
+}
+
+/* Menu toggle button styles */
+.menu-toggle-button {
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.account-icon {
+    /* Add your styles here, for example: */
+    font-size: 1.5rem;
+}
+
+/* Navigation panel styles */
+.nav-panel {
+    background-color: #fff; 
+    border-left: 1px solid #ddd; 
+    position: fixed; 
+    top: 0;
+    bottom: 0;
+    right: -250px; 
+    width: 250px;
+    transition: all 0.3s;
+    padding: 1rem;
+    z-index: 1050; 
+}
+
+/* Visible class for showing the nav panel */
+.visible {
+    left: 0;
+}
+
+/* Nav panel link styles */
+.nav-panel a {
+    color: #194185; 
+    margin-bottom: 0.5rem; 
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem; 
+}
+
+/* Logout button styles */
+.logout-button {
+    color: white;
+    background-color: #194185; 
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold; 
+    margin-left: 0.5rem;
+}
+
+/* Left side content styles */
+.dashboard-left-side {
     padding: 1rem;
 }
 
-.dashboard-container{
+.request-container
+.properties-container,
+.service-container {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); 
+    padding: 1rem; 
+    margin-top: 4rem;
+}
+
+/* Adjust the label for the properties to match the Services label */
+.dashboard-label {
+    font-weight: bold;
+    text-align: left;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    background: none;
+    border: none;
+    box-shadow: none; 
+    display: block; 
+}
+
+/* Table styles */
+.dashboard-table {
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0; 
+    margin: auto; 
+    border-radius: 0.25rem;
+    overflow: hidden; 
 }
 
-.dashboard-left-side{
-    display: inline-block;
-    vertical-align: middle;
-    width: 80%;
-    height: 55vh;
+/* Table header styles */
+.dashboard-table .dashboard-header {
+    background: #e9ecef; 
+    color: #495057; 
+    border-top: none;
 }
 
-.dashboard-title{
-    font-family: sans-serif;
-    font-size: 2.5vw;
-    text-align: center;
+/* Table data cell styles */
+.dashboard-table td {
+    font-weight: bold;
 }
-
-.dashboard-label{
-    font-family: sans-serif;
-    font-size: 2vw;
+.dashboard-table th,
+.dashboard-table td {
+    border: 1px solid #dee2e6; 
+    padding: 0.75rem; 
     text-align: left;
 }
-.dashboard-table-container{
-    height: 35vh;
+
+.dashboard-table tbody tr{
+    background: white;
 }
 
-.dashboard-table{
-    width: 100%;
-    border-collapse: collapse; 
-    border: 2px solid;
+.dashboard-table .dashboard-empty-service,
+.dashboard-table .dashboard-empty-property {
+    text-align: center; 
+    padding: 1rem; 
 }
 
-.dashboard-empty-property{
-    text-align: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    background-color: gray;
+.dashboard-table thead tr {
+    background-color: #e9ecef;
 }
 
-.dashboard-empty-service{
-    text-align: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
+.dashboard-table tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
 }
 
-.dashboard-header{
-    text-align: left;
-    background-color: grey;
-    border-bottom: 2px solid;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+.dashboard-table tbody tr:nth-of-type(even) {
+    background-color: white;
 }
 
-.dashboard-link{
-    background-color: grey;
-}
-
-.tip-table-container{
-    display: inline-block;
-    vertical-align: middle;
-    width: 15vw;
-    height: 52vh;
-    margin-left: 2%;
-    margin-top: 4%;
-    border: 2px solid;
-    background-color: grey;
-}
-
-.tip-table{
-    text-align: center;
-    border-collapse: collapse; 
-    background-color: grey;
-    
-}
-
-.dashboard-tip-header{
-    font-family: sans-serif;
-    font-size: 2vw;
-    text-decoration: underline;
-    padding-left: 1%;
-    padding-right: 1%;
-}
-
-.logout-button{
-    float:right;
-    background-color:#194185;
-    border: 3px outset #194185;
+/* Add property and Request service button styles */
+.add-property-button,
+.request-service-button,
+.delete-button {
+    background-color: #194185;
     color: white;
+    border-radius: 0.25rem;
+    border: none;
+    padding: 0.375rem 0.75rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
 }
 
+/* Hover effect for buttons */
+.add-property-button:hover,
+.request-service-button:hover,
+.delete-button:hover {
+    background-color: #194185;
+}
+
+/* Footer styles */
+.dashboard-footer {
+    background-color: #194185;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+/* Footer link styles */
+.footer-content .footer-links a {
+    color: white;
+    padding: 0 0.5rem;
+}
+
+/* Delete confirmation popup styles */
 .delete-confirmation-popup {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.25rem;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border: 2px solid #194185;
-    padding: 20px;
-    z-index: 1000; /* Above all other elements */
-    text-align: center;
+    z-index: 1060; 
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
-  
-.delete-confirmation-popup p {
-    margin-bottom: 20px;
-}
-  
+
+/* Delete confirmation buttons */
 .delete-confirmation-popup button {
-    background-color: #194185;
-    color: white;
-    padding: 10px 20px;
-    margin: 0 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
+    margin-top: 1rem;
 }
-  
-.delete-confirmation-popup button:hover {
-    background-color: #15346b;
+
+/* Overlay for navigation panel */
+.nav-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040; 
 }

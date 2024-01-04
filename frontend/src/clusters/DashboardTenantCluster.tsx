@@ -1,9 +1,3 @@
-/**
- * Dashboard Cluster includes the tables, buttons
- *
- * Sends:
- * Receives:
- */
 import { useEffect } from "react";
 
 import { useLogout } from "../hooks/useLogout.tsx";
@@ -58,23 +52,36 @@ export function DashboardTenantCluster() {
         }
     }, [user, user?.token]);
 
+    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
+
+    // Function to toggle the nav panel
+    const toggleNavPanel = () => {
+        setIsNavPanelVisible(!isNavPanelVisible);
+    };
+
     return (
         <div className="dashboard-container">
-            <img
-                src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
-                className="dashboard-logo"
-            />
+            <div className="header">
+                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <button className="menu-toggle-button" onClick={toggleNavPanel}>
+                    ☰
+                </button>
+            </div>
 
-            {/* logout button */}
-            <button className="logout-button" onClick={logout}>
-                Log out
-            </button>
-            <h1 className="dashboard-title">Tenant Dashboard</h1>
-
-            {/* left side of dashboard for inline-block */}
-            <div className="dashboard-left-side">
+            {/* Nav Panel */}
+            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
+                {/* List your navigation options here */}
+                <span className="user-icon">👤</span>
+                <a onClick={() => navigate("/addproperty")}>Add Property</a>
+                <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
+                <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
+                <div className="logout-container">
+                    <button className="logout-button" onClick={logout}>Log out</button>
+                </div>
+                {/* Add more links as needed */}
+            </div>
                 {/* Property block */}
-                <div className="dashboard-table-container">
+                <div className="properties-container">
                     <h1 className="dashboard-label">Properties</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
@@ -89,7 +96,7 @@ export function DashboardTenantCluster() {
                             {isLoading ? (
                                 <td colSpan={2}>Loading Properties...</td>
                             ) : Array.isArray(properties) &&
-                              properties.length > 0 ? (
+                                properties.length > 0 ? (
                                 properties.map((userProperty) => (
                                     <tr>
                                         <td>{userProperty.name}</td>
@@ -110,7 +117,7 @@ export function DashboardTenantCluster() {
                 </div>
 
                 {/* Service Request block */}
-                <div className="dashboard-table-container">
+                <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
                     <table className="dashboard-table">
                         <tr className="dashboard-header">
@@ -127,48 +134,22 @@ export function DashboardTenantCluster() {
                         </tr>
                     </table>
                 </div>
-            </div>
-
-            {/* tip block */}
-            <div className="tip-table-container">
-                <table className="tip-table">
-                    <tr className="dashboard-tip-header">
-                        <th>Tips</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            Need maintenance. You might want to{" "}
-                            <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
-                                create a service request.
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <a
-                                onClick={() => {
-                                    navigate("/invite/tenant");
-                                }}
-                            >
-                                Invite a tenant
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <a
-                                onClick={() => {
-                                    navigate("/invite/serviceprovider");
-                                }}
-                            >
-                                Invite a service provider
-                            </a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+                {/* Nav Panel Overlay */}
+                {isNavPanelVisible && (
+                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
+                )}
+                {/* Footer */}
+                <footer className="dashboard-footer">
+                <div className="footer-content">
+                    <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
+                    <div className="footer-links">
+                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                        <a onClick={() => navigate("/tos")}>Terms of Service</a>
+                        <a onClick={() => navigate("/contact")}>Contact Us</a>
+                    </div>
+                </div>
+                </footer>
         </div>
     );
 }
+
