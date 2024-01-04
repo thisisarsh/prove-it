@@ -109,7 +109,12 @@ body {
     border-radius: 0.25rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); 
     padding: 1rem; 
+    width: 100%;
     margin-top: 4rem;
+}
+
+.properties-container{
+    padding-top: 8rem;
 }
 
 /* Adjust the label for the properties to match the Services label */
