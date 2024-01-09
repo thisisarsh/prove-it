@@ -230,9 +230,9 @@ export function DashboardOwnerCluster() {
                 <div className="footer-content">
                     <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
                     <div className="footer-links">
-                        <a href="/privacy-policy">Privacy Policy</a>
-                        <a href="/terms-of-service">Terms of Service</a>
-                        <a href="/contact">Contact Us</a>
+                        <a onClick={() => {navigate("/privacy-policy")}}>Privacy Policy</a>
+                        <a onClick={() => {navigate("/terms-of-service")}}>Terms of Service</a>
+                        <a onClick={() => {navigate("/contact")}}>Contact Us</a>
                     </div>
                 </div>
             </footer>
