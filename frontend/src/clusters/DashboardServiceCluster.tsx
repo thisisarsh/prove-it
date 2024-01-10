@@ -67,7 +67,7 @@ export function DashboardServiceCluster() {
 
     return (
         <div className="dashboard-container">
-            <div className="header">
+            <div className="header mb-5">
                 <h1 className="dashboard-title">Dashboard Service Provider</h1>
                 <button className="menu-toggle-button" onClick={toggleNavPanel}>
                     ☰
@@ -86,7 +86,7 @@ export function DashboardServiceCluster() {
                 </div>
             </div>
                 {/* New Requests Table */}
-            <div className="new-request-container">
+            <div className="new-request-container mb-5">
                 <h1 className="dashboard-label">New Requests</h1>
                 <table className="dashboard-table">
                     <thead className="dashboard-header">
@@ -107,7 +107,7 @@ export function DashboardServiceCluster() {
             </div>
 
             {/* Current Requests Table */}
-            <div className="request-container">
+            <div className="request-container mb-5">
                 <h1 className="dashboard-label">Current Requests</h1>
                 <table className="dashboard-table">
                 <thead className="dashboard-header">
@@ -129,7 +129,7 @@ export function DashboardServiceCluster() {
             </div>
 
             {/* Completed Requests Table */}
-            <div className="request-container">
+            <div className="request-container mb-5">
                 <h1 className="dashboard-label">Completed Requests</h1>
                 <table className="dashboard-table">
                 <thead className="dashboard-header">
