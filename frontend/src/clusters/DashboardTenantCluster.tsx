@@ -72,9 +72,7 @@ export function DashboardTenantCluster() {
             <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
                 {/* List your navigation options here */}
                 <span className="user-icon">👤</span>
-                <a onClick={() => navigate("/addproperty")}>Add Property</a>
-                <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
-                <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
+                <a onClick={() => (navigate("/invite/serviceprovider"))}>Invite Service Provider</a>
                 <div className="logout-container">
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
