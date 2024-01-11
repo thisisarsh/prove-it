@@ -109,23 +109,37 @@ export function DashboardOwnerCluster() {
         setShowDeleteConfirmation(false);
     };
 
+    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
+
+    // Function to toggle the nav panel
+    const toggleNavPanel = () => {
+        setIsNavPanelVisible(!isNavPanelVisible);
+    };
+
     return (
+    <body>
         <div className="dashboard-container">
-            <img
-                src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
-                className="dashboard-logo"
-            />
+            <div className="header">
+                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <button className="menu-toggle-button" onClick={toggleNavPanel}>
+                    ☰
+                </button>
+            </div>
 
-            {/* logout button */}
-            <button className="logout-button" onClick={logout}>
-                Log out
-            </button>
-            <h1 className="dashboard-title">Dashboard</h1>
-
-            {/* left side of dashboard for inline-block */}
-            <div className="dashboard-left-side">
+            {/* Nav Panel */}
+            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
+                {/* List your navigation options here */}
+                <span className="user-icon">👤</span>
+                <a href="/addproperty">Add Property</a>
+                <a href="/invite/tenant">Invite Tenant</a>
+                <a href="/invite/serviceprovider">Invite Service Provider</a>
+                <div className="logout-container">
+                    <button className="logout-button" onClick={logout}>Log out</button>
+                </div>
+                {/* Add more links as needed */}
+            </div>
                 {/* Property block */}
-                <div className="dashboard-table-container">
+                <div className="properties-container">
                     <h1 className="dashboard-label">Properties</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
@@ -140,7 +154,7 @@ export function DashboardOwnerCluster() {
                             {isLoading ? (
                                 <td colSpan={2}>Loading Properties...</td>
                             ) : Array.isArray(properties) &&
-                              properties.length > 0 ? (
+                                properties.length > 0 ? (
                                 properties.map((userProperty) => (
                                     <tr key={userProperty.id}>
                                         <td>{userProperty.name}</td>
@@ -173,22 +187,20 @@ export function DashboardOwnerCluster() {
                                     className="dashboard-empty-property"
                                     colSpan={3}
                                 >
-                                    <a
-                                        className="dashboard-link"
+                                    <button
+                                        className="add-property-button"
                                         onClick={() => {
                                             navigate("/addproperty");
-                                        }}
-                                    >
-                                        Add Property...
-                                    </a>
+                                        }}>
+                                                Add Property
+                                        </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
                 {/* Service Request block */}
-                <div className="dashboard-table-container">
+                <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
                     <table className="dashboard-table">
                         <tr className="dashboard-header">
@@ -198,55 +210,32 @@ export function DashboardOwnerCluster() {
                         </tr>
                         <tr>
                             <td className="dashboard-empty-service" colSpan={3}>
-                                <a className="dashboard-link" onClick={() => navigate("/request-service")}>
-                                    Request a Service
-                                </a>
+                                <button
+                                    className="request-service-button"
+                                    onClick={() => {
+                                        navigate("/request-service");
+                                    }}>
+                                        Request a Service
+                                </button>
                             </td>
                         </tr>
                     </table>
                 </div>
-            </div>
-
-            {/* tip block */}
-            <div className="tip-table-container">
-                <table className="tip-table">
-                    <tr className="dashboard-tip-header">
-                        <th>Tips</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            You dont have any property added.{" "}
-                            <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
-                                Start by adding a property
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <a
-                                onClick={() => {
-                                    navigate("/invite/tenant");
-                                }}
-                            >
-                                Invite a tenant
-                            </a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <a
-                                onClick={() => {
-                                    navigate("/invite/serviceprovider");
-                                }}
-                            >
-                                Invite a service provider
-                            </a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            {/* Nav Panel Overlay */}
+                {isNavPanelVisible && (
+                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
+            )}
+            {/* Footer */}
+            <footer className="dashboard-footer">
+                <div className="footer-content">
+                    <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
+                    <div className="footer-links">
+                        <a onClick={() => {navigate("/privacy-policy")}}>Privacy Policy</a>
+                        <a onClick={() => {navigate("/terms-of-service")}}>Terms of Service</a>
+                        <a onClick={() => {navigate("/contact")}}>Contact Us</a>
+                    </div>
+                </div>
+            </footer>
 
             {/* Delete Confirmation Popup */}
             {showDeleteConfirmation && (
@@ -260,5 +249,6 @@ export function DashboardOwnerCluster() {
                 </div>
             )}
         </div>
+    </body>
     );
 }
