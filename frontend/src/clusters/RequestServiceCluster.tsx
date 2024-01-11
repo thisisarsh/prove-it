@@ -5,11 +5,13 @@ import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../
 import SearchableDropdown from "../components/DropDownList";
 import ErrorMessageContainer from "../components/ErrorMessageContainer";
 import Spinner from "../components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 import "../styles/components/createServiceRequest.css"
 
 export function RequestServiceCluster() {
     const user = useAuthContext().state.user;
+    const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -128,8 +130,30 @@ export function RequestServiceCluster() {
             detail: issueDetail
         }
 
-        console.log(createRequestBody);
-        setIsLoading(false);
+        fetch(import.meta.env.VITE_SERVER + "/ticket/initiated", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify(createRequestBody),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((responseJson) => {
+            setIsLoading(false);
+            if (responseJson.isSuccess) {
+                alert(responseJson.message ?? "Request successfully created");
+                navigate("/dashboard");
+            } else {
+                setError(responseJson.message);
+            }
+        })
+        .catch((error) => setError(error));
     }
 
     return (

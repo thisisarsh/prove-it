@@ -4,7 +4,8 @@ require('dotenv').config();
 const GENERAL_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-provider/service-type/domain";
 const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-provider/service-type/options/";
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
-const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines"
+const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
+const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -76,6 +77,22 @@ exports.requestTimelines = (req, res) => {
     requestTimelineHeaders.Authorization = req.headers.authorization;
 
     axios.get(REQUEST_TIMELINES_LINK, {headers: requestTimelineHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.tenantTicket = (req, res) => {
+    console.log("Processing tenant ticket...");
+
+    let tenantTicketHeaders = HEADERS;
+    tenantTicketHeaders.Authorization = req.headers.authorization;
+
+    axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {
         res.send(response.data);
     })
