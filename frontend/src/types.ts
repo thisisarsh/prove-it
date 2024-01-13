@@ -73,4 +73,17 @@ export interface TenantProperty {
     owner: string;
 }
 
+export interface PropertyDettail {
+    name: string;
+    cityName: string;
+    countyName: string;
+    stateName: string;
+    propertyType: string;
+    isPrimary: boolean;
+    isTenantActive: boolean;
+    streetAddress: string;
+    zipcode: string;
+    rent: number;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
