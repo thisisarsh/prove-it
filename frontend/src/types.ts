@@ -73,7 +73,24 @@ export interface TenantProperty {
     owner: string;
 }
 
-export interface PropertyDettail {
+export interface GeneralServiceType {
+    count: number;
+    id: string;
+    serviceType: string;
+}
+
+export interface SpecificServiceType {
+    id: string;
+    parentId: string;
+    serviceType: string;
+}
+
+export interface Timeline {
+    id: string;
+    title: string;
+}
+
+export interface PropertyDetail {
     name: string;
     cityName: string;
     countyName: string;

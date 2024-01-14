@@ -8,6 +8,7 @@ const invitationController = require("../controllers/invitationController.js");
 const ownerTenantsController = require("../controllers/ownerTenantsController");
 const backgroundCheckController = require("../controllers/backgroundCheckController");
 const agreementController = require("../controllers/agreementController");
+const serviceRequestController = require("../controllers/serviceRequestController.js");
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.get('/properties-owner', dashboardOwnerController.getProperties);
 router.post('/get-property-details', dashboardOwnerController.getPropertyDetails);
 router.post('/properties-tenant', dashboardTenantController.getProperties);
 //router.post('/properties-service', dashboardServiceController.getProperties);
+router.get('/properties-tenant', dashboardTenantController.getProperties)
 router.delete('/deleteproperty', dashboardOwnerController.deleteProperties);
 // router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
@@ -43,4 +45,9 @@ router.post('/background-check/tenant/approve', backgroundCheckController.approv
 router.post('/agreement/initiate', agreementController.sendAgreement)
 router.post('/agreement/submit', agreementController.submitAgreement)
 router.post('/agreement/approve', agreementController.approveAgreement)
+router.get('/general-service-types', serviceRequestController.generalServiceTypes);
+router.get('/specific-service-types', serviceRequestController.specificServiceTypes);
+router.get('/request-timelines', serviceRequestController.requestTimelines);
+router.post('/ticket/initiated', serviceRequestController.tenantTicket);
+
 module.exports = router;

@@ -10,7 +10,7 @@ import { useLogout } from "../../hooks/useLogout.tsx";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
-import { Property, PropertyDettail } from "../../types.ts";
+import { Property, PropertyDetail } from "../../types.ts";
 
 import "../../styles/pages/dashboard.css";
 /**
@@ -22,7 +22,7 @@ export function DashboardOwnerCluster() {
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<Property[] | null>(null);
-    const [propertyDetail, setPropertyDetail] = useState<PropertyDettail | null>(null);
+    const [propertyDetail, setPropertyDetail] = useState<PropertyDetail | null>(null);
 
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(
         null,
@@ -268,7 +268,7 @@ export function DashboardOwnerCluster() {
                                 <button
                                     className="request-service-button"
                                     onClick={() => {
-                                        navigate("/servicerequest");
+                                        navigate("/request-service");
                                     }}>
                                         Request a Service
                                 </button>

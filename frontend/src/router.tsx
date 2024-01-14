@@ -23,6 +23,7 @@ import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
 import { ForgotPassword } from "./routes/ForgotPassword";
 import { HOTenants } from "./routes/HOTenants.tsx";
 
+import { RequestService } from "./routes/RequestService";
 
 
 export const Router = createBrowserRouter([
@@ -52,33 +53,57 @@ export const Router = createBrowserRouter([
     },
     {
         path: "/verifyphone",
-        element: <VerifyPhone />,
+        element: (
+            <ProtectedRoute redirect="/dashboard">
+                <VerifyPhone/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/verifyotp",
-        element: <VerifyOTP />,
+        element: (
+            <ProtectedRoute redirect="/dashboard">
+                <VerifyOTP/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/setrole",
-        element: <SetRole />,
+        element: (
+            <ProtectedRoute redirect="/dashboard">
+                <SetRole/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         //TODO: Protect this route
         path: "/addproperty",
-        element: <AddProperty />,
+        element: (
+            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+                <AddProperty/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/invite/tenant",
-        element: <InviteTenant />,
+        element: (
+            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+                <InviteTenant/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/invite/serviceprovider",
-        element: <InviteServiceProvider />,
+        element: (
+            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+                <InviteServiceProvider/>
+            </ProtectedRoute>
+        ),
         errorElement: <ErrorPage />,
     },
     {
@@ -109,6 +134,11 @@ export const Router = createBrowserRouter([
     {
         path:"/ho/tenants",
         element:<HOTenants/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/request-service",
+        element: <RequestService/>,
         errorElement: <ErrorPage />
     }
 ]);

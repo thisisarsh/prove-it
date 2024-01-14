@@ -52,6 +52,7 @@ export function useSetRole() {
                 userUpdatedTokenAndRole!.role = {role: roleName, id: roleId};
 
                 //re-save the user to authContext with the new token.
+                localStorage.setItem('user', JSON.stringify(userUpdatedTokenAndRole));
                 dispatch({ type: "LOGIN", payload: {user: userUpdatedTokenAndRole} });
                 
                 navigate('/dashboard');
