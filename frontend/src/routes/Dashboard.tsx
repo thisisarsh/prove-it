@@ -5,9 +5,9 @@
  * WIP: need to add the rest of the page
  */
 
-import { DashboardOwnerCluster } from "../clusters/DashboardOwnerCluster.tsx";
-import { DashboardTenantCluster } from "../clusters/DashboardTenantCluster.tsx";
-import { DashboardServiceCluster } from "../clusters/DashboardServiceCluster.tsx";
+import { DashboardOwnerCluster } from "../clusters/ho-manager/DashboardOwnerCluster.tsx";
+import { DashboardTenantCluster } from "../clusters/tenant/DashboardTenantCluster.tsx";
+import { DashboardServiceCluster } from "../clusters/service-provider/DashboardServiceCluster.tsx";
 import { useAuthContext } from "../hooks/useAuthContext.tsx";
 
 export function Dashboard() {
