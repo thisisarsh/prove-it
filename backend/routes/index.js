@@ -19,7 +19,7 @@ router.post('/addproperty', controllerProperty.addProperty);
 router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
 router.get('/properties-owner', dashboardOwnerController.getProperties);
-router.post('/properties-tenant', dashboardTenantController.getProperties)
+router.get('/properties-tenant', dashboardTenantController.getProperties)
 router.delete('/deleteproperty', dashboardOwnerController.deleteProperties);
 // router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
@@ -32,7 +32,6 @@ router.post('/forgotpassword', controller.forgotPassword);
 
 router.get('/general-service-types', serviceRequestController.generalServiceTypes);
 router.get('/specific-service-types', serviceRequestController.specificServiceTypes);
-router.get('/tenant-property', serviceRequestController.tenantProperty);
 router.get('/request-timelines', serviceRequestController.requestTimelines);
 router.post('/ticket/initiated', serviceRequestController.tenantTicket);
 

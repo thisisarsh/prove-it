@@ -31,7 +31,7 @@ export function RequestServiceCluster() {
 
     const GENERAL_SERVICE_TYPE_LINK = import.meta.env.VITE_SERVER + "/general-service-types";
     const SPECIFIC_SERVICES_LINK = import.meta.env.VITE_SERVER + "/specific-service-types";
-    const TENANT_PROPERTY_LINK = import.meta.env.VITE_SERVER + "/tenant-property";
+    const TENANT_PROPERTY_LINK = import.meta.env.VITE_SERVER + '/properties-tenant';
     const TIMELINES_LINK = import.meta.env.VITE_SERVER + "/request-timelines";
 
     const fetchData = useCallback(
@@ -73,8 +73,8 @@ export function RequestServiceCluster() {
 
         fetchData(TENANT_PROPERTY_LINK + "?tenantId=" + user?.id)
         .then((response) => {
-            if (response.isSuccess) {
-                setProperty(response.data);
+            if (!response.error) {
+                setProperty(response[0]);
             } else {
                 setError("ERROR GETTING PROPERTY");
             }

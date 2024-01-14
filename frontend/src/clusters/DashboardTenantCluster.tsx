@@ -33,13 +33,12 @@ export function DashboardTenantCluster() {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            fetch(import.meta.env.VITE_SERVER + "/properties-tenant", {
-                method: "POST",
+            fetch(import.meta.env.VITE_SERVER + "/properties-tenant" + "?tenantId=" + user.id, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + user?.token,
                 },
-                body: JSON.stringify(user),
             })
                 .then((response) => {
                     if (!response.ok) {
