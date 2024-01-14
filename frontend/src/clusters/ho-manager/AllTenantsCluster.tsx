@@ -97,49 +97,66 @@ export function AllTenantsCluster() {
     };
 
     const handleSendAgreement = () => {
-        setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/agreement/initiate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token,
-            },
-        })
-            .finally(() => {
-                setIsLoading(false);
-                setAgreementModalShow(false);
-            });
+        if (selectedTenant) {
+            setIsLoading(true);
+            const queryParams = new URLSearchParams({
+                userId: selectedTenant.id
+            }).toString();
+            fetch(`${import.meta.env.VITE_SERVER}/agreement/initiate?${queryParams}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user?.token}`,
+                },
+            })
+                .finally(() => {
+                    setIsLoading(false);
+                    setAgreementModalShow(false);
+                });
+        }
     }
 
     const handleSubmitAgreement = () => {
-        setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/agreement/submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token,
-            },
-        })
-            .finally(() => {
-                setIsLoading(false);
-                setAgreementModalShow(false);
-            });
+        if (selectedTenant) {
+            setIsLoading(true);
+            const queryParams = new URLSearchParams({
+                userId: selectedTenant.id
+            }).toString();
+            fetch(`${import.meta.env.VITE_SERVER}/agreement/submit?${queryParams}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user?.token}`,
+                },
+            })
+                .finally(() => {
+                    setIsLoading(false);
+                    setAgreementModalShow(false);
+                });
+        }
     }
 
     const handleApproveAgreement = () => {
-        setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/agreement/approve", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token,
-            },
-        })
-            .finally(() => {
-                setIsLoading(false);
-                setAgreementModalShow(false);
-            });
+        if (selectedTenant) {
+            setIsLoading(true);
+            const queryParams = new URLSearchParams({
+                userId: selectedTenant.id
+            }).toString();
+
+            fetch(`${import.meta.env.VITE_SERVER}/agreement/approve?${queryParams}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user?.token}`,
+                },
+            })
+                .finally(() => {
+                    setIsLoading(false);
+                    setAgreementModalShow(false);
+                });
+        }
     }
+
     const handleBCReject = () => {
         // WIP : Add functionality for rejection
     }
