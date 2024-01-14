@@ -35,7 +35,10 @@ export function AllTenantsCluster() {
         setBCModalShow(true);
     }
     const handleAgreementModalClose = () => setAgreementModalShow(false);
-    const handleAgreementModalShow = () => setAgreementModalShow(true);
+    const handleAgreementModalShow = (tenant: Tenant) =>{
+        setSelectedTenant(tenant);
+        setAgreementModalShow(true);
+    }
 
     const navigate = useNavigate();
 
@@ -62,13 +65,84 @@ export function AllTenantsCluster() {
                     Authorization: "Bearer " + user?.token,
                 },
             })
-                // Handle the response and errors as needed
                 .finally(() => {
                     setIsLoading(false);
                     setBCModalShow(false);
                 });
         }
     };
+
+    const handleBCApprove = () => {
+
+        if (selectedTenant) {
+            setIsLoading(true);
+
+            const queryParams = new URLSearchParams({
+                userId: selectedTenant.id
+            }).toString();
+
+            setIsLoading(true);
+            fetch(`${import.meta.env.VITE_SERVER}/background-check/tenant/approve?${queryParams}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + user?.token,
+                },
+            })
+                .finally(() => {
+                    setIsLoading(false);
+                    setBCModalShow(false);
+                });
+        }
+    };
+
+    const handleSendAgreement = () => {
+        setIsLoading(true);
+        fetch(import.meta.env.VITE_SERVER + "/agreement/initiate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+        })
+            .finally(() => {
+                setIsLoading(false);
+                setAgreementModalShow(false);
+            });
+    }
+
+    const handleSubmitAgreement = () => {
+        setIsLoading(true);
+        fetch(import.meta.env.VITE_SERVER + "/agreement/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+        })
+            .finally(() => {
+                setIsLoading(false);
+                setAgreementModalShow(false);
+            });
+    }
+
+    const handleApproveAgreement = () => {
+        setIsLoading(true);
+        fetch(import.meta.env.VITE_SERVER + "/agreement/approve", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+        })
+            .finally(() => {
+                setIsLoading(false);
+                setAgreementModalShow(false);
+            });
+    }
+    const handleBCReject = () => {
+        // WIP : Add functionality for rejection
+    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -120,7 +194,7 @@ export function AllTenantsCluster() {
                             <td>
                                 <Button variant="primary" size="sm" onClick={() => handleBCModalShow(item.tenant)}>Background Check</Button>
                                 {' '}
-                                <Button variant="secondary" size="sm" onClick={handleAgreementModalShow}>Agreement</Button>
+                                <Button variant="secondary" size="sm" onClick={() => handleAgreementModalShow(item.tenant)}>Agreement</Button>
                             </td>
                         </tr>
                     ))}
@@ -139,10 +213,10 @@ export function AllTenantsCluster() {
                     <Button variant="info" onClick={handleBCInitiation}>
                         Initiate
                     </Button>
-                    <Button variant="success" onClick={handleBCModalClose}>
+                    <Button variant="success" onClick={handleBCApprove}>
                         Accept
                     </Button>
-                    <Button variant="danger" onClick={handleBCModalClose}>
+                    <Button variant="danger" onClick={handleBCReject}>
                         Reject
                     </Button>
                 </Modal.Footer>
@@ -156,8 +230,14 @@ export function AllTenantsCluster() {
                     <Button variant="secondary" onClick={handleAgreementModalClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleAgreementModalClose}>
-                        Save Changes
+                    <Button variant="primary" onClick={handleSendAgreement}>
+                        Send
+                    </Button>
+                    <Button variant="info" onClick={handleSubmitAgreement}>
+                        Submit
+                    </Button>
+                    <Button variant="success" onClick={handleApproveAgreement}>
+                        Approve
                     </Button>
                 </Modal.Footer>
             </Modal>

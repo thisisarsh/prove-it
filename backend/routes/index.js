@@ -7,6 +7,7 @@ const invitationController = require("../controllers/invitationController.js");
 //const ownerPropertyController = require("../controllers/ownerPropertyController.js");
 const ownerTenantsController = require("../controllers/ownerTenantsController");
 const backgroundCheckController = require("../controllers/backgroundCheckController");
+const agreementController = require("../controllers/agreementController");
 
 const router = express.Router();
 
@@ -39,5 +40,7 @@ router.get('/owner-tenants', ownerTenantsController.getTenants)
 router.post('/background-check/tenant', backgroundCheckController.checkTenant)
 router.post('/background-check/tenant/approve', backgroundCheckController.approveTenant)
 
-
+router.post('/agreement/initiate', agreementController.sendAgreement)
+router.post('/agreement/submit', agreementController.submitAgreement)
+router.post('/agreement/approve', agreementController.approveAgreement)
 module.exports = router;

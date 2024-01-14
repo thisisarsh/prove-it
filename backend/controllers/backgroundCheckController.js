@@ -80,7 +80,7 @@ exports.approveTenant = (req, res) => {
     let checkHeaders = {...HEADERS, Authorization: req.headers.authorization};
 
     // Need to get applicant id first
-    // If doesn't work try setting downloadURL to false
+    // If it doesn't work try setting downloadURL to false
 
     axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { headers: checkHeaders })
         .then(response => {
