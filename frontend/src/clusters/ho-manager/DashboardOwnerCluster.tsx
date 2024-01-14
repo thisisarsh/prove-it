@@ -177,6 +177,7 @@ export function DashboardOwnerCluster() {
                 <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
                 <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
                 <a onClick={() => navigate("/property")}>Property</a>
+                <a onClick={() => navigate("/ho/tenants")}>Tenants</a>
                 <div className="logout-container">
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>

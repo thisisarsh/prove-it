@@ -26,8 +26,7 @@ exports.getProperties = (req, res) => {
     .catch(error => {
         console.error('Error fetching data:', error);
         res.send({error: error.message});
-    })
-
+    });
 }
 
 exports.deleteProperties = (req, res) => {
@@ -41,8 +40,7 @@ exports.deleteProperties = (req, res) => {
     .catch(error => {
         console.error('Error fetching data:', error);
         res.send({error: error.message});
-    })
-
+    });
 }
 
 exports.getPropertyDetails = (req, res) => {
@@ -82,5 +80,5 @@ exports.getPropertyDetails = (req, res) => {
     .catch(error => {
         console.error('Error fetching data:', error);
         res.send({error: error.message});
-    })
+    });
 }

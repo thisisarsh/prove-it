@@ -17,7 +17,6 @@ const VALIDATE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-managem
 const DELETE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
 
 
-//process.env.API_TOKEN
 const HEADERS = {
   'xck': process.env.API_TOKEN,
   'Content-Type': 'application/json', 
@@ -50,9 +49,7 @@ exports.city = (req, res) => {
             cityId: item.id,
             name: item.name,
         }));
-      
-        //console.log(refinedData);
-        //console.log(response.data);
+
         res.send(refinedData);
     })
     .catch(error => {
@@ -74,8 +71,7 @@ exports.zip = (req, res) => {
             code: item.code,
             zipId: item.id
         }));
-      
-        //console.log(refinedData);
+
         res.send(refinedData);
     })
     .catch(error => {
@@ -91,8 +87,6 @@ exports.addProperty = (req, res) => {
     const propertyObject = req.body;
     let addPropertyHeaders = JSON.parse(JSON.stringify(HEADERS));
     addPropertyHeaders.Authorization = req.headers.authorization ?? null;
-
-    //console.log(addPropertyHeaders);
 
     axios.post(ADD_PROPERTY_LINK, propertyObject,{ 'headers': addPropertyHeaders })
     .then(response => {
@@ -146,7 +140,6 @@ exports.addProperty = (req, res) => {
                   console.error('Error fetching data:', error);
                   res.send(error);
                 });
-                //send invail address to front
                 res.send(response.data); 
               }
             })

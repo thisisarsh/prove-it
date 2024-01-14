@@ -21,6 +21,7 @@ import { TenantOnboarding } from "./routes/TenantOnboarding";
 import { SignupRole } from "./routes/SignupRole";
 import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
 import { ForgotPassword } from "./routes/ForgotPassword";
+import { HOTenants } from "./routes/HOTenants.tsx";
 
 
 
@@ -103,6 +104,11 @@ export const Router = createBrowserRouter([
     {
         path:"/forgot-password",
         element:<ForgotPassword/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/ho/tenants",
+        element:<HOTenants/>,
         errorElement: <ErrorPage />
     }
 ]);
