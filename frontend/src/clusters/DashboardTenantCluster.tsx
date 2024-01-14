@@ -62,7 +62,7 @@ export function DashboardTenantCluster() {
     return (
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title">Dashboard Tenant</h1>
                 <button className="menu-toggle-button" onClick={toggleNavPanel}>
                     ☰
                 </button>

@@ -32,6 +32,7 @@ export function useLogin() {
 
             const user : User = json.user;
             console.log(user);
+            localStorage.setItem("user", JSON.stringify(user))
             dispatch({ type: "LOGIN", payload: { user } });
             
             if (user.phoneVerified && user.role?.role) {
