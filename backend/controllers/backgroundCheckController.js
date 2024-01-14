@@ -18,7 +18,7 @@ exports.checkTenant = (req, res) => {
         userId: req.query.userId,
         firstName: req.query.firstName,
         lastName: req.query.lastName,
-        Email: req.query.email,
+        email: req.query.email,
         tenantPropertyRefId: "",
 
         // WIP : Add as requested
@@ -82,7 +82,7 @@ exports.approveTenant = (req, res) => {
     // Need to get applicant id first
     // If it doesn't work try setting downloadURL to false
 
-    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { headers: checkHeaders })
+    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { "headers": checkHeaders })
         .then(response => {
 
             if (!response.data?.isSuccess) {
@@ -91,7 +91,7 @@ exports.approveTenant = (req, res) => {
 
             payload.tenantPropertyRefId = response.data.data.tenantPropertyRefId;
 
-            return axios.get(BACKGROUND_CHECK_STATUS_LINK + req.query.userId, { headers: checkHeaders });
+            return axios.get(BACKGROUND_CHECK_STATUS_LINK + req.query.userId, { "headers": checkHeaders });
         })
         .then(statusResponse => {
 
@@ -101,7 +101,7 @@ exports.approveTenant = (req, res) => {
 
             payload.applicantId = statusResponse.data.data.status.applicantId;
 
-            return axios.post(BACKGROUND_CHECK_APPROVE_LINK, payload, { headers: checkHeaders });
+            return axios.post(BACKGROUND_CHECK_APPROVE_LINK, payload, { "headers": checkHeaders });
         })
         .then(approveResponse => {
 
