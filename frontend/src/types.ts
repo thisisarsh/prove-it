@@ -34,6 +34,16 @@ export interface Role {
     role: string;
 }
 
+export interface ServiceRequest {
+    serviceTypeId: string;
+    details: string;
+    propertyName: string;
+    timelineId: string;
+    detail: string;
+    startDate: string;
+    endDate: string;
+}
+
 export interface PropertyJSON {
     countyId: string | undefined;
     cityId: string | undefined;

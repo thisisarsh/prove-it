@@ -1,9 +1,3 @@
-/**
- * Dashboard Cluster includes the tables, buttons
- *
- * Sends:
- * Receives:
- */
 import { useEffect } from "react";
 
 import { useLogout } from "../hooks/useLogout.tsx";
@@ -67,7 +61,7 @@ export function DashboardTenantCluster() {
     return (
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title">Dashboard Tenant</h1>
                 <button className="menu-toggle-button" onClick={toggleNavPanel}>
                     ☰
                 </button>
@@ -99,7 +93,7 @@ export function DashboardTenantCluster() {
                             {isLoading ? (
                                 <td colSpan={2}>Loading Properties...</td>
                             ) : Array.isArray(properties) &&
-                              properties.length > 0 ? (
+                                properties.length > 0 ? (
                                 properties.map((userProperty) => (
                                     <tr>
                                         <td>{userProperty.name}</td>
@@ -146,12 +140,13 @@ export function DashboardTenantCluster() {
                 <div className="footer-content">
                     <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
                     <div className="footer-links">
-                        <a href="/privacy-policy">Privacy Policy</a>
-                        <a href="/terms-of-service">Terms of Service</a>
-                        <a href="/contact">Contact Us</a>
+                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                        <a onClick={() => navigate("/tos")}>Terms of Service</a>
+                        <a onClick={() => navigate("/contact")}>Contact Us</a>
                     </div>
                 </div>
                 </footer>
         </div>
     );
 }
+

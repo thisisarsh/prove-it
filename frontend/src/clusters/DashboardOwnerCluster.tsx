@@ -130,9 +130,9 @@ export function DashboardOwnerCluster() {
             <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
                 {/* List your navigation options here */}
                 <span className="user-icon">👤</span>
-                <a href="/addproperty">Add Property</a>
-                <a href="/invite/tenant">Invite Tenant</a>
-                <a href="/invite/serviceprovider">Invite Service Provider</a>
+                <a onClick={() => navigate("/addproperty")}>Add Property</a>
+                <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
+                <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
                 <div className="logout-container">
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
@@ -230,9 +230,9 @@ export function DashboardOwnerCluster() {
                 <div className="footer-content">
                     <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
                     <div className="footer-links">
-                        <a onClick={() => {navigate("/privacy-policy")}}>Privacy Policy</a>
-                        <a onClick={() => {navigate("/terms-of-service")}}>Terms of Service</a>
-                        <a onClick={() => {navigate("/contact")}}>Contact Us</a>
+                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                        <a onClick={() => navigate("/tos")}>Terms of Service</a>
+                        <a onClick={() => navigate("/contact")}>Contact Us</a>
                     </div>
                 </div>
             </footer>
@@ -252,3 +252,4 @@ export function DashboardOwnerCluster() {
     </body>
     );
 }
+
