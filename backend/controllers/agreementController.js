@@ -75,9 +75,9 @@ exports.submitAgreement = (req, res) => {
             if (!response.data?.isSuccess) {
                 throw new Error(response.data.message);
             }
-            payload.ownerId = response.data.property.ownerId;
-            payload.managerId = response.data.property.ownerId;
-            payload.propertyId = response.data.property.id;
+            payload.ownerId = response.data.data.property.ownerId;
+            payload.managerId = response.data.data.property.ownerId;
+            payload.propertyId = response.data.data.property.id;
             payload.tenantPropertyRefId = response.data.data.tenantPropertyRefId;
 
             return axios.post(AGREEMENT_SUBMIT_LINK, payload, { 'headers': headers });
@@ -109,7 +109,7 @@ exports.approveAgreement = (req, res) => {
                 throw new Error(response.data.message);
             }
 
-            payload.propertyId = response.data.property.id;
+            payload.propertyId = response.data.data.property.id;
 
             return axios.get(AGREEMENT_VIEW_LINK.replace('{tenantId}', req.query.userId).replace('{propertyId}', payload.propertyId), { 'headers': headers });
         })
