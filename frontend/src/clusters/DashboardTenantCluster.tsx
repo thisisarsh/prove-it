@@ -27,13 +27,12 @@ export function DashboardTenantCluster() {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            fetch(import.meta.env.VITE_SERVER + "/properties-tenant", {
-                method: "POST",
+            fetch(import.meta.env.VITE_SERVER + "/properties-tenant" + "?tenantId=" + user.id, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + user?.token,
                 },
-                body: JSON.stringify(user),
             })
                 .then((response) => {
                     if (!response.ok) {
@@ -125,7 +124,7 @@ export function DashboardTenantCluster() {
                         </tr>
                         <tr>
                             <td className="dashboard-empty-service" colSpan={3}>
-                                <a href="https://youtu.be/dQw4w9WgXcQ?si=xCkLFrt7q1dP8Bk2">
+                                <a className="dashboard-link" onClick={() => {navigate("/request-service")}}>
                                     Request a Service
                                 </a>
                             </td>

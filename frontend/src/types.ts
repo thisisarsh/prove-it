@@ -73,4 +73,21 @@ export interface TenantProperty {
     owner: string;
 }
 
+export interface GeneralServiceType {
+    count: number;
+    id: string;
+    serviceType: string;
+}
+
+export interface SpecificServiceType {
+    id: string;
+    parentId: string;
+    serviceType: string;
+}
+
+export interface Timeline {
+    id: string;
+    title: string;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

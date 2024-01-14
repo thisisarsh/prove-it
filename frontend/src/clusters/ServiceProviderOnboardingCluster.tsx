@@ -285,7 +285,7 @@ export function ServiceProviderOnboardingCluster() {
                     {isLoading ? (
                         <Spinner/>
                     ) : (
-                        <Button variant="primary" size="lg" onClick={handleSubmit}>
+                        <Button variant="primary" size="lg" className="submit-button" onClick={handleSubmit}>
                             Submit
                         </Button>
                     )}

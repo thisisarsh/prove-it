@@ -15,7 +15,7 @@ exports.getProperties = (req, res) => {
     getTenantInfoHeaders.Authorization = req.headers.authorization;
 
     //get tenant info from user item in localStorage
-    axios.get(TENANT_LINK + req.body.id , {'headers': getTenantInfoHeaders})
+    axios.get(TENANT_LINK + req.query.tenantId , {'headers': getTenantInfoHeaders})
     .then(response => {
         if (response.data?.isSuccess) {
             //select only some field for display
@@ -23,7 +23,8 @@ exports.getProperties = (req, res) => {
             refinedData = {
                 name: propertyData.name,
                 streetAddress: propertyData.streetAddress,
-                owner: propertyData.ownerId
+                owner: propertyData.ownerId,
+                id: propertyData.id
             }
 
             //get owner first and last name

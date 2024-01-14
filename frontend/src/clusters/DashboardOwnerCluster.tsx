@@ -213,7 +213,7 @@ export function DashboardOwnerCluster() {
                                 <button
                                     className="request-service-button"
                                     onClick={() => {
-                                        navigate("/servicerequest");
+                                        navigate("/request-service");
                                     }}>
                                         Request a Service
                                 </button>

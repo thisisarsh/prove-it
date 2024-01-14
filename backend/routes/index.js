@@ -4,6 +4,7 @@ const dashboardOwnerController = require("../controllers/dashboardOwnerControlle
 const dashboardTenantController = require("../controllers/dashboardTenantController")
 const controllerProperty = require("../controllers/addPropertyController");
 const invitationController = require("../controllers/invitationController.js");
+const serviceRequestController = require("../controllers/serviceRequestController.js");
 
 const router = express.Router();
 
@@ -18,8 +19,7 @@ router.post('/addproperty', controllerProperty.addProperty);
 router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
 router.get('/properties-owner', dashboardOwnerController.getProperties);
-router.post('/properties-tenant', dashboardTenantController.getProperties);
-//router.post('/properties-service', dashboardServiceController.getProperties);
+router.get('/properties-tenant', dashboardTenantController.getProperties)
 router.delete('/deleteproperty', dashboardOwnerController.deleteProperties);
 // router.post('/inviteuser', invitationController.inviteUser);
 router.post('/signup/invited', controller.invitedSignup);
@@ -29,5 +29,10 @@ router.post('/send-invite', invitationController.inviteUser);
 router.post('/invited/sp-detail', controller.spDetail);
 router.post('/address/validate', controllerProperty.validateAddress);
 router.post('/forgotpassword', controller.forgotPassword);
+
+router.get('/general-service-types', serviceRequestController.generalServiceTypes);
+router.get('/specific-service-types', serviceRequestController.specificServiceTypes);
+router.get('/request-timelines', serviceRequestController.requestTimelines);
+router.post('/ticket/initiated', serviceRequestController.tenantTicket);
 
 module.exports = router;

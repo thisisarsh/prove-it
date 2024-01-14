@@ -21,6 +21,7 @@ import { TenantOnboarding } from "./routes/TenantOnboarding";
 import { SignupRole } from "./routes/SignupRole";
 import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
 import { ForgotPassword } from "./routes/ForgotPassword";
+import { RequestService } from "./routes/RequestService";
 
 
 export const Router = createBrowserRouter([
@@ -126,6 +127,11 @@ export const Router = createBrowserRouter([
     {
         path:"/forgot-password",
         element:<ForgotPassword/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/request-service",
+        element: <RequestService/>,
         errorElement: <ErrorPage />
     }
 ]);
