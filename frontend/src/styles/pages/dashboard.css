@@ -116,7 +116,7 @@ body {
 
 .new-request-container
 .properties-container{
-    padding-top: 8rem;
+    padding-top: 10rem;
 }
 
 /* Adjust the label for the properties to match the Services label */
@@ -148,6 +148,7 @@ body {
     background: #e9ecef; 
     color: #495057; 
     border-top: none;
+    margin-top: 8rem;
 }
 
 /* Table data cell styles */
@@ -209,7 +210,7 @@ body {
     color: white;
     text-align: center;
     padding: 1rem;
-    position: relative;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
