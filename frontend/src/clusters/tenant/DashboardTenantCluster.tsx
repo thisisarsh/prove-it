@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-import { useLogout } from "../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout.tsx";
 import { useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty } from "../types.ts";
+import { TenantProperty } from "../../types.ts";
 
-import "../styles/pages/dashboard.css";
+import "../../styles/pages/dashboard.css";
 /**
  *
  * @returns Void

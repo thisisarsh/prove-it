@@ -90,4 +90,17 @@ export interface Timeline {
     title: string;
 }
 
+export interface PropertyDetail {
+    name: string;
+    cityName: string;
+    countyName: string;
+    stateName: string;
+    propertyType: string;
+    isPrimary: boolean;
+    isTenantActive: boolean;
+    streetAddress: string;
+    zipcode: string;
+    rent: number;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

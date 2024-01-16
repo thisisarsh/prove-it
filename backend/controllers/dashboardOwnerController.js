@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const OWNED_PROPERTIES_LINK = 'https://apiqa.hometrumpeter.com/property-management/properties/owner';
 const DELETE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
+const GET_PROPERTY_DETAIL_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -25,8 +26,7 @@ exports.getProperties = (req, res) => {
     .catch(error => {
         console.error('Error fetching data:', error);
         res.send({error: error.message});
-    })
-
+    });
 }
 
 exports.deleteProperties = (req, res) => {
@@ -40,6 +40,45 @@ exports.deleteProperties = (req, res) => {
     .catch(error => {
         console.error('Error fetching data:', error);
         res.send({error: error.message});
-    })
+    });
+}
 
+exports.getPropertyDetails = (req, res) => {
+    let getPropertiesHeaders = HEADERS;
+    getPropertiesHeaders.Authorization = req.headers.authorization;
+    //console.log(req.body);
+    //console.log(req.body.stateId);
+
+    axios.get(GET_PROPERTY_DETAIL_LINK + req.body.id, {'headers': HEADERS})
+    .then(response => {
+        if (response.data?.isSuccess) {
+            //console.log("RESPONSE");
+            //console.log(response.data.data);
+            const propertyData = response.data.data;
+            refinedData = {
+                name: propertyData.name,
+                cityName: propertyData.city.name,
+                countyName: propertyData.county.name,
+                stateName: propertyData.state.name,
+                propertyType: propertyData.propertyType.type,
+                isDeletable: propertyData.isDeletable,
+                isPrimary: propertyData.isPrimary.toString(),
+                isTenantActive: propertyData.isTenantActive.toString(),
+                streetAddress: propertyData.streetAddress,
+                zipcode: propertyData.zipcode.code,
+                rent: propertyData.rent,
+                isSuccess: true
+            }
+            //const refinedDataArray = [refinedData];
+            //return res.send(refinedDataArray ?? []);
+            return res.send(refinedData ?? {});
+
+        } else {
+            return res.send({error: response.data.message});
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        res.send({error: error.message});
+    });
 }

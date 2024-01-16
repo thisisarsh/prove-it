@@ -5,14 +5,14 @@
  * Receives:
  */
 import { useEffect } from "react";
-
-import { useLogout } from "../hooks/useLogout.tsx";
+import Modal from 'react-bootstrap/Modal';
+import { useLogout } from "../../hooks/useLogout.tsx";
 import { useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
-import { Property } from "../types.ts";
+import { Property, PropertyDetail } from "../../types.ts";
 
-import "../styles/pages/dashboard.css";
+import "../../styles/pages/dashboard.css";
 /**
  *
  * @returns Void
@@ -22,12 +22,17 @@ export function DashboardOwnerCluster() {
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<Property[] | null>(null);
+    const [propertyDetail, setPropertyDetail] = useState<PropertyDetail | null>(null);
 
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(
         null,
     );
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
 
+    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
+
+    
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
@@ -109,7 +114,45 @@ export function DashboardOwnerCluster() {
         setShowDeleteConfirmation(false);
     };
 
-    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
+    // Function to handle the "Details" button click
+    const handleDetailsClick = (property: Property) => {
+        
+        fetch(import.meta.env.VITE_SERVER + "/get-property-details", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({ id: property.id }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                //console.log(response.json);
+                return response.json();
+            })
+            .then((responseJson) => {
+                //console.log('Backend response:', responseJson);
+                if (responseJson.isSuccess) {
+                    setPropertyDetail(responseJson);
+                    //console.log(propertyDetail);
+                } else if (!responseJson.isSuccess) {
+                    console.log(responseJson);
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+        setSelectedProperty(property);
+        setShowDetail(true);
+    };
+
+    const handleCloseDetail = () => {
+        setSelectedProperty(null);
+        setShowDetail(false);
+    }
 
     // Function to toggle the nav panel
     const toggleNavPanel = () => {
@@ -133,6 +176,8 @@ export function DashboardOwnerCluster() {
                 <a onClick={() => navigate("/addproperty")}>Add Property</a>
                 <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
                 <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
+                <a onClick={() => navigate("/property")}>Property</a>
+                <a onClick={() => navigate("/ho/tenants")}>Tenants</a>
                 <div className="logout-container">
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
@@ -169,6 +214,16 @@ export function DashboardOwnerCluster() {
                                                 className="delete-button"
                                             >
                                                 Delete
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    handleDetailsClick(
+                                                        userProperty,
+                                                    )
+                                                }
+                                                className="delete-button"
+                                            >
+                                                Details
                                             </button>
                                         </td>
                                     </tr>
@@ -248,6 +303,72 @@ export function DashboardOwnerCluster() {
                     <button onClick={handleCancelDelete}>No</button>
                 </div>
             )}
+
+            {/* Show more detail about property Popup */}
+            <Modal show={showDetail} onHide={handleCloseDetail}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Property Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <table className="property-detail-table">
+                        <tbody>
+                            {propertyDetail != null ? (
+                                <>
+                                    <tr>
+                                        <td>Property Name: </td>
+                                        <td>{propertyDetail.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Street Adress: </td>
+                                        <td>{propertyDetail.streetAddress}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>City: </td>
+                                        <td>{propertyDetail.cityName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>County: </td>
+                                        <td>{propertyDetail.countyName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>State: </td>
+                                        <td>{propertyDetail.stateName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Zip Code: </td>
+                                        <td>{propertyDetail.zipcode}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Property Type: </td>
+                                        <td>{propertyDetail.propertyType}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rent: </td>
+                                        <td>{propertyDetail.rent}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Is Primary: </td>
+                                        <td>{propertyDetail.isPrimary}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Is Tenant Active: </td>
+                                        <td>{propertyDetail.isTenantActive}</td>
+                                    </tr>
+                                </>
+                            ) : (
+                                <tr>
+                                    <td colSpan={2}>No details available.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </Modal.Body>
+                <Modal.Footer>
+                <button onClick={handleCloseDetail}>
+                    Close
+                </button>
+                 </Modal.Footer>
+      </Modal>
         </div>
     </body>
     );
