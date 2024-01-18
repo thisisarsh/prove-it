@@ -78,6 +78,7 @@ export function AddServiceCluster() {
 
     const handleGeneralTypeSelect = (selectedGeneralType: GeneralServiceType) => {
         setSelectedGenType(selectedGeneralType);
+        setServiceOfferings([]);
         
         const params = new URLSearchParams({parentId: selectedGeneralType.id});
         fetchData(SPECIFIC_SERVICES_LINK + "?" + params.toString())
@@ -95,7 +96,7 @@ export function AddServiceCluster() {
     }
 
     const handleSpecServiceSelect = (selectedSpecService : SpecificServiceType, offeringIndex: number) => {
-        let nextServiceOfferings = [...serviceOfferings];
+        const nextServiceOfferings = [...serviceOfferings];
 
         nextServiceOfferings[offeringIndex].service = selectedSpecService;
         
@@ -103,7 +104,7 @@ export function AddServiceCluster() {
     }
 
     const handleTimelineSelect = (selectedTimeline : Timeline, offeringIndex: number) => {
-        let nextServiceOfferings = [...serviceOfferings];
+        const nextServiceOfferings = [...serviceOfferings];
 
         nextServiceOfferings[offeringIndex].timeline = selectedTimeline;
 
@@ -111,7 +112,7 @@ export function AddServiceCluster() {
     }
 
     const addNewOffering = () => {
-        let newService : ServiceOffering = {
+        const newService : ServiceOffering = {
             service: undefined,
             timeline: undefined,
             detail: undefined

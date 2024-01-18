@@ -14,15 +14,17 @@ import { useNavigate } from "react-router-dom";
 //import { ServiceRequest } from "../types.ts";
 
 import "../../styles/pages/dashboard.css";
-import { DashboardServiceParent, DashboardServiceChild } from "../../types.ts";
+import { DashboardServiceParent } from "../../types.ts";
 import { Accordion } from "react-bootstrap";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer.tsx";
+import Spinner from "../../components/Spinner.tsx";
 /**
  *
  * @returns Void
  */
 export function DashboardServiceCluster() {
     const { logout } = useLogout();
-    const [error, setError] = useState<String | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
 
@@ -77,7 +79,7 @@ export function DashboardServiceCluster() {
             console.error(error);
             setError('An error occured');
         })
-    }, [user, user?.token]);
+    }, [user, fetchData]);
 
     //console.log(properties);
 
@@ -109,6 +111,10 @@ export function DashboardServiceCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
             </div>
+
+            {error && <ErrorMessageContainer message={error}/>}
+            {isLoading && <Spinner/>}
+
             {/* New Requests Table */}
             <div className="new-request-container mb-5">
                 <h1 className="dashboard-label">New Requests</h1>

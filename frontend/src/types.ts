@@ -110,12 +110,12 @@ export interface ServiceOffering {
 }
 
 export interface DashboardServiceParent {
-    serviceType: String;
+    serviceType: string;
     childs: DashboardServiceChild[];
 }
 
 export interface DashboardServiceChild {
-    serviceType: String;
+    serviceType: string;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
