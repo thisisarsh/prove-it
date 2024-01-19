@@ -56,6 +56,8 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
+                console.log("PROPERTIES");
+                console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);

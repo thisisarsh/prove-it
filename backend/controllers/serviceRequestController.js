@@ -6,6 +6,7 @@ const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
+const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -95,6 +96,22 @@ exports.tenantTicket = (req, res) => {
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {
         res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getTenantTicket = (req, res) => {
+    console.log("Getting tenant tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    axios.get(GET_TENANT_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        res.send(response.data.data);
     })
     .catch(error => {
         console.error(error);

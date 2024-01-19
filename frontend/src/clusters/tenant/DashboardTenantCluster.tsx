@@ -4,9 +4,10 @@ import { useLogout } from "../../hooks/useLogout.tsx";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty } from "../../types.ts";
+import { TenantProperty, ServiceRequest } from "../../types.ts";
 
 import "../../styles/pages/dashboard.css";
+
 /**
  *
  * @returns Void
@@ -16,6 +17,7 @@ export function DashboardTenantCluster() {
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<TenantProperty[] | null>(null);
+    const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
 
     //const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     //const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -44,6 +46,31 @@ export function DashboardTenantCluster() {
                 .then((data) => {
                     setIsLoading(false);
                     setProperties(data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data: " + error);
+                });
+                
+            fetch(
+                import.meta.env.VITE_SERVER + "/ticket/tenant/tickets",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + user?.token,
+                    },
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setIsLoading(false);
+                    setTickets(data);
+                    console.log("TENANT SP TICKETS");
+                    console.log(data);
                 })
                 .catch((error) => {
                     console.error("Error fetching data: " + error);
@@ -117,11 +144,34 @@ export function DashboardTenantCluster() {
                 <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
                     <table className="dashboard-table">
-                        <tr className="dashboard-header">
-                            <th className="dashboard-header">Service</th>
-                            <th>Provider</th>
-                            <th>Property</th>
-                        </tr>
+                        <thead className="dashboard-header">
+                            <tr>
+                                <th className="dashboard-header">Service</th>
+                                <th>Provider</th>
+                                <th>Property</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading ? (
+                                <td colSpan={2}>Loading Service Requests...</td>
+                            ) : Array.isArray(tickets) &&
+                                tickets.length > 0 ? (
+                                tickets.map((userTicket) => (
+                                    <tr>
+                                        <td>{userTicket.serviceType.serviceType}</td>
+                                        <td>{"Unassigned"}</td>
+                                        <td>{userTicket.property.name}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={2}>
+                                        You don't have any service requests yet.
+                                        Start by requesting a service!
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
                         <tr>
                             <td className="dashboard-empty-service" colSpan={3}>
                                 <button className="request-service-button"
