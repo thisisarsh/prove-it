@@ -7,14 +7,18 @@ stages:
   - test
   - release
   - deploy
+  - pen-test
   - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_TEST_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-D1'
+  CLIENT_CONTAINER_TEST_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-D2'
   SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_RELEASE_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_RELEASE_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
   SERVER_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-prod-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_PROD_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_PROD_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
   PROJECT_TEST_ENV: ht-coop
   PROJECT_STAGING_ENV: ht-uat-coop
   PROJECT_PRODUCTION_ENV: ht-prod-coop
@@ -64,15 +68,22 @@ build-client:
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
         $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
-    - echo $VITE_SERVER
+    - echo $VITE_SERVER_1
     - echo $VITE_SERVER_MERGE
     - |
       if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D1 ./frontend
        else
-         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+         docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D1 ./frontend
        fi
-    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+    - docker push $CLIENT_CONTAINER_TEST_IMAGE_D1
+    - |
+      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D2 ./frontend
+       else
+         docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D2 ./frontend
+       fi
+      - docker push $CLIENT_CONTAINER_TEST_IMAGE_D2
   environment: development
 build-server-staging:
   extends: .before_script_template
@@ -91,9 +102,13 @@ build-client-staging:
   script:
     - echo $VITE_SERVER
     - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-    - docker push $CLIENT_CONTAINER_PROD_IMAGE
+      docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE_D1 ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D1
+    - >-
+      docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE_D2 ./frontend
+      - docker push $CLIENT_CONTAINER_PROD_IMAGE_D2
   only:
     - develop
   environment: staging
@@ -113,9 +128,13 @@ build-client-production:
   stage: build
   script:
     - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-    - docker push $CLIENT_CONTAINER_PROD_IMAGE
+      docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE_D1 ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D1
+    - >-
+      docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE_D2 ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D2
   only:
     - main
   environment: production
@@ -160,9 +179,12 @@ release-images:
     - docker pull $SERVER_CONTAINER_PROD_IMAGE
     - docker tag $SERVER_CONTAINER_PROD_IMAGE $SERVER_CONTAINER_RELEASE_IMAGE
     - docker push $SERVER_CONTAINER_RELEASE_IMAGE
-    - docker pull $CLIENT_CONTAINER_PROD_IMAGE
-    - docker tag $CLIENT_CONTAINER_PROD_IMAGE $CLIENT_CONTAINER_RELEASE_IMAGE
-    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE
+    - docker pull $CLIENT_CONTAINER_PROD_IMAGE_D1
+    - docker tag $CLIENT_CONTAINER_PROD_IMAGE_D1 $CLIENT_CONTAINER_RELEASE_IMAGE_D1
+    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE_D1
+    - docker pull $CLIENT_CONTAINER_PROD_IMAGE_D2
+    - docker tag $CLIENT_CONTAINER_PROD_IMAGE_D2 $CLIENT_CONTAINER_RELEASE_IMAGE_D2
+    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE_D2
   environment: production
 deploy-test-server:
   stage: deploy
@@ -229,7 +251,7 @@ deploy-test-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
   environment: development
-deploy-test-client:
+deploy-d1-test-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -244,7 +266,7 @@ deploy-test-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE
+    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE_D1
     - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
     - >-
@@ -282,6 +304,49 @@ deploy-test-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s-dev
+  environment: development
+deploy-d2-test-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client
+  rules:
+    - if: >-
+        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
+  script:
+    - cd frontend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE_D2
+    - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
+    - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.metadata.name = strenv(APP_NAME)'
+      client-configs/k8s-dev/service.yaml
+    - >-
+      yq -i '.spec.selector.app = strenv(APP_NAME)'
+      client-configs/k8s-dev/service.yaml
+    - >-
+      yq -i '.metadata.name = strenv(APP_NAME)'
+      client-configs/k8s-dev/route.yaml
+    - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -347,7 +412,7 @@ deploy-staging-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
   environment: staging
-deploy-staging-client:
+deploy-d1-staging-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -360,7 +425,7 @@ deploy-staging-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE_D1
     - export APP_NAME=ht-website-staged
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
     - >-
@@ -387,8 +452,37 @@ deploy-staging-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
+deploy-d2-staging-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-staging
+  only:
+    - develop
+  script:
+    - cd frontend
     - >-
-      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE_D2
+    - export APP_NAME=ht-website-staged
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
@@ -413,7 +507,7 @@ deploy-prod-server:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
+    - export IMAGE=$SERVER_CONTAINER_RELEASE_IMAGE
     - export APP_NAME=ht-server-live
     - export CONFIG_PATH=server-configs/k8s/deployment.yaml
     - >-
@@ -452,7 +546,7 @@ deploy-prod-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
   environment: production
-deploy-prod-client:
+deploy-d1-prod-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -466,7 +560,60 @@ deploy-prod-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export IMAGE=$CLIENT_CONTAINER_RELEASE_IMAGE_D1
+    - export APP_NAME=ht-website-live
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+  environment: production
+deploy-d2-prod-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-production
+    - release-images
+  only:
+    - main
+  script:
+    - cd frontend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CLIENT_CONTAINER_RELEASE_IMAGE_D2
     - export APP_NAME=ht-website-live
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
     - >-
@@ -527,4 +674,3 @@ clear-test-env:
     - oc delete deployment --all
     - oc delete svc --all
     - oc delete route --all
-
