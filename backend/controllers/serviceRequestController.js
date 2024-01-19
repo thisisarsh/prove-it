@@ -7,6 +7,7 @@ const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-managemen
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
+const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/manager/tickets";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -110,6 +111,22 @@ exports.getTenantTicket = (req, res) => {
     Headers.Authorization = req.headers.authorization;
 
     axios.get(GET_TENANT_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        res.send(response.data.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getManagerTicket = (req, res) => {
+    console.log("Getting manager tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
     .then(response => {
         res.send(response.data.data);
     })

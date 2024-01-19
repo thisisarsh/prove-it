@@ -50,5 +50,6 @@ router.get('/specific-service-types', serviceRequestController.specificServiceTy
 router.get('/request-timelines', serviceRequestController.requestTimelines);
 router.post('/ticket/initiated', serviceRequestController.tenantTicket);
 router.get('/ticket/tenant/tickets', serviceRequestController.getTenantTicket);
+router.get('/ticket/manager/tickets', serviceRequestController.getManagerTicket);
 
 module.exports = router;
