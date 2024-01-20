@@ -69,7 +69,7 @@ export function DashboardTenantCluster() {
                 .then((data) => {
                     setIsLoading(false);
                     setTickets(data);
-                    console.log("TENANT SP TICKETS");
+                    console.log("TENANT TICKETS");
                     console.log(data);
                 })
                 .catch((error) => {
