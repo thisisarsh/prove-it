@@ -125,7 +125,7 @@ export function DashboardTenantCluster() {
                         <tr>
                             <td className="dashboard-empty-service" colSpan={3}>
                                 <button className="request-service-button"
-                                    onClick={() => {navigate("/request-service-tenet");}}> Request a Service
+                                    onClick={() => {navigate("/request-service");}}> Request a Service
                                 </button>
                             </td>
                         </tr>

@@ -103,4 +103,19 @@ export interface PropertyDetail {
     rent: number;
 }
 
+export interface ServiceOffering {
+    service: SpecificServiceType | undefined;
+    timeline: Timeline | undefined;
+    detail: string | undefined;
+}
+
+export interface DashboardServiceParent {
+    serviceType: string;
+    childs: DashboardServiceChild[];
+}
+
+export interface DashboardServiceChild {
+    serviceType: string;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

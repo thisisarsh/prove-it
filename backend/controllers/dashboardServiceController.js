@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const SERVICE_PROVIDER_LINK = 'https://apiqa.hometrumpeter.com/customer/service-provider/';
 const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
+const USER_SERVICES_LINK = 'https://apiqa.hometrumpeter.com/service-provider/user/services/';
 
 
 const HEADERS = {
@@ -56,3 +57,16 @@ exports.getProperties = (req, res) => {
 
 }
 
+exports.userServices = (req, res) => {
+    let userServicesHeaders = HEADERS;
+    userServicesHeaders.Authorization = req.headers.authorization;
+
+    axios.get(USER_SERVICES_LINK + req.query.userId, {headers: userServicesHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        res.status(500).json({error: "Error fetching data"})
+        console.error(error);
+    });
+}

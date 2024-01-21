@@ -7,54 +7,79 @@
 //import { useEffect } from "react";
 
 import { useLogout } from "../../hooks/useLogout.tsx";
-import { useState } from "react";
-//import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { useCallback, useEffect, useState } from "react";
+import { useAuthContext } from "../../hooks/useAuthContext.tsx";
 import { useNavigate } from "react-router-dom";
 //import { Property } from "../types.ts";
 //import { ServiceRequest } from "../types.ts";
 
 import "../../styles/pages/dashboard.css";
+import { DashboardServiceParent } from "../../types.ts";
+import { Accordion } from "react-bootstrap";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer.tsx";
+import Spinner from "../../components/Spinner.tsx";
 /**
  *
  * @returns Void
  */
 export function DashboardServiceCluster() {
     const { logout } = useLogout();
-    //const [error, setError] = useState(null);
-    //const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
+
     //const [properties, setProperties] = useState<Property[] | null>(null);
     //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
     //const [currentRequests, setCurrentRequests] = useState<ServiceRequest[]>([]);
     //const [completedRequests, setCompletedRequests] = useState<ServiceRequest[]>([]);
-    //const { state } = useAuthContext();
-    //const { user } = state;
+    const user = useAuthContext().state.user;
     const navigate = useNavigate();
 
 
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     fetch(import.meta.env.VITE_SERVER + "/service", {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: "Bearer " + user?.token,
-    //         },
-    //     })
-    //         .then((response) => {
-    //             if (!response.ok) {
-    //                 throw new Error("Network response was not ok");
-    //             }
-    //             //console.log(response.json);
-    //             return response.json();
-    //         })
-    //         .then((data) => {
-    //             setIsLoading(false);
-    //             setProperties(data);
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error fetching data: " + error);
-    //         });
-    // }, [user, user?.token]);
+    const fetchData = useCallback(
+        async (url: string, method = "GET") => {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            if (user) {
+                headers.append("Authorization", `Bearer ${user.token}`);
+            }
+            const requestOptions = {
+                method: method,
+                headers: headers,
+            };
+
+            try {
+                const response = await fetch(url, requestOptions);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            } catch (error) {
+                console.error("Error:", error);
+                setError("An error occured");
+                throw error;
+            }
+        },
+        [user],
+    );
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchData(import.meta.env.VITE_SERVER + "/user-services?userId=" + user?.id)
+        .then(response => {
+            setIsLoading(false);
+            if (response.isSuccess) {
+                setDashboardServices(response.data);
+            } else {
+                setError(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured');
+        })
+    }, [user, fetchData]);
 
     //console.log(properties);
 
@@ -78,6 +103,7 @@ export function DashboardServiceCluster() {
             <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
                 {/* List your navigation options here */}
                 <span className="user-icon">👤</span>
+                <a onClick={() => navigate("/add-service")}>Add a service</a>
                 <a onClick={() => navigate("/services")}>Service Request</a>
                 <a onClick={() => navigate("/clients")}>Clients</a>
                 <a onClick={() => navigate("/services/complete")}>Completed Request</a>
@@ -85,7 +111,11 @@ export function DashboardServiceCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
             </div>
-                {/* New Requests Table */}
+
+            {error && <ErrorMessageContainer message={error}/>}
+            {isLoading && <Spinner/>}
+
+            {/* New Requests Table */}
             <div className="new-request-container mb-5">
                 <h1 className="dashboard-label">New Requests</h1>
                 <table className="dashboard-table">
@@ -104,6 +134,28 @@ export function DashboardServiceCluster() {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            {/*My services table*/}
+            <div className="request-container mb-5">
+                
+                <h1 className="dashboard-label">My Services</h1>
+
+                <Accordion defaultActiveKey={"0"}>
+                    {dashboardServices.map((dashboardService, index) => (
+                        <Accordion.Item eventKey={index.toString()}>
+                            <Accordion.Header>{dashboardService.serviceType}</Accordion.Header>
+                            <Accordion.Body>
+                                {dashboardService.childs.map(childService => (
+                                    <>
+                                        {childService.serviceType}
+                                        <br/>
+                                    </>
+                                ))}
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
             </div>
 
             {/* Current Requests Table */}

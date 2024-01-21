@@ -6,6 +6,7 @@ const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
+const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -93,6 +94,22 @@ exports.tenantTicket = (req, res) => {
     tenantTicketHeaders.Authorization = req.headers.authorization;
 
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.addService = (req, res) => {
+    console.log("Posting new services...");
+
+    let addServiceHeaders = HEADERS;
+    addServiceHeaders.Authorization = req.headers.authorization;
+
+    axios.post(ADD_SERVICE_LINK, req.body, {headers: addServiceHeaders})
     .then(response => {
         res.send(response.data);
     })
