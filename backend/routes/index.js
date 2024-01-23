@@ -9,6 +9,7 @@ const ownerTenantsController = require("../controllers/ownerTenantsController");
 const backgroundCheckController = require("../controllers/backgroundCheckController");
 const agreementController = require("../controllers/agreementController");
 const serviceRequestController = require("../controllers/serviceRequestController.js");
+const dashboardServiceController = require("../controllers/dashboardServiceController.js");
 
 const router = express.Router();
 
@@ -51,5 +52,7 @@ router.get('/request-timelines', serviceRequestController.requestTimelines);
 router.post('/ticket/initiated', serviceRequestController.tenantTicket);
 router.get('/ticket/tenant/tickets', serviceRequestController.getTenantTicket);
 router.get('/ticket/manager/tickets', serviceRequestController.getManagerTicket);
+router.post('/service', serviceRequestController.addService);
+router.get('/user-services', dashboardServiceController.userServices);
 
 module.exports = router;
