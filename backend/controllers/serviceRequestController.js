@@ -6,12 +6,9 @@ const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
-<<<<<<< HEAD
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
 const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/manager/tickets";
-=======
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
->>>>>>> develop
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
