@@ -6,6 +6,8 @@ const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
+const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
+const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/manager/tickets";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
 
 const HEADERS = {
@@ -103,6 +105,22 @@ exports.tenantTicket = (req, res) => {
     })
 }
 
+exports.getTenantTicket = (req, res) => {
+    console.log("Getting tenant tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    axios.get(GET_TENANT_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        res.send(response.data.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
 exports.addService = (req, res) => {
     console.log("Posting new services...");
 
@@ -112,6 +130,22 @@ exports.addService = (req, res) => {
     axios.post(ADD_SERVICE_LINK, req.body, {headers: addServiceHeaders})
     .then(response => {
         res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getManagerTicket = (req, res) => {
+    console.log("Getting manager tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        res.send(response.data.data);
     })
     .catch(error => {
         console.error(error);
