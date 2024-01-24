@@ -141,28 +141,36 @@ export function DashboardServiceCluster() {
                 
                 <h1 className="dashboard-label">My Services</h1>
 
-                <Accordion defaultActiveKey={"0"}>
-                    {dashboardServices.map((dashboardService, index) => (
-                        <Accordion.Item eventKey={index.toString()}>
-                            <Accordion.Header>{dashboardService.serviceType}</Accordion.Header>
-                            <Accordion.Body>
-                                {dashboardService.childs.map(childService => (
-                                    <>
-                                        {childService.serviceType}
-                                        <br/>
-                                    </>
-                                ))}
-                            </Accordion.Body>
-                        </Accordion.Item>
-                    ))}
-                </Accordion>
+                {dashboardServices ? (
+                    <Accordion defaultActiveKey={"0"}>
+                        {dashboardServices.map((dashboardService, index) => (
+                            <Accordion.Item eventKey={index.toString()}>
+                                <Accordion.Header>{dashboardService.serviceType}</Accordion.Header>
+                                <Accordion.Body>
+                                    {dashboardService.childs.map(childService => (
+                                        <>
+                                            {childService.serviceType}
+                                            <br/>
+                                        </>
+                                    ))}
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        ))}
+                    </Accordion>
+                ) : (
+                    <span>
+                        You haven't added any services yet! Start by
+                        <a className="dashboard-link" onClick={() => {navigate("/add-service")}}> adding a service...</a>
+                    </span>
+                )}
+                
             </div>
 
             {/* Current Requests Table */}
             <div className="request-container mb-5">
                 <h1 className="dashboard-label">Current Requests</h1>
                 <table className="dashboard-table">
-                <thead className="dashboard-header">
+                <thead className="dashboard-header">    
                         <tr>
                             <th>Service</th>
                             <th>Property</th>
