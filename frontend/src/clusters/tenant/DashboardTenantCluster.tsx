@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-import { useLogout } from "../../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty, ServiceRequest } from "../../types.ts";
+import { TenantProperty, ServiceRequest } from "../../types";
 
 import "../../styles/pages/dashboard.css";
 

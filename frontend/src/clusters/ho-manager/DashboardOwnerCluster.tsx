@@ -6,11 +6,11 @@
  */
 import { useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { useLogout } from "../../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { Property, PropertyDetail, ServiceRequest } from "../../types.ts";
+import { Property, PropertyDetail, ServiceRequest } from "../../types";
 
 import "../../styles/pages/dashboard.css";
 /**

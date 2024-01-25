@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Spinner from "../../components/Spinner.tsx";
+import Spinner from "../../components/Spinner";
 
 interface Tenant {
     id: string;

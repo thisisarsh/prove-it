@@ -24,7 +24,7 @@ import { ForgotPassword } from "./routes/ForgotPassword";
 import { HOTenants } from "./routes/HOTenants";
 
 import { RequestService } from "./routes/RequestService";
-import { AddService } from "./routes/AddService.tsx";
+import { AddService } from "./routes/AddService";
 
 
 export const Router = createBrowserRouter([

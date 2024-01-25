@@ -1,13 +1,13 @@
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useCallback, useState, useEffect } from "react";
-import { City, State, Zip } from "../types.ts";
+import { City, State, Zip } from "../types";
 import { Button, Form } from "react-bootstrap";
-import SearchableDropdown from "../components/DropDownList.tsx";
+import SearchableDropdown from "../components/DropDownList";
 import { useNavigate } from "react-router-dom";
 
 import "../styles/components/onboardServiceProvider.css";
-import Spinner from "../components/Spinner.tsx";
-import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
+import Spinner from "../components/Spinner";
+import ErrorMessageContainer from "../components/ErrorMessageContainer";
 
 export function ServiceProviderOnboardingCluster() {
 

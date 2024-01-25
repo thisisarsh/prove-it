@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
-import { useVerifyOTP } from "../hooks/useVerifyOTP.tsx";
+import { useVerifyOTP } from "../hooks/useVerifyOTP";
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 
 export function OTPVerifyCluster() {
