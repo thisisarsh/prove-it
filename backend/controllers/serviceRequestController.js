@@ -7,7 +7,7 @@ const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-managemen
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
-const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/manager/tickets";
+const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/open-tickets";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
 
 const HEADERS = {
@@ -143,9 +143,24 @@ exports.getManagerTicket = (req, res) => {
     let Headers = HEADERS;
     Headers.Authorization = req.headers.authorization;
 
+    async function sr_getall(service_requests) {
+        let responseArr = [];
+        for(const sr of service_requests) {
+            let response = await axios.get(`https://apiqa.hometrumpeter.com/service-provider/services-request-detail/${sr.id}`, {headers: Headers})
+            responseArr.push(response.data.data)
+        }
+        
+        return(responseArr);
+    }
+    
     axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
     .then(response => {
-        res.send(response.data.data);
+        service_requests = response.data.data.serviceRequests;
+
+        return sr_getall(service_requests)
+    })
+    .then(srList => {
+        res.send(srList);
     })
     .catch(error => {
         console.error(error);

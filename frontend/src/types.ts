@@ -128,6 +128,14 @@ export interface ServiceRequest {
     proposals: Proposal;
 }
 
+export interface ServiceRequestManager {
+    id: string;
+    property: Property;
+    timeline: Timeline;
+    serviceType: ServiceType;
+    proposals: Proposal;
+}
+
 export interface ServiceOffering {
     service: SpecificServiceType | undefined;
     timeline: Timeline | undefined;
