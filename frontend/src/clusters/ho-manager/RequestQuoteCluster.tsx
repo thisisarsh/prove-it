@@ -7,22 +7,26 @@ import { ServiceRequestCard } from "../../components/ServiceRequestCard";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import { useSearchParams } from "react-router-dom";
 
 export function RequestQuoteCluster() {
 
+    const user = useAuthContext().state.user;
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+
     const PRIVATE_PROVIDERS_LINK = import.meta.env.VITE_SERVER + "/private-providers";
     const REQUEST_DETAILS_LINK = import.meta.env.VITE_SERVER + "/request-details";
-    const REQUEST_TICKET_LINK = import.meta.env.VITE_SERVER + "/service-request/ticket"
-    const EXAMPLE_REQUEST_ID = "1628efc9-30cd-4a14-8f02-4f234487322c"; //example request from testhomeowner2
+    const REQUEST_TICKET_LINK = import.meta.env.VITE_SERVER + "/service-request/ticket";
+    const REQUEST_ID = searchParams.get('id')
+    
 
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
-
-    const user = useAuthContext().state.user;
-    const navigate = useNavigate();
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -62,7 +66,7 @@ export function RequestQuoteCluster() {
             }
         });
 
-        fetchData(REQUEST_DETAILS_LINK + "?id=" + EXAMPLE_REQUEST_ID)
+        fetchData(REQUEST_DETAILS_LINK + "?id=" + REQUEST_ID)
         .then(response => {
             if (response.isSuccess) {
                 setRequestDetails(response.data);
