@@ -5,7 +5,7 @@ declare global {
 }
 
 window.config = {
-    SERVER_URL: window.config.SERVER_URL || '${VITE_SERVER}',
+    SERVER_URL: import.meta.env.VITE_SERVER || '${VITE_SERVER}',
 };
 
 export {};
