@@ -144,29 +144,23 @@ exports.getManagerTicket = (req, res) => {
     Headers.Authorization = req.headers.authorization;
 
     async function sr_getall(service_requests) {
-        let sr_list = [];
+        let responseArr = [];
         for(const sr of service_requests) {
-            axios.get(`https://apiqa.hometrumpeter.com/service-provider/services-request-detail/${sr.id}`, {headers: Headers})
-            .then(response => {
-                sr_individual = response.data.data;
-                console.log(sr_individual);
-                sr_list.push(sr_individual);
-            })
-            .catch(error => {
-                console.error(error);
-                res.status(500).json({error: error.message});
-            })
+            let response = await axios.get(`https://apiqa.hometrumpeter.com/service-provider/services-request-detail/${sr.id}`, {headers: Headers})
+            responseArr.push(response.data.data)
         }
-        return(sr_list);
+        
+        return(responseArr);
     }
+    
     axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
     .then(response => {
         service_requests = response.data.data.serviceRequests;
 
-        sr_getall(service_requests)
-        console.log("SR LIST");
-        console.log(sr_list);
-        res.send(sr_list);
+        return sr_getall(service_requests)
+    })
+    .then(srList => {
+        res.send(srList);
     })
     .catch(error => {
         console.error(error);
