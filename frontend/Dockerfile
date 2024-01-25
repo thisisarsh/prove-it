@@ -1,11 +1,12 @@
 FROM node:18-alpine
 
-ARG BUILD_ENV=dev
-ARG VITE_SERVER
-# Set the ENV_VAR environment variable based on the build-time variable
+ARG BUILD_ENV=prod
 ENV ENV_VAR=$BUILD_ENV
 
+ARG VITE_SERVER
 ENV VITE_SERVER=$VITE_SERVER
+
+RUN apk add --no-cache gettext # for envsubst
 
 WORKDIR /usr/src/app
 
@@ -25,9 +26,14 @@ RUN npm install -g serve
 
 COPY . /usr/src/app
 
+RUN echo "ENV_VAR is set to $ENV_VAR"
+
 RUN npx vite build
+
+COPY scripts/startup.sh /usr/src/app/startup.sh
+
+RUN chmod +x /usr/src/app/startup.sh
 
 EXPOSE 8080
 
-CMD [ "serve", "-l", "8080", "--single", "dist" ]
-
+CMD [ "/usr/src/app/startup.sh" ]

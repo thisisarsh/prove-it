@@ -7,6 +7,7 @@ import { City, PropertyJSON, PropertyType, State, Zip } from "../types.ts";
 import SearchableDropdown from "../components/DropDownList.tsx";
 import "../styles/pages/addProperty.css";
 
+
 export function AddPropertyCluster() {
     const { state } = useAuthContext();
     const { user } = state;

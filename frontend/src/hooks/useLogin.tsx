@@ -2,9 +2,6 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types"
-
-const LOGIN_LINK = import.meta.env.VITE_SERVER + "/login";
-
 export function useLogin() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +11,12 @@ export function useLogin() {
     const login = async (email: string, password: string) => {
         setIsLoading(true);
         setError("");
+
+        const serverAddress = window.config.SERVER_URL;
+
+        const LOGIN_LINK = serverAddress + "/login";
+        console.log(serverAddress)
+        console.log(LOGIN_LINK);
 
         // API call
         const response = await fetch(LOGIN_LINK, {
@@ -31,7 +34,6 @@ export function useLogin() {
             setIsLoading(false);
 
             const user : User = json.user;
-            console.log(user);
             localStorage.setItem("user", JSON.stringify(user))
             dispatch({ type: "LOGIN", payload: { user } });
             

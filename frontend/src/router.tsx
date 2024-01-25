@@ -21,7 +21,7 @@ import { TenantOnboarding } from "./routes/TenantOnboarding";
 import { SignupRole } from "./routes/SignupRole";
 import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
 import { ForgotPassword } from "./routes/ForgotPassword";
-import { HOTenants } from "./routes/HOTenants.tsx";
+import { HOTenants } from "./routes/HOTenants";
 
 import { RequestService } from "./routes/RequestService";
 
