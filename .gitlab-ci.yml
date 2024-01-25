@@ -7,18 +7,14 @@ stages:
   - test
   - release
   - deploy
-  - pen-test
   - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_TEST_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-D1'
-  CLIENT_CONTAINER_TEST_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-D2'
+  CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_RELEASE_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_RELEASE_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
   SERVER_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-prod-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_PROD_IMAGE_D1: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
-  CLIENT_CONTAINER_PROD_IMAGE_D2: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
+  CLIENT_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
   PROJECT_TEST_ENV: ht-coop
   PROJECT_STAGING_ENV: ht-uat-coop
   PROJECT_PRODUCTION_ENV: ht-prod-coop
@@ -56,8 +52,7 @@ build-server:
         $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --pull -t
-      $SERVER_CONTAINER_TEST_IMAGE ./backend
+      docker build --pull -t $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
 build-client:
@@ -68,29 +63,22 @@ build-client:
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
         $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
-    - echo $VITE_SERVER_1
+    - echo $VITE_SERVER
     - echo $VITE_SERVER_MERGE
     - |
       if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D1 ./frontend
+         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
        else
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D1 ./frontend
+         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
        fi
-    - docker push $CLIENT_CONTAINER_TEST_IMAGE_D1
-    - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D2 ./frontend
-       else
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t $CLIENT_CONTAINER_TEST_IMAGE_D2 ./frontend
-       fi
-      - docker push $CLIENT_CONTAINER_TEST_IMAGE_D2
+    - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
 build-server-staging:
   extends: .before_script_template
   stage: build
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod
+      docker build --build-arg BUILD_ENV=prod
       --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -102,13 +90,9 @@ build-client-staging:
   script:
     - echo $VITE_SERVER
     - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE_D1 ./frontend
-    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D1
-    - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE_D2 ./frontend
-      - docker push $CLIENT_CONTAINER_PROD_IMAGE_D2
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
     - develop
   environment: staging
@@ -117,7 +101,7 @@ build-server-production:
   stage: build
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -128,13 +112,9 @@ build-client-production:
   stage: build
   script:
     - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER_1 --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE_D1 ./frontend
-    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D1
-    - >-
-      docker build --build-arg VITE_SERVER=$VITE_SERVER_2 --pull -t
-      $CLIENT_CONTAINER_PROD_IMAGE_D2 ./frontend
-    - docker push $CLIENT_CONTAINER_PROD_IMAGE_D2
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
   only:
     - main
   environment: production
@@ -179,12 +159,9 @@ release-images:
     - docker pull $SERVER_CONTAINER_PROD_IMAGE
     - docker tag $SERVER_CONTAINER_PROD_IMAGE $SERVER_CONTAINER_RELEASE_IMAGE
     - docker push $SERVER_CONTAINER_RELEASE_IMAGE
-    - docker pull $CLIENT_CONTAINER_PROD_IMAGE_D1
-    - docker tag $CLIENT_CONTAINER_PROD_IMAGE_D1 $CLIENT_CONTAINER_RELEASE_IMAGE_D1
-    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE_D1
-    - docker pull $CLIENT_CONTAINER_PROD_IMAGE_D2
-    - docker tag $CLIENT_CONTAINER_PROD_IMAGE_D2 $CLIENT_CONTAINER_RELEASE_IMAGE_D2
-    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE_D2
+    - docker pull $CLIENT_CONTAINER_PROD_IMAGE
+    - docker tag $CLIENT_CONTAINER_PROD_IMAGE $CLIENT_CONTAINER_RELEASE_IMAGE
+    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE
   environment: production
 deploy-test-server:
   stage: deploy
@@ -204,6 +181,7 @@ deploy-test-server:
     - export IMAGE=$SERVER_CONTAINER_TEST_IMAGE
     - export APP_NAME=ht-webserver-dev-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=server-configs/k8s-dev/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -228,6 +206,8 @@ deploy-test-server:
       yq -i '.metadata.name = strenv(APP_NAME)'
       server-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
+
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -239,6 +219,8 @@ deploy-test-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -251,7 +233,7 @@ deploy-test-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
   environment: development
-deploy-d1-test-client:
+deploy-test-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -266,9 +248,10 @@ deploy-d1-test-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE_D1
+    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE
     - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -293,6 +276,7 @@ deploy-d1-test-client:
       yq -i '.metadata.name = strenv(APP_NAME)'
       client-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -304,49 +288,8 @@ deploy-d1-test-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s-dev
-  environment: development
-deploy-d2-test-client:
-  stage: deploy
-  image: quay.io/openshift/origin-cli
-  dependencies:
-    - build-client
-  rules:
-    - if: >-
-        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /--deploy-test/
-  script:
-    - cd frontend
-    - >-
-      wget
-      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-      -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE_D2
-    - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
-    - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
-    - >-
-      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-      $CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.metadata.name = strenv(APP_NAME)'
-      client-configs/k8s-dev/service.yaml
-    - >-
-      yq -i '.spec.selector.app = strenv(APP_NAME)'
-      client-configs/k8s-dev/service.yaml
-    - >-
-      yq -i '.metadata.name = strenv(APP_NAME)'
-      client-configs/k8s-dev/route.yaml
-    - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -376,6 +319,7 @@ deploy-staging-server:
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-server-staged
     - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -389,6 +333,7 @@ deploy-staging-server:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -400,6 +345,8 @@ deploy-staging-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -412,7 +359,7 @@ deploy-staging-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
   environment: staging
-deploy-d1-staging-client:
+deploy-staging-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -425,9 +372,10 @@ deploy-d1-staging-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE_D1
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-website-staged
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -441,6 +389,7 @@ deploy-d1-staging-client:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -452,37 +401,10 @@ deploy-d1-staging-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
-deploy-d2-staging-client:
-  stage: deploy
-  image: quay.io/openshift/origin-cli
-  dependencies:
-    - build-client-staging
-  only:
-    - develop
-  script:
-    - cd frontend
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
-      wget
-      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-      -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE_D2
-    - export APP_NAME=ht-website-staged
-    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
-    - >-
-      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-      $CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
@@ -507,9 +429,10 @@ deploy-prod-server:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$SERVER_CONTAINER_RELEASE_IMAGE
+    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-server-live
     - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -523,6 +446,7 @@ deploy-prod-server:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -534,6 +458,8 @@ deploy-prod-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "FRONT_URL").value = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -546,7 +472,7 @@ deploy-prod-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
   environment: production
-deploy-d1-prod-client:
+deploy-prod-client:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -560,9 +486,10 @@ deploy-d1-prod-client:
       wget
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_RELEASE_IMAGE_D1
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-website-live
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -576,6 +503,7 @@ deploy-d1-prod-client:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -587,59 +515,8 @@ deploy-d1-prod-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
-    - >-
-      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_PRODUCTION_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f client-configs/k8s
-  environment: production
-deploy-d2-prod-client:
-  stage: deploy
-  image: quay.io/openshift/origin-cli
-  dependencies:
-    - build-client-production
-    - release-images
-  only:
-    - main
-  script:
-    - cd frontend
-    - >-
-      wget
-      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-      -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$CLIENT_CONTAINER_RELEASE_IMAGE_D2
-    - export APP_NAME=ht-website-live
-    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
-    - >-
-      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-      $CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_PRODUCTION_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f client-configs/k8s
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
