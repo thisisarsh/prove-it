@@ -66,7 +66,7 @@ export function DashboardServiceCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetchData(import.meta.env.VITE_SERVER + "/user-services?userId=" + user?.id)
+        fetchData(window.config.SERVER_URL + "/user-services?userId=" + user?.id)
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {

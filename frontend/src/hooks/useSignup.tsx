@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "./useAuthContext";
 
-const SIGNUP_LINK = import.meta.env.VITE_SERVER + "/signup";
-const INVITED_SIGNUP_LINK = import.meta.env.VITE_SERVER + "/signup/invited";
+const SIGNUP_LINK = window.config.SERVER_URL + "/signup";
+const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/signup/invited";
 
 export function useSignUp() {
     const [error, setError] = useState<string | null>(null);

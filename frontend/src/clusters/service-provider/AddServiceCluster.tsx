@@ -20,10 +20,10 @@ export function AddServiceCluster() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const GENERAL_SERVICE_TYPE_LINK = import.meta.env.VITE_SERVER + "/general-service-types";
-    const SPECIFIC_SERVICES_LINK = import.meta.env.VITE_SERVER + "/specific-service-types";
-    const TIMELINES_LINK = import.meta.env.VITE_SERVER + "/request-timelines";
-    const ADD_SERVICE_LINK = import.meta.env.VITE_SERVER + "/service"
+    const GENERAL_SERVICE_TYPE_LINK = window.config.SERVER_URL + "/general-service-types";
+    const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
+    const TIMELINES_LINK = window.config.SERVER_URL + "/request-timelines";
+    const ADD_SERVICE_LINK = window.config.SERVER_URL + "/service"
 
     const user = useAuthContext().state.user;
     const navigate = useNavigate();

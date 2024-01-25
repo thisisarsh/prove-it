@@ -3,7 +3,7 @@ import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types";
 
-const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/set-role";
+const VERIFY_OTP_API = window.config.SERVER_URL + "/set-role";
 
 function getRoleId(roleName: string) {
     switch (roleName) {

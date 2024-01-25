@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const VERIFY_OTP_API = import.meta.env.VITE_SERVER + "/contactverify";
+const VERIFY_OTP_API = window.config.SERVER_URL + "/contactverify";
 
 export function useVerifyOTP() {
     const [error, setError] = useState(null);

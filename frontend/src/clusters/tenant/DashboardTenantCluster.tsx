@@ -29,7 +29,7 @@ export function DashboardTenantCluster() {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            fetch(import.meta.env.VITE_SERVER + "/properties-tenant" + "?tenantId=" + user.id, {
+            fetch(window.config.SERVER_URL + "/properties-tenant" + "?tenantId=" + user.id, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export function DashboardTenantCluster() {
                 });
                 
             fetch(
-                import.meta.env.VITE_SERVER + "/ticket/tenant/tickets",
+                window.config.SERVER_URL + "/ticket/tenant/tickets",
                 {
                     method: "GET",
                     headers: {

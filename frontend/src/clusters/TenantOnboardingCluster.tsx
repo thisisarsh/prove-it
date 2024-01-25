@@ -90,7 +90,7 @@ export default function TenantOnboardingCluster() {
         };
 
         const response = await fetch(
-            import.meta.env.VITE_SERVER + "/survey/tenant",
+            window.config.SERVER_URL + "/survey/tenant",
             {
                 method: "POST",
                 headers: {

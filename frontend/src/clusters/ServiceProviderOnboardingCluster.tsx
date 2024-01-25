@@ -60,7 +60,7 @@ export function ServiceProviderOnboardingCluster() {
     );
 
     useEffect(() => {
-        const url = import.meta.env.VITE_SERVER + "/state";
+        const url = window.config.SERVER_URL + "/state";
         fetchData(url)
             .then((data) => setStates(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -77,7 +77,7 @@ export function ServiceProviderOnboardingCluster() {
 
         //Send a POST request to the API with the selected option
         const url =
-            import.meta.env.VITE_SERVER +
+            window.config.SERVER_URL +
             "/city?" +
             new URLSearchParams({ stateId: selectedState.id });
         fetchData(url)
@@ -96,7 +96,7 @@ export function ServiceProviderOnboardingCluster() {
         );
 
         const url =
-            import.meta.env.VITE_SERVER +
+            window.config.SERVER_URL +
             "/zip?" +
             new URLSearchParams({ cityId: selectedCity.cityId });
         fetchData(url)
@@ -124,7 +124,7 @@ export function ServiceProviderOnboardingCluster() {
             streetAddress: address,
         }
         const addressValidateResponse = await fetch(
-            import.meta.env.VITE_SERVER + '/address/validate',
+            window.config.SERVER_URL + '/address/validate',
             {
                 method:"POST",
                 headers:{
@@ -163,7 +163,7 @@ export function ServiceProviderOnboardingCluster() {
         console.log(spDetailBody);
 
         const response = await fetch(
-            import.meta.env.VITE_SERVER + "/invited/sp-detail",
+            window.config.SERVER_URL + "/invited/sp-detail",
             {
                 method: "POST",
                 headers: {

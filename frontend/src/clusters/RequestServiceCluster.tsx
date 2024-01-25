@@ -29,10 +29,10 @@ export function RequestServiceCluster() {
 
     const [property, setProperty] = useState<Property | null>(null);
 
-    const GENERAL_SERVICE_TYPE_LINK = import.meta.env.VITE_SERVER + "/general-service-types";
-    const SPECIFIC_SERVICES_LINK = import.meta.env.VITE_SERVER + "/specific-service-types";
-    const TENANT_PROPERTY_LINK = import.meta.env.VITE_SERVER + '/properties-tenant';
-    const TIMELINES_LINK = import.meta.env.VITE_SERVER + "/request-timelines";
+    const GENERAL_SERVICE_TYPE_LINK = window.config.SERVER_URL + "/general-service-types";
+    const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
+    const TENANT_PROPERTY_LINK = window.config.SERVER_URL + '/properties-tenant';
+    const TIMELINES_LINK = window.config.SERVER_URL + "/request-timelines";
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -130,7 +130,7 @@ export function RequestServiceCluster() {
             detail: issueDetail
         }
 
-        fetch(import.meta.env.VITE_SERVER + "/ticket/initiated", {
+        fetch(window.config.SERVER_URL + "/ticket/initiated", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
