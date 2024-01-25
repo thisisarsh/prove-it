@@ -24,6 +24,7 @@ import { ForgotPassword } from "./routes/ForgotPassword";
 import { HOTenants } from "./routes/HOTenants";
 
 import { RequestService } from "./routes/RequestService";
+import { AddService } from "./routes/AddService.tsx";
 
 
 export const Router = createBrowserRouter([
@@ -139,6 +140,14 @@ export const Router = createBrowserRouter([
     {
         path:"/request-service",
         element: <RequestService/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/add-service",
+        element: 
+        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
+            <AddService/>
+        </ProtectedRoute>,
         errorElement: <ErrorPage />
     }
 ]);

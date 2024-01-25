@@ -26,6 +26,7 @@ exports.getProperties = (req, res) => {
                 owner: propertyData.ownerId,
                 id: propertyData.id
             }
+            console.log(refinedData);
 
             //get owner first and last name
             axios.get(OWNER_LINK + refinedData.owner , {'headers': getTenantInfoHeaders})

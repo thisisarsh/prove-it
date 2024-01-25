@@ -6,6 +6,9 @@ const SPECIFIC_SERVICE_TYPES_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-management/get-property/tenant/";
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
+const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
+const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/open-tickets";
+const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -95,6 +98,69 @@ exports.tenantTicket = (req, res) => {
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {
         res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getTenantTicket = (req, res) => {
+    console.log("Getting tenant tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    axios.get(GET_TENANT_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        res.send(response.data.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.addService = (req, res) => {
+    console.log("Posting new services...");
+
+    let addServiceHeaders = HEADERS;
+    addServiceHeaders.Authorization = req.headers.authorization;
+
+    axios.post(ADD_SERVICE_LINK, req.body, {headers: addServiceHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getManagerTicket = (req, res) => {
+    console.log("Getting manager tickets...");
+
+    let Headers = HEADERS;
+    Headers.Authorization = req.headers.authorization;
+
+    async function sr_getall(service_requests) {
+        let responseArr = [];
+        for(const sr of service_requests) {
+            let response = await axios.get(`https://apiqa.hometrumpeter.com/service-provider/services-request-detail/${sr.id}`, {headers: Headers})
+            responseArr.push(response.data.data)
+        }
+        
+        return(responseArr);
+    }
+    
+    axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
+    .then(response => {
+        service_requests = response.data.data.serviceRequests;
+
+        return sr_getall(service_requests)
+    })
+    .then(srList => {
+        res.send(srList);
     })
     .catch(error => {
         console.error(error);

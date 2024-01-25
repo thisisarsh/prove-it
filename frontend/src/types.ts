@@ -103,4 +103,52 @@ export interface PropertyDetail {
     rent: number;
 }
 
+export interface Timeline {
+    id: string;
+    title: string;
+}
+
+export interface ServiceType {
+    id: string;
+    serviceType: string;
+}
+
+export interface Proposal {
+    id: string;
+    serviceRequestId: string;
+    initiatorId: string;
+    serviceProviderId: string;
+}
+
+export interface ServiceRequest {
+    id: string;
+    property: Property;
+    timeline: Timeline;
+    serviceType: ServiceType;
+    proposals: Proposal;
+}
+
+export interface ServiceRequestManager {
+    id: string;
+    property: Property;
+    timeline: Timeline;
+    serviceType: ServiceType;
+    proposals: Proposal;
+}
+
+export interface ServiceOffering {
+    service: SpecificServiceType | undefined;
+    timeline: Timeline | undefined;
+    detail: string | undefined;
+}
+
+export interface DashboardServiceParent {
+    serviceType: string;
+    childs: DashboardServiceChild[];
+}
+
+export interface DashboardServiceChild {
+    serviceType: string;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

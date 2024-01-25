@@ -31,10 +31,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
+    z-index: 999;
 }
 
 /* Title styles */
@@ -101,22 +102,20 @@ body {
     padding: 1rem;
 }
 
-.new-request-container
-.request-container
+.new-request-container,
+.request-container,
 .properties-container,
 .service-container {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); 
-    padding: 1rem; 
+    padding-left: 1rem; 
+    padding-right: 1rem; 
+    padding-bottom: 0.75rem;
     width: 100%;
     margin-top: 4rem;
 }
 
-.new-request-container
+.new-request-container,
 .properties-container{
-    padding-top: 10rem;
+    padding-top: 24px;
 }
 
 /* Adjust the label for the properties to match the Services label */
@@ -134,19 +133,20 @@ body {
 
 /* Table styles */
 .dashboard-table {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); 
     width: 100%;
     max-width: 100%;
     border-collapse: separate; 
     border-spacing: 0; 
     margin: auto; 
-    border-radius: 0.25rem;
+    border-radius: 25px;
     overflow: hidden; 
 }
 
 /* Table header styles */
 .dashboard-table .dashboard-header {
     background: #e9ecef; 
-    color: #495057; 
+    color: #3a3e42; 
     border-top: none;
     margin-top: 8rem;
 }
@@ -162,26 +162,26 @@ body {
     text-align: left;
 }
 
-.dashboard-table tbody tr{
-    background: white;
-}
-
 .dashboard-table .dashboard-empty-service,
 .dashboard-table .dashboard-empty-property {
     text-align: center; 
     padding: 1rem; 
 }
 
-.dashboard-table thead tr {
-    background-color: #e9ecef;
+.property-detail-table{
+    padding: 0.75rem;
 }
 
 .dashboard-table tbody tr:nth-of-type(odd) {
     background-color: #f8f9fa;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .dashboard-table tbody tr:nth-of-type(even) {
     background-color: white;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 /* Add property and Request service button styles */
@@ -210,7 +210,7 @@ body {
     color: white;
     text-align: center;
     padding: 1rem;
-    position: absolute;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
