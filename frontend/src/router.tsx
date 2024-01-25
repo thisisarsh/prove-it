@@ -25,6 +25,7 @@ import { HOTenants } from "./routes/HOTenants.tsx";
 
 import { RequestService } from "./routes/RequestService";
 import { AddService } from "./routes/AddService.tsx";
+import { RequestQuote } from "./routes/RequestQuote.tsx";
 
 
 export const Router = createBrowserRouter([
@@ -147,6 +148,14 @@ export const Router = createBrowserRouter([
         element: 
         <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
             <AddService/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/request-quote",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+            <RequestQuote/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
     }
