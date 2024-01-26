@@ -136,17 +136,26 @@ export function RequestQuoteCluster() {
             </div>
 
             <h2>My private service providers</h2>
+            
+            {isLoading && (
+                <>
+                    <Spinner/>
+                    <p>Submitting service request</p>
+                </>
+            )}
 
-            {serviceProviders.length > 0 ? (
-            <Row className="g-2">
-                {serviceProviders.map((serviceProvider) => (
-                    <Col className="g-2">
-                        <ServiceProviderCard sp={serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
-                    </Col>
-                ))}
-            </Row>
-            ) : (
-                <p>You haven't invited any service providers! Start by inviting a service provider...</p>
+            {!isLoading && serviceProviders.length > 0 && (
+                <Row className="g-2">
+                    {serviceProviders.map((serviceProvider) => (
+                        <Col className="g-2">
+                            <ServiceProviderCard sp={serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
+                        </Col>
+                    ))}
+                </Row>
+            )}
+
+            {!isLoading && serviceProviders.length == 0 && (
+                <p>You don't have any private service providers! Start by inviting a service provider...</p>
             )}
         </>
     )
