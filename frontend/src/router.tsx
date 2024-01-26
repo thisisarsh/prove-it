@@ -149,5 +149,13 @@ export const Router = createBrowserRouter([
             <AddService/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
+    },
+    {
+        path:"/request-quote",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+            <RequestQuote/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
     }
 ]);

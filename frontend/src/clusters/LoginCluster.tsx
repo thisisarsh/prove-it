@@ -64,7 +64,7 @@ export function LoginCluster() {
             }}
         >
             {/* Message to user from previous page */}
-            {loginMessage && <p>{loginMessage}</p>}
+            {loginMessage && <p className="login-page-message">{loginMessage}</p>}
 
             <FormGroup
                 label="Email address"

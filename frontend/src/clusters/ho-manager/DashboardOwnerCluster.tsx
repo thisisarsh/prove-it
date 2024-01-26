@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Property, PropertyDetail, ServiceRequest } from "../../types";
 
 import "../../styles/pages/dashboard.css";
+import { Button } from "react-bootstrap";
 /**
  *
  * @returns Void
@@ -269,13 +270,13 @@ export function DashboardOwnerCluster() {
                                     className="dashboard-empty-property"
                                     colSpan={3}
                                 >
-                                    <button
-                                        className="add-property-button"
+                                    <Button
+                                        className="standard-button"
                                         onClick={() => {
                                             navigate("/addproperty");
                                         }}>
                                                 Add Property
-                                        </button>
+                                        </Button>
                                 </td>
                             </tr>
                         </tbody>
@@ -290,6 +291,7 @@ export function DashboardOwnerCluster() {
                                 <th className="dashboard-header">Service</th>
                                 <th>Provider</th>
                                 <th>Property</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -299,14 +301,28 @@ export function DashboardOwnerCluster() {
                                 tickets.length > 0 ? (
                                 tickets.map((userTicket) => (
                                     <tr key={userTicket.id}>
-                                        <td>{userTicket.serviceType.serviceType}</td>
-                                        <td>{"Unassigned"}</td>
-                                        <td>{userTicket.property.name}</td>
+                                        <td>
+                                            {userTicket.serviceType.serviceType}
+                                        </td>
+
+                                        <td>
+                                            {"Unassigned"}
+                                        </td>
+
+                                        <td>                                            
+                                            {userTicket.property.name}                                                
+                                        </td>
+
+                                        <td>
+                                            <Button className="standard-button" onClick={() => {navigate("/request-quote?id=" + userTicket.id)}}>
+                                                Request quote
+                                            </Button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={3}>
+                                    <td colSpan={4}>
                                         You don't have any service requests yet.
                                         Start by requesting a service! 
                                     </td>
@@ -314,14 +330,14 @@ export function DashboardOwnerCluster() {
                             )}
                         </tbody>
                         <tr>
-                            <td className="dashboard-empty-service" colSpan={3}>
-                                <button
-                                    className="request-service-button"
+                            <td className="dashboard-empty-service" colSpan={4}>
+                                <Button
+                                    className="standard-button"
                                     onClick={() => {
                                         navigate("/request-service");
                                     }}>
                                         Request a Service
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     </table>
