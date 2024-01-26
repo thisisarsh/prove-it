@@ -151,4 +151,43 @@ export interface DashboardServiceChild {
     serviceType: string;
 }
 
+export interface ServiceProvider {
+    email: string,
+    id: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    spDetail: SPDetail
+}
+
+export interface SPDetail {
+    address: string,
+    cityId: string,
+    company: string,
+    countyId: string,
+    distanceCovered: number,
+    id: string,
+    isAppliedForPublic: boolean,
+    isBGChecked: boolean,
+    isPublic: boolean,
+    latitude: number,
+    longitude: number,
+    perHourRate: number,
+    stateId: string,
+    userId: string,
+    zipcodeId: string
+}
+
+export interface RequestDetails {
+    createdAt: string,
+    detail: string,
+    id: string,
+    isTicket: boolean,
+    property: Property,
+    proposalCount: number,
+    serviceType: ServiceType,
+    status: string,
+    timeline: Timeline
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

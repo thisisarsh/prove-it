@@ -9,6 +9,9 @@ const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated"
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
 const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/open-tickets";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
+const PRIVATE_PROVIDERS_LINK =  "https://apiqa.hometrumpeter.com/service-provider/customer/sp";
+const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request-detail/"
+const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -161,6 +164,65 @@ exports.getManagerTicket = (req, res) => {
     })
     .then(srList => {
         res.send(srList);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getPrivateProviders = (req, res) => {
+    console.log("Getting private providers...");
+
+    let headers = HEADERS;
+    headers.Authorization = req.headers.authorization;
+
+    axios.get(PRIVATE_PROVIDERS_LINK, {headers: headers})
+    .then(response => {
+        if (response.data.isSuccess) {
+            let refinedData = [];
+            
+            //extract the service provider information from the reponse objects
+            for (let i=0; i<response.data.data.length; i++) {
+                refinedData.push(response.data.data[i].serviceProvider);
+            }
+
+            res.send({isSuccess: true, data: refinedData});
+        } else {
+            res.send(response.data);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.getRequestDetails = (req, res) => {
+    console.log("Getting request details for service request " + req.query.id);
+
+    let requestDetailHeaders = HEADERS;
+    requestDetailHeaders.Authorization = req.headers.authorization;
+
+    axios.get(REQUEST_DETAILS_LINK + req.query.id, {headers: requestDetailHeaders})
+    .then(response => {
+        res.send(response.data)
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.serviceRequestTicket = (req, res) => {
+    console.log("Posting the following ticket as a service request: ", req.body);
+
+    let serviceRequestTicketHeaders = HEADERS;
+    serviceRequestTicketHeaders.Authorization = req.headers.authorization;
+
+    axios.post(SERVICE_REQUEST_TICKET_LINK, req.body, {headers: serviceRequestTicketHeaders})
+    .then(response => {
+        res.send(response.data);
     })
     .catch(error => {
         console.error(error);
