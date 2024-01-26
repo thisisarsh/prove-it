@@ -276,7 +276,7 @@ deploy-test-client:
       yq -i '.metadata.name = strenv(APP_NAME)'
       client-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
-    - yq -i '.spec.template.spec.containers[0].env[] | select(.name == "VITE_SERVER").value = strenv(VITE_SERVER)' $CONFIG_PATH
+    - yq -i '.spec.template.spec.containers[0].env[1].value = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
