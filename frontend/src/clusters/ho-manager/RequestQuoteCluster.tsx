@@ -74,7 +74,7 @@ export function RequestQuoteCluster() {
                 setError("Error: " + response.message);
             }
         })
-    }, [user, fetchData, PRIVATE_PROVIDERS_LINK, REQUEST_DETAILS_LINK]);
+    }, [user, fetchData, PRIVATE_PROVIDERS_LINK, REQUEST_DETAILS_LINK, REQUEST_ID]);
 
     async function handleSubmitRequest(sp: ServiceProvider) {
         setError(null);
