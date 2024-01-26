@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Spinner from "../../components/Spinner.tsx";
+import Spinner from "../../components/Spinner";
 
 interface Tenant {
     id: string;
@@ -58,7 +58,7 @@ export function AllTenantsCluster() {
             }).toString();
 
             setIsLoading(true);
-            fetch(`${import.meta.env.VITE_SERVER}/background-check/tenant?${queryParams}`, {
+            fetch(`${window.config.SERVER_URL}/background-check/tenant?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export function AllTenantsCluster() {
             }).toString();
 
             setIsLoading(true);
-            fetch(`${import.meta.env.VITE_SERVER}/background-check/tenant/approve?${queryParams}`, {
+            fetch(`${window.config.SERVER_URL}/background-check/tenant/approve?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export function AllTenantsCluster() {
             const queryParams = new URLSearchParams({
                 userId: selectedTenant.id
             }).toString();
-            fetch(`${import.meta.env.VITE_SERVER}/agreement/initiate?${queryParams}`, {
+            fetch(`${window.config.SERVER_URL}/agreement/initiate?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export function AllTenantsCluster() {
             const queryParams = new URLSearchParams({
                 userId: selectedTenant.id
             }).toString();
-            fetch(`${import.meta.env.VITE_SERVER}/agreement/submit?${queryParams}`, {
+            fetch(`${window.config.SERVER_URL}/agreement/submit?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export function AllTenantsCluster() {
                 userId: selectedTenant.id
             }).toString();
 
-            fetch(`${import.meta.env.VITE_SERVER}/agreement/approve?${queryParams}`, {
+            fetch(`${window.config.SERVER_URL}/agreement/approve?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -163,7 +163,7 @@ export function AllTenantsCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/owner-tenants", {
+        fetch(window.config.SERVER_URL + "/owner-tenants", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

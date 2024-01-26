@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-import { useLogout } from "../../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty, ServiceRequest } from "../../types.ts";
+import { TenantProperty, ServiceRequest } from "../../types";
 
 import "../../styles/pages/dashboard.css";
 
@@ -29,7 +29,7 @@ export function DashboardTenantCluster() {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            fetch(import.meta.env.VITE_SERVER + "/properties-tenant" + "?tenantId=" + user.id, {
+            fetch(window.config.SERVER_URL + "/properties-tenant" + "?tenantId=" + user.id, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export function DashboardTenantCluster() {
                 });
                 
             fetch(
-                import.meta.env.VITE_SERVER + "/ticket/tenant/tickets",
+                window.config.SERVER_URL + "/ticket/tenant/tickets",
                 {
                     method: "GET",
                     headers: {

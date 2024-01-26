@@ -17,7 +17,7 @@ export function ForgotPassword() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(import.meta.env.VITE_SERVER + '/forgotpassword', {
+        const response = await fetch(window.config.SERVER_URL + '/forgotpassword', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'

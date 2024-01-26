@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, ReactNode, Dispatch } from "react";
-import { User } from "../types.ts";
+import { User } from "../types";
 
 export interface AuthState {
     user: User | null;

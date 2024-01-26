@@ -1,4 +1,4 @@
-import TenantOnboardingCluster from "../clusters/TenantOnboardingCluster.tsx";
+import TenantOnboardingCluster from "../clusters/TenantOnboardingCluster";
 
 export function TenantOnboarding() {
     return (

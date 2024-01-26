@@ -6,18 +6,18 @@
  */
 //import { useEffect } from "react";
 
-import { useLogout } from "../../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout";
 import { useCallback, useEffect, useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 //import { Property } from "../types.ts";
 //import { ServiceRequest } from "../types.ts";
 
 import "../../styles/pages/dashboard.css";
-import { DashboardServiceParent } from "../../types.ts";
+import { DashboardServiceParent } from "../../types";
 import { Accordion } from "react-bootstrap";
-import ErrorMessageContainer from "../../components/ErrorMessageContainer.tsx";
-import Spinner from "../../components/Spinner.tsx";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import Spinner from "../../components/Spinner";
 /**
  *
  * @returns Void
@@ -66,7 +66,7 @@ export function DashboardServiceCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetchData(import.meta.env.VITE_SERVER + "/user-services?userId=" + user?.id)
+        fetchData(window.config.SERVER_URL + "/user-services?userId=" + user?.id)
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {

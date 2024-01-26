@@ -1,15 +1,15 @@
 import { Form, Button } from "react-bootstrap";
-import Spinner from "../components/Spinner.tsx";
-import ErrorMessageContainer from "../components/ErrorMessageContainer.tsx";
+import Spinner from "../components/Spinner";
+import ErrorMessageContainer from "../components/ErrorMessageContainer";
 
 import React, { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 import "../styles/pages/inviteUser.css";
 import { useNavigate } from "react-router-dom";
-import { Property } from "../types.ts";
-import SearchableDropdown from "../components/DropDownList.tsx";
-import { FormGroup } from "../components/Forms.tsx";
+import { Property } from "../types";
+import SearchableDropdown from "../components/DropDownList";
+import { FormGroup } from "../components/Forms";
 
 interface InviteUserProps {
     roleName: string;
@@ -38,7 +38,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
 
     useEffect(() => {
         if (props.roleName == "tenant") {
-            fetch(import.meta.env.VITE_SERVER + "/properties-owner", {
+            fetch(window.config.SERVER_URL + "/properties-owner", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
         };
         console.log(inviteUserObject);
 
-        fetch(import.meta.env.VITE_SERVER + "/send-invite", {
+        fetch(window.config.SERVER_URL + "/send-invite", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

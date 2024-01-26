@@ -6,11 +6,11 @@
  */
 import { useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { useLogout } from "../../hooks/useLogout.tsx";
+import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext.tsx";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { Property, PropertyDetail, ServiceRequest } from "../../types.ts";
+import { Property, PropertyDetail, ServiceRequest } from "../../types";
 
 import "../../styles/pages/dashboard.css";
 import { Button } from "react-bootstrap";
@@ -41,7 +41,7 @@ export function DashboardOwnerCluster() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(import.meta.env.VITE_SERVER + "/properties-owner", {
+        fetch(window.config.SERVER_URL + "/properties-owner", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export function DashboardOwnerCluster() {
                 console.error("Error fetching data: " + error);
             });
 
-        fetch(import.meta.env.VITE_SERVER + "/ticket/manager/tickets", {
+        fetch(window.config.SERVER_URL + "/ticket/manager/tickets", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -100,7 +100,7 @@ export function DashboardOwnerCluster() {
 
     // Function to handle the confirmation of deletion
     const handleConfirmDelete = () => {
-        fetch(import.meta.env.VITE_SERVER + "/deleteproperty", {
+        fetch(window.config.SERVER_URL + "/deleteproperty", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -145,7 +145,7 @@ export function DashboardOwnerCluster() {
     // Function to handle the "Details" button click
     const handleDetailsClick = (property: Property) => {
         
-        fetch(import.meta.env.VITE_SERVER + "/get-property-details", {
+        fetch(window.config.SERVER_URL + "/get-property-details", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

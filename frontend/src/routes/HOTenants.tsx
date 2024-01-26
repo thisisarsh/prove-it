@@ -1,4 +1,4 @@
-import {AllTenantsCluster} from "../clusters/ho-manager/AllTenantsCluster.tsx";
+import {AllTenantsCluster} from "../clusters/ho-manager/AllTenantsCluster";
 //import "../styles/pages/HOTenants.css";
 
 export function HOTenants() {

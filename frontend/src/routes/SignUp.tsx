@@ -1,4 +1,4 @@
-import { SignUpCluster } from "../clusters/SignUpCluster.tsx";
+import { SignUpCluster } from "../clusters/SignUpCluster";
 
 /**
  * Signup page

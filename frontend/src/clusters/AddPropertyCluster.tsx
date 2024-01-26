@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext.tsx";
-import { City, PropertyJSON, PropertyType, State, Zip } from "../types.ts";
-import SearchableDropdown from "../components/DropDownList.tsx";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { City, PropertyJSON, PropertyType, State, Zip } from "../types";
+import SearchableDropdown from "../components/DropDownList";
 import "../styles/pages/addProperty.css";
+
 
 export function AddPropertyCluster() {
     const { state } = useAuthContext();
@@ -65,7 +66,7 @@ export function AddPropertyCluster() {
     );
 
     useEffect(() => {
-        const url = import.meta.env.VITE_SERVER + "/state";
+        const url = window.config.SERVER_URL + "/state";
         fetchData(url)
             .then((data) => setStates(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -82,7 +83,7 @@ export function AddPropertyCluster() {
 
         //Send a POST request to the API with the selected option
         const url =
-            import.meta.env.VITE_SERVER +
+            window.config.SERVER_URL +
             "/city?" +
             new URLSearchParams({ stateId: selectedState.id });
         fetchData(url)
@@ -99,7 +100,7 @@ export function AddPropertyCluster() {
         );
 
         const url =
-            import.meta.env.VITE_SERVER +
+            window.config.SERVER_URL +
             "/zip?" +
             new URLSearchParams({ cityId: selectedCity.cityId });
         fetchData(url)
@@ -114,7 +115,7 @@ export function AddPropertyCluster() {
             JSON.stringify(selectedZipObj),
         );
 
-        const url = import.meta.env.VITE_SERVER + "/propertytypes";
+        const url = window.config.SERVER_URL + "/propertytypes";
         fetchData(url)
             .then((data) => setPropertyTypes(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -148,7 +149,7 @@ export function AddPropertyCluster() {
         };
 
         //Post the property object to the server.
-        fetch(import.meta.env.VITE_SERVER + "/addproperty", {
+        fetch(window.config.SERVER_URL + "/addproperty", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

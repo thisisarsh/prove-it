@@ -4,7 +4,7 @@ import proveitLogo from "../assets/prove-it-logo-200.png";
 import htLogo from "../assets/ht-logo.svg";
 import htFullAppsetGraphic from "../assets/ht-appset-full.png";
 import "../styles/pages/homepage.css";
-import Footer from "../components/PageFooter.tsx";
+import Footer from "../components/PageFooter";
 
 /**
  * Home page

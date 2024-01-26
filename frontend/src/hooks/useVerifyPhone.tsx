@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
 
-const SEND_CONTACT_API = import.meta.env.VITE_SERVER + "/contactsend";
+const SEND_CONTACT_API = window.config.SERVER_URL + "/contactsend";
 
 export function useVerifyPhone() {
     const [error, setError] = useState(null);

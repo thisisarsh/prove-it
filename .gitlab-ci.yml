@@ -52,8 +52,7 @@ build-server:
         $CI_COMMIT_MESSAGE =~ /--deploy-test/
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --pull -t
-      $SERVER_CONTAINER_TEST_IMAGE ./backend
+      docker build --pull -t $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
 build-client:
@@ -79,7 +78,7 @@ build-server-staging:
   stage: build
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod
+      docker build --build-arg BUILD_ENV=prod
       --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -102,7 +101,7 @@ build-server-production:
   stage: build
   script:
     - >-
-      docker build --build-arg FRONT_URL=$FRONT_URL --build-arg BUILD_ENV=prod --pull -t
+      docker build --build-arg BUILD_ENV=prod --pull -t
       $SERVER_CONTAINER_PROD_IMAGE ./backend
     - docker push $SERVER_CONTAINER_PROD_IMAGE
   only:
@@ -182,6 +181,7 @@ deploy-test-server:
     - export IMAGE=$SERVER_CONTAINER_TEST_IMAGE
     - export APP_NAME=ht-webserver-dev-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=server-configs/k8s-dev/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -206,6 +206,8 @@ deploy-test-server:
       yq -i '.metadata.name = strenv(APP_NAME)'
       server-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -217,6 +219,8 @@ deploy-test-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -247,6 +251,7 @@ deploy-test-client:
     - export IMAGE=$CLIENT_CONTAINER_TEST_IMAGE
     - export APP_NAME=ht-website-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=client-configs/k8s-dev/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -271,6 +276,7 @@ deploy-test-client:
       yq -i '.metadata.name = strenv(APP_NAME)'
       client-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' client-configs/k8s-dev/route.yaml
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -282,6 +288,8 @@ deploy-test-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s-dev
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -311,6 +319,7 @@ deploy-staging-server:
     - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
     - export APP_NAME=ht-server-staged
     - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -324,6 +333,7 @@ deploy-staging-server:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -335,6 +345,8 @@ deploy-staging-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -363,6 +375,7 @@ deploy-staging-client:
     - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-website-staged
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -376,6 +389,7 @@ deploy-staging-client:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -387,6 +401,8 @@ deploy-staging-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -416,6 +432,7 @@ deploy-prod-server:
     - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-server-live
     - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -429,6 +446,7 @@ deploy-prod-server:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -440,6 +458,8 @@ deploy-prod-server:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -469,6 +489,7 @@ deploy-prod-client:
     - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
     - export APP_NAME=ht-website-live
     - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -482,6 +503,7 @@ deploy-prod-client:
     - >-
       yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
       $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
       --insecure-skip-tls-verify
@@ -493,6 +515,8 @@ deploy-prod-client:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -527,4 +551,3 @@ clear-test-env:
     - oc delete deployment --all
     - oc delete svc --all
     - oc delete route --all
-

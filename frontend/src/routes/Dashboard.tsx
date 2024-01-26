@@ -5,10 +5,10 @@
  * WIP: need to add the rest of the page
  */
 
-import { DashboardOwnerCluster } from "../clusters/ho-manager/DashboardOwnerCluster.tsx";
-import { DashboardTenantCluster } from "../clusters/tenant/DashboardTenantCluster.tsx";
-import { DashboardServiceCluster } from "../clusters/service-provider/DashboardServiceCluster.tsx";
-import { useAuthContext } from "../hooks/useAuthContext.tsx";
+import { DashboardOwnerCluster } from "../clusters/ho-manager/DashboardOwnerCluster";
+import { DashboardTenantCluster } from "../clusters/tenant/DashboardTenantCluster";
+import { DashboardServiceCluster } from "../clusters/service-provider/DashboardServiceCluster";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export function Dashboard() {
     const user = useAuthContext().state.user;

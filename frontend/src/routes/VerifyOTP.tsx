@@ -1,4 +1,4 @@
-import { OTPVerifyCluster } from "../clusters/OTPVerifyCluster.tsx";
+import { OTPVerifyCluster } from "../clusters/OTPVerifyCluster";
 
 export function VerifyOTP() {
     return (

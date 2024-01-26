@@ -1,4 +1,4 @@
-import InviteUserCluster from "../clusters/InviteUserCluster.tsx";
+import InviteUserCluster from "../clusters/InviteUserCluster";
 import "../styles/pages/addProperty.css";
 
 export function InviteServiceProvider() {
