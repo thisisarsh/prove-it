@@ -55,24 +55,24 @@ build-server:
       docker build --pull -t $SERVER_CONTAINER_TEST_IMAGE ./backend
     - docker push $SERVER_CONTAINER_TEST_IMAGE
   environment: development
-build-client:
-  extends: .before_script_template
-  stage: build
-  rules:
-    - if: >-
-        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /--deploy-test/
-  script:
-    - echo $VITE_SERVER
-    - echo $VITE_SERVER_MERGE
-    - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
-       else
-         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
-       fi
-    - docker push $CLIENT_CONTAINER_TEST_IMAGE
-  environment: development
+#build-client:
+#  extends: .before_script_template
+#  stage: build
+#  rules:
+#    - if: >-
+#        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
+#        $CI_COMMIT_MESSAGE =~ /--deploy-test/
+#  script:
+#    - echo $VITE_SERVER
+#    - echo $VITE_SERVER_MERGE
+#    - |
+#      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
+#         docker build --build-arg VITE_SERVER=$VITE_SERVER_MERGE --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+#       else
+#         docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t $CLIENT_CONTAINER_TEST_IMAGE ./frontend
+#       fi
+#    - docker push $CLIENT_CONTAINER_TEST_IMAGE
+#  environment: development
 build-server-staging:
   extends: .before_script_template
   stage: build
@@ -206,7 +206,7 @@ deploy-test-server:
       yq -i '.metadata.name = strenv(APP_NAME)'
       server-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
-    - yq -i '(.spec.template.spec.containers[] | select(.name == APP_NAME).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
 
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
@@ -220,7 +220,7 @@ deploy-test-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
     - export FRONT_URL=$FRONT_URL_2
-    - yq -i '(.spec.template.spec.containers[] | select(.name == "APP_NAME").env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
