@@ -10,15 +10,20 @@ import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
 
 export function RequestQuoteCluster() {
+
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    const PRIVATE_PROVIDERS_LINK = window.config.SERVER_URL + "/private-providers";
+
+    const PRIVATE_PROVIDERS_LINK = window.config.SERVER_URL + "/find-sp";
     const REQUEST_DETAILS_LINK = window.config.SERVER_URL + "/request-details";
     const REQUEST_TICKET_LINK = window.config.SERVER_URL + "/service-request/ticket";
     const REQUEST_ID = searchParams.get('id');
-    
+    const REQUEST_PROPERTY_ID = searchParams.get('proId');
+    const REQUEST_SERVICE_ID = searchParams.get('serId');
+
+
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -54,14 +59,26 @@ export function RequestQuoteCluster() {
     );
 
     useEffect(() => {
-        fetchData(PRIVATE_PROVIDERS_LINK)
+        fetch(PRIVATE_PROVIDERS_LINK, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token
+            },
+            body: JSON.stringify({childId: REQUEST_SERVICE_ID, propertyId: REQUEST_PROPERTY_ID})
+        })
         .then(response => {
-            if(!response.isSuccess) {
-                setError("Error: Network response was not ok");
+            if (!response.ok) {
+                 setError("Error: Network response was not ok");
             }
-            console.log(response.data);
-
-            setServiceProviders(response.data);
+            return response.json();
+         })
+        .then(responseJson => {
+            if (responseJson.isSuccess) {
+                setServiceProviders(responseJson.data);
+            } else {
+                setError("Error: " + responseJson.message);
+            }
         });
 
         fetchData(REQUEST_DETAILS_LINK + "?id=" + REQUEST_ID)

@@ -9,7 +9,7 @@ const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated"
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
 const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/service-request/initiator/service-requests";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
-const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/customer/sp";
+const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/sp";
 const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request-detail/"
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 const APPROVE_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/approve-proposal/";
@@ -163,10 +163,37 @@ exports.getPrivateProviders = (req, res) => {
 
     let headers = HEADERS;
     headers.Authorization = req.headers.authorization;
-    
-    axios.get(FIND_SERVICE_PROVIDER_LINK, {headers: headers})
+
+    let findServiceProviderObject =
+        {
+            "typeId": req.body.childId,
+            "propertyId": req.body.propertyId,
+            "serviceProviderType":"0",
+            "cities":[],
+            "city":"",
+            "showMiles":false,
+            "showTime":false,
+            "showBounded":false,
+            "showLicensed":false,
+            "skipedLicensed":true,
+            "showInsured":false,
+            "showVerified":false
+        };
+
+    axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
     .then(response => {
-        res.send(response.data);
+        if (response.data.isSuccess) {
+            let refinedData = [];
+            
+            //extract the service provider information from the reponse objects
+            for (let i=0; i<response.data.data.length; i++) {
+                refinedData.push(response.data.data[i].serviceProvider);
+            }
+
+            res.send({isSuccess: true, data: refinedData});
+        } else {
+            res.send(response.data);
+        }
     })
     .catch(error => {
         console.error(error);
