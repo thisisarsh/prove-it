@@ -47,3 +47,31 @@ exports.getTenants = async (req, res) => {
         return res.send({error: error.message});
     }
 }
+
+exports.getTenantInProperty = (req,res) => {
+    let getPropertiesHeaders = HEADERS;
+    getPropertiesHeaders.Authorization =  req.headers.authorization;       
+    axios.get(GET_PROPERTY_TENANTS + req.body.id , {'headers': getPropertiesHeaders})
+    .then(response => {
+        if (response.data?.isSuccess) {
+            rawData = response.data.data.tenants ?? [];
+            const refinedData = rawData.map(item => ({
+                firstName: item.firstName,
+                lastName: item.lastName,
+                phone: item.phone,
+                email: item.email
+            }));
+
+            const tenant = {
+                "tenants": refinedData,
+                "isSuccess": true,
+            }
+
+            res.send(tenant);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        res.send({error: error.message});
+    })
+}

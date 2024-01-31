@@ -16,10 +16,12 @@ export function RequestQuoteCluster() {
     const [searchParams] = useSearchParams();
 
 
-    const PRIVATE_PROVIDERS_LINK = import.meta.env.VITE_SERVER + "/private-providers";
-    const REQUEST_DETAILS_LINK = import.meta.env.VITE_SERVER + "/request-details";
-    const REQUEST_TICKET_LINK = import.meta.env.VITE_SERVER + "/service-request/ticket";
-    const REQUEST_ID = searchParams.get('id')
+    const PRIVATE_PROVIDERS_LINK = window.config.SERVER_URL + "/private-providers";
+    const REQUEST_DETAILS_LINK = window.config.SERVER_URL + "/request-details";
+    const REQUEST_TICKET_LINK = window.config.SERVER_URL + "/service-request/ticket";
+    const REQUEST_ID = searchParams.get('id');
+    const REQUEST_PROPERTY_ID = searchParams.get('proId');
+    const REQUEST_SERVICE_ID = searchParams.get('serId');
     
 
     const [error, setError] = useState<string | null>(null);
@@ -57,12 +59,25 @@ export function RequestQuoteCluster() {
     );
 
     useEffect(() => {
-        fetchData(PRIVATE_PROVIDERS_LINK)
+        fetch(PRIVATE_PROVIDERS_LINK, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token
+            },
+            body: JSON.stringify({childId: REQUEST_SERVICE_ID, propertyId: REQUEST_PROPERTY_ID})
+        })
         .then(response => {
-            if (response.isSuccess) {
-                setServiceProviders(response.data);
+            if (!response.ok) {
+                 setError("Error: Network response was not ok");
+            }
+            return response.json();
+         })
+        .then(responseJson => {
+            if (responseJson.isSuccess) {
+                setServiceProviders(responseJson.data);
             } else {
-                setError("Error: " + response.message);
+                setError("Error: " + responseJson.message);
             }
         });
 

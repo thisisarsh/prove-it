@@ -126,7 +126,7 @@ export function RequestServiceCluster() {
         const createRequestBody = {
             propertyId: property?.id,
             timelineId: selectedTimeline?.id,
-            serviceTypeId: selectedGenType?.id,
+            serviceTypeId: selectedSpecService?.id,
             detail: issueDetail
         }
 

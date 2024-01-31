@@ -5,6 +5,7 @@ require('dotenv').config();
 const OWNED_PROPERTIES_LINK = 'https://apiqa.hometrumpeter.com/property-management/properties/owner';
 const DELETE_PROPERTY_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
 const GET_PROPERTY_DETAIL_LINK = 'https://apiqa.hometrumpeter.com/property-management/property/';
+const FIND_SERVICE_PROVIDER = 'https://apiqa.hometrumpeter.com/service-provider/sp';
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -18,8 +19,8 @@ exports.getProperties = (req, res) => {
     axios.get(OWNED_PROPERTIES_LINK, {'headers': getPropertiesHeaders})
     .then(response => {
         if (response.data?.isSuccess) {
-            console.log(response.data.data ?? []);
-            console.log("PROPERTY");
+            //console.log(response.data.data ?? []);
+            //console.log("PROPERTY");
             return res.send(response.data.data ?? []);
         } else {
             return res.send({error: response.data.message});
@@ -75,6 +76,42 @@ exports.getPropertyDetails = (req, res) => {
             //return res.send(refinedDataArray ?? []);
             return res.send(refinedData ?? {});
 
+        } else {
+            return res.send({error: response.data.message});
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        res.send({error: error.message});
+    });
+}
+
+exports.findServiceProvider = (req, res) => {
+    let findServiceProviderHeaders = HEADERS;
+    findServiceProviderHeaders.Authorization = req.headers.authorization;
+
+    let findServiceProviderObject = 
+        {
+            "typeId": req.body.childId,
+            "propertyId": req.body.propertyId,
+            "serviceProviderType":"0",
+            "cities":[],
+            "city":"",
+            "showMiles":false,
+            "showTime":false,
+            "showBounded":false,
+            "showLicensed":false,
+            "skipedLicensed":true,
+            "showInsured":false,
+            "showVerified":false
+        };
+
+
+    axios.post(FIND_SERVICE_PROVIDER, findServiceProviderObject, {'headers': getPropertiesHeaders})
+    .then(response => {
+        if (response.data?.isSuccess) {
+            console.log(response.data.data ?? []);
+            return res.send(response.data.data ?? []);
         } else {
             return res.send({error: response.data.message});
         }

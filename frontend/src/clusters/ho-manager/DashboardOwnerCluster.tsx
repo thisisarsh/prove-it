@@ -10,7 +10,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { Property, PropertyDetail, ServiceRequest } from "../../types";
+import { Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail } from "../../types";
 
 import "../../styles/pages/dashboard.css";
 import { Button } from "react-bootstrap";
@@ -29,8 +29,11 @@ export function DashboardOwnerCluster() {
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(
         null,
     );
+    const [tenantinPropertyDetail, setTenantinPropertyDetail] = useState<TenantinPropertyDetail | null>(null);
+
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
+    const [showTenant, setShowTenant] = useState(false);
 
     const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
 
@@ -58,8 +61,8 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
-                console.log("PROPERTIES");
-                console.log(data);
+                //console.log("PROPERTIES");
+                //console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -82,8 +85,8 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setTickets(data);
-                console.log("TICKETS");
-                console.log(data);
+                //console.log("TICKETS");
+                //console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -182,6 +185,46 @@ export function DashboardOwnerCluster() {
         setShowDetail(false);
     }
 
+    // Function to handle the "Tenant" button click
+    const handleTenantClick = (property: Property) => {
+        
+        fetch(window.config.SERVER_URL + "/tenant-detail", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({ id: property.id }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                //console.log(response.json);
+                return response.json();
+            })
+            .then((responseJson) => {
+                console.log('Backend response:', responseJson);
+                if (responseJson.isSuccess) {
+                    setTenantinPropertyDetail(responseJson.tenants);
+                    //console.log(tenantinPropertyDetail);
+                } else if (!responseJson.isSuccess) {
+                    //console.log(responseJson);
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+        setSelectedProperty(property);
+        setShowTenant(true);
+    };
+
+    const handleCloseTenant = () => {
+        setSelectedProperty(null);
+        setShowTenant(false);
+    }
+    
     // Function to toggle the nav panel
     const toggleNavPanel = () => {
         setIsNavPanelVisible(!isNavPanelVisible);
@@ -206,6 +249,7 @@ export function DashboardOwnerCluster() {
                 <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
                 <a onClick={() => navigate("/property")}>Property</a>
                 <a onClick={() => navigate("/ho/tenants")}>Tenants</a>
+                <a onClick={() => navigate("/ho/service-providers")}>Service Provider</a>
                 <div className="logout-container">
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </div>
@@ -252,6 +296,16 @@ export function DashboardOwnerCluster() {
                                                 className="delete-button"
                                             >
                                                 Details
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    handleTenantClick(
+                                                        userProperty,
+                                                    )
+                                                }
+                                                className="delete-button"
+                                            >
+                                                Tenant
                                             </button>
                                         </td>
                                     </tr>
@@ -314,7 +368,8 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            <Button className="standard-button" onClick={() => {navigate("/request-quote?id=" + userTicket.id)}}>
+                                            <Button className="standard-button" onClick={() => {navigate(
+                                                "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
                                                 Request quote
                                             </Button>
                                         </td>
@@ -434,7 +489,52 @@ export function DashboardOwnerCluster() {
                     Close
                 </button>
                  </Modal.Footer>
-      </Modal>
+            </Modal>
+
+             {/* Show tenant in property Popup */}
+             <Modal show={showTenant} onHide={handleCloseTenant}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Tenant in Property</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {Array.isArray(tenantinPropertyDetail) &&
+                    tenantinPropertyDetail != null &&
+                    tenantinPropertyDetail.length > 0 ? (
+                        <table className="property-detail-table">
+                            <thead className="dashboard-header">
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>{tenant.firstName}</td>
+                                        <td>{tenant.lastName}</td>
+                                        <td>{tenant.phone}</td>
+                                        <td>{tenant.email}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <>
+                        <p>No tenant assigned to property. You can invite tenant by click the button below</p>
+                        <button onClick={() => navigate("/invite/tenant")}>
+                            Invite Tenant
+                        </button>
+                        </>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                <button onClick={handleCloseTenant}>
+                    Close
+                </button>
+                 </Modal.Footer>
+            </Modal>
         </div>
     </body>
     );
