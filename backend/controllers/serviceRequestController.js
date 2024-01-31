@@ -9,7 +9,7 @@ const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated"
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
 const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/open-tickets";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
-const PRIVATE_PROVIDERS_LINK =  "https://apiqa.hometrumpeter.com/service-provider/customer/sp";
+const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/sp";
 const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request-detail/"
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 
@@ -177,7 +177,23 @@ exports.getPrivateProviders = (req, res) => {
     let headers = HEADERS;
     headers.Authorization = req.headers.authorization;
 
-    axios.get(PRIVATE_PROVIDERS_LINK, {headers: headers})
+    let findServiceProviderObject = 
+        {
+            "typeId": req.body.childId,
+            "propertyId": req.body.propertyId,
+            "serviceProviderType":"0",
+            "cities":[],
+            "city":"",
+            "showMiles":false,
+            "showTime":false,
+            "showBounded":false,
+            "showLicensed":false,
+            "skipedLicensed":true,
+            "showInsured":false,
+            "showVerified":false
+        };
+    
+    axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
     .then(response => {
         if (response.data.isSuccess) {
             let refinedData = [];

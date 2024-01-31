@@ -22,6 +22,7 @@ import { SignupRole } from "./routes/SignupRole";
 import { ServiceProviderOnboarding } from "./routes/ServiceProviderOnboarding";
 import { ForgotPassword } from "./routes/ForgotPassword";
 import { HOTenants } from "./routes/HOTenants";
+import { HOServiceProvider } from "./routes/HOServiceProvider";
 import { RequestService } from "./routes/RequestService";
 import { RequestQuote } from "./routes/RequestQuote";
 import { AddService } from "./routes/AddService";
@@ -135,6 +136,11 @@ export const Router = createBrowserRouter([
     {
         path:"/ho/tenants",
         element:<HOTenants/>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/ho/service-providers",
+        element:<HOServiceProvider/>,
         errorElement: <ErrorPage />
     },
     {

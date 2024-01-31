@@ -67,6 +67,19 @@ export interface Property {
     streetAddress: string;
 }
 
+export interface ServiceProviderDetail {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    company: string;
+    distanceCovered: string;
+    perHourRate: number;
+    isPublic: string;
+
+}
+
 export interface TenantProperty {
     name: string;
     streetAddress: string;
@@ -188,6 +201,13 @@ export interface RequestDetails {
     serviceType: ServiceType,
     status: string,
     timeline: Timeline
+}
+
+export interface TenantinPropertyDetail {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
