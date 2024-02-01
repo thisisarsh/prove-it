@@ -123,7 +123,7 @@ export interface Timeline {
 
 export interface ServiceType {
     id: string;
-    serviceType: string;
+    serviceType: string | null;
 }
 
 export interface Proposal {
@@ -138,15 +138,33 @@ export interface ServiceRequest {
     property: Property;
     timeline: Timeline;
     serviceType: ServiceType;
-    proposals: Proposal;
+    proposals: Proposal | null;
 }
 
-export interface ServiceRequestManager {
+export interface ServiceRequestSP {
+    createdAt: String;
     id: string;
-    property: Property;
-    timeline: Timeline;
-    serviceType: ServiceType;
-    proposals: Proposal;
+    status: String;
+    timeline: {
+      title: String;
+    }
+    initiator: {
+      firstName: String;
+      lastName: String;
+      id: String;
+    }
+    property: {
+      id: String;
+      name: String;
+      streetAddress: String
+    };
+    serviceRequest: {
+      detail: String;
+    }
+    serviceType: {
+      id: String;
+      serviceType: String;
+    }
 }
 
 export interface ServiceOffering {

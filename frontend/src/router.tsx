@@ -26,6 +26,7 @@ import { HOServiceProvider } from "./routes/HOServiceProvider";
 import { RequestService } from "./routes/RequestService";
 import { RequestQuote } from "./routes/RequestQuote";
 import { AddService } from "./routes/AddService";
+import { SendQuote } from "./routes/SendQuote";
 
 
 export const Router = createBrowserRouter([
@@ -161,6 +162,14 @@ export const Router = createBrowserRouter([
         element:
         <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
             <RequestQuote/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/send-quote",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
+            <SendQuote/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
     }
