@@ -26,7 +26,7 @@ router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
 router.get('/properties-owner', dashboardOwnerController.getProperties);
 router.post('/get-property-details', dashboardOwnerController.getPropertyDetails);
-router.post('/find-sp', dashboardOwnerController.findServiceProvider);
+router.post('/find-sp', serviceRequestController.getPrivateProviders);
 router.post('/properties-tenant', dashboardTenantController.getProperties);
 //router.post('/properties-service', dashboardServiceController.getProperties);
 router.get('/properties-tenant', dashboardTenantController.getProperties)
@@ -59,7 +59,7 @@ router.get('/ticket/manager/tickets', serviceRequestController.getManagerTicket)
 router.post('/service', serviceRequestController.addService);
 router.get('/user-services', dashboardServiceController.userServices);
 
-router.get('/private-providers', serviceRequestController.getPrivateProviders);
+router.post('/private-providers', serviceRequestController.getPrivateProviders);
 router.get('/request-details', serviceRequestController.getRequestDetails);
 router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);
 router.get('/approve-proposal', serviceRequestController.approveProposal);  

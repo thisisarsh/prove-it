@@ -9,6 +9,8 @@ interface SPCardProps {
 }
 
 export function ServiceProviderCard(props: SPCardProps) {
+
+    console.log(props.sp);
     return (
         <Card style={{width: '18rem'}}>
             <Card.Body>

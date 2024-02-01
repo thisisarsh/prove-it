@@ -221,4 +221,11 @@ export interface TenantinPropertyDetail {
     email: string;
 }
 
+export interface TenantinPropertyDetail {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
