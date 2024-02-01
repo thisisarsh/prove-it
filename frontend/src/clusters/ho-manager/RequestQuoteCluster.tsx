@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { RequestDetails, ServiceProvider, ServiceProviderWrapper } from "../../types";
+import { RequestDetails, ServiceProvider } from "../../types";
 import { Col, Row } from "react-bootstrap";
 import { ServiceProviderCard } from "../../components/ServiceProviderCard";
 import { ServiceRequestCard } from "../../components/ServiceRequestCard";
@@ -58,7 +58,9 @@ export function RequestQuoteCluster() {
         [user],
     );
 
+
     useEffect(() => {
+        if(serviceProviders.length == 0){
         fetch(PRIVATE_PROVIDERS_LINK, {
             method: "POST",
             headers: {
@@ -75,9 +77,7 @@ export function RequestQuoteCluster() {
          })
         .then(responseJson => {
             if (responseJson.isSuccess) {
-                console.log(responseJson.data);
                 setServiceProviders(responseJson.data);
-                console.log(serviceProviders);
             } else {
                 setError("Error: " + responseJson.message);
             }
@@ -91,7 +91,7 @@ export function RequestQuoteCluster() {
                 setError("Error: " + response.message);
             }
         })
-    }, [user, fetchData, PRIVATE_PROVIDERS_LINK, REQUEST_DETAILS_LINK, REQUEST_ID]);
+    }}, [user, fetchData, PRIVATE_PROVIDERS_LINK, REQUEST_DETAILS_LINK, REQUEST_ID, REQUEST_SERVICE_ID, REQUEST_PROPERTY_ID, serviceProviders]);
 
     async function handleSubmitRequest(sp: ServiceProvider) {
         setError(null);
@@ -124,6 +124,7 @@ export function RequestQuoteCluster() {
         })
         .then(responseJson => {
             if (responseJson.isSuccess) {
+                console.log(responseJson);
                 alert(responseJson.message);
                 navigate('/dashboard');
             } else {
@@ -161,15 +162,15 @@ export function RequestQuoteCluster() {
                 </>
             )}
 
-            {/*{!isLoading && serviceProviders.length > 0 && (*/}
-            {/*    <Row className="g-2">*/}
-            {/*        {serviceProviders.map((serviceProviderObj) => (*/}
-            {/*            <Col className="g-2">*/}
-            {/*                <ServiceProviderCard sp={serviceProviderObj.serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>*/}
-            {/*            </Col>*/}
-            {/*        ))}*/}
-            {/*    </Row>*/}
-            {/*)}*/}
+             {!isLoading && serviceProviders.length > 0 && (
+                <Row className="g-2">
+                    {serviceProviders.map((serviceProviderObj) => (
+                        <Col className="g-2">
+                            <ServiceProviderCard sp={serviceProviderObj} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
+                        </Col>
+                    ))}
+                </Row>
+            )} 
 
             {!isLoading && serviceProviders.length == 0 && (
                 <p>You don't have any private service providers! Start by inviting a service provider...</p>
