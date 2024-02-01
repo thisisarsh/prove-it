@@ -164,6 +164,10 @@ export interface DashboardServiceChild {
     serviceType: string;
 }
 
+export interface ServiceProviderWrapper {
+    serviceProvider: ServiceProvider[]
+}
+
 export interface ServiceProvider {
     email: string,
     id: string,

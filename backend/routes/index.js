@@ -59,7 +59,7 @@ router.get('/ticket/manager/tickets', serviceRequestController.getManagerTicket)
 router.post('/service', serviceRequestController.addService);
 router.get('/user-services', dashboardServiceController.userServices);
 
-router.post('/private-providers', serviceRequestController.getPrivateProviders);
+router.get('/private-providers', serviceRequestController.getPrivateProviders);
 router.get('/request-details', serviceRequestController.getRequestDetails);
 router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);   
 
