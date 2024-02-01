@@ -22,7 +22,7 @@ export function RequestQuoteCluster() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [serviceProviders, setServiceProviders] = useState<ServiceProviderWrapper[]>([]);
+    const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
 
     const fetchData = useCallback(
@@ -146,7 +146,7 @@ export function RequestQuoteCluster() {
                 <Row className="g-2">
                     {serviceProviders.map((serviceProviderObj) => (
                         <Col className="g-2">
-                            <ServiceProviderCard sp={serviceProviderObj.serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
+                            <ServiceProviderCard sp={serviceProviderObj} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
                         </Col>
                     ))}
                 </Row>
