@@ -12,6 +12,4 @@ for file in $BUILD_DIR/index-*.js; do
   fi
 done
 
-sed -i "/<\/title>/a $SCRIPT_TAG" $INDEX_HTML
-
 serve -l 8080 --single /usr/src/app/dist

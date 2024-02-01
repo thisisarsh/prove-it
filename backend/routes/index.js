@@ -62,6 +62,7 @@ router.get('/sp-service-requests', dashboardServiceController.getRequests);
 
 router.get('/private-providers', serviceRequestController.getPrivateProviders);
 router.get('/request-details', serviceRequestController.getRequestDetails);
-router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);   
+router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);
+router.get('/approve-proposal', serviceRequestController.approveProposal);  
 
 module.exports = router;

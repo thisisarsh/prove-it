@@ -90,8 +90,8 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setTickets(data);
-                //console.log("TICKETS");
-                //console.log(data);
+                console.log("TICKETS");
+                console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -105,6 +105,22 @@ export function DashboardOwnerCluster() {
         setSelectedProperty(property);
         setShowDeleteConfirmation(true);
     };
+
+    //function to check if a service request has a submitted proposal
+    const submittedProposalCount = (serviceRequest : ServiceRequest | undefined) : number => {
+
+        if (serviceRequest != undefined && Array.isArray(serviceRequest.proposals)) {
+            let submittedCount = 0;
+            for (let i = 0; i<serviceRequest.proposals?.length; i++) {
+                if (serviceRequest.proposals[i].status === "submitted") {
+                    submittedCount += 1
+                }
+            }
+            return submittedCount;
+        }
+
+        return 0;
+    }
 
     // Function to handle the confirmation of deletion
     const handleConfirmDelete = () => {
@@ -360,7 +376,7 @@ export function DashboardOwnerCluster() {
                         <thead className="dashboard-header">
                             <tr>
                                 <th className="dashboard-header">Service</th>
-                                <th>Provider</th>
+                                <th>Status</th>
                                 <th>Property</th>
                                 <th>Actions</th>
                             </tr>
@@ -377,7 +393,7 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            {"Unassigned"}
+                                            {userTicket.status}
                                         </td>
 
                                         <td>                                            
@@ -389,7 +405,16 @@ export function DashboardOwnerCluster() {
                                                 "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
                                                 Request quote
                                             </Button>
-                                        </td>
+                                            
+
+                                            {userTicket.status == "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
+                                                <Button className="standard-button ms-1"
+                                                onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
+                                                    View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
+                                                </Button>                                            
+                                            )}
+                                            
+                                        </td>   
                                     </tr>
                                 ))
                             ) : (

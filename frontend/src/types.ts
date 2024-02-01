@@ -42,6 +42,13 @@ export interface ServiceRequest {
     detail: string;
     startDate: string;
     endDate: string;
+    status: string;
+    proposalCount: number | undefined;
+    proposals: Proposal[] | undefined;
+    property: Property;
+    id: string;   
+    timeline: Timeline;
+    serviceType: ServiceType;
 }
 
 export interface PropertyJSON {
@@ -127,18 +134,26 @@ export interface ServiceType {
 }
 
 export interface Proposal {
-    id: string;
-    serviceRequestId: string;
-    initiatorId: string;
-    serviceProviderId: string;
+  id: string;
+  serviceRequestId: string;
+  initiatorId: string;
+  serviceProviderId: string;
+  serviceProvider: ServiceProvider;
+  quotePrice: number | undefined;
+  estimatedHours: number | undefined;
+  startDate: string | undefined;
+  endDate: string | undefined;
+  detail: string | undefined;
+  status: string;
 }
+
 
 export interface ServiceRequest {
     id: string;
     property: Property;
     timeline: Timeline;
     serviceType: ServiceType;
-    proposals: Proposal | null;
+    proposals: Proposal[] | undefined;
 }
 
 export interface ServiceRequestSP {
@@ -183,7 +198,7 @@ export interface DashboardServiceChild {
 }
 
 export interface ServiceProviderWrapper {
-    serviceProvider: ServiceProvider[]
+    serviceProvider: ServiceProvider
 }
 
 export interface ServiceProvider {
@@ -222,7 +237,8 @@ export interface RequestDetails {
     proposalCount: number,
     serviceType: ServiceType,
     status: string,
-    timeline: Timeline
+    timeline: Timeline,
+    proposals: Proposal[] | undefined,
 }
 
 export interface TenantinPropertyDetail {

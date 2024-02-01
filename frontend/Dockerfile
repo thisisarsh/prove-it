@@ -32,6 +32,8 @@ RUN npx vite build
 
 COPY scripts/startup.sh /usr/src/app/startup.sh
 
+RUN chmod -R 777 /usr/src/app/dist/assets
+
 RUN chmod +x /usr/src/app/startup.sh
 
 EXPOSE 8080
