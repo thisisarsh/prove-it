@@ -26,6 +26,7 @@ import { HOServiceProvider } from "./routes/HOServiceProvider";
 import { RequestService } from "./routes/RequestService";
 import { RequestQuote } from "./routes/RequestQuote";
 import { AddService } from "./routes/AddService";
+import { Proposals } from "./routes/Proposals";
 
 
 export const Router = createBrowserRouter([
@@ -161,6 +162,14 @@ export const Router = createBrowserRouter([
         element:
         <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
             <RequestQuote/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/proposals",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+            <Proposals/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
     }

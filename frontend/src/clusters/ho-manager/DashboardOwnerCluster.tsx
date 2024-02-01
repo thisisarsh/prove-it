@@ -90,8 +90,8 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setTickets(data);
-                //console.log("TICKETS");
-                //console.log(data);
+                console.log("TICKETS");
+                console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -360,7 +360,7 @@ export function DashboardOwnerCluster() {
                         <thead className="dashboard-header">
                             <tr>
                                 <th className="dashboard-header">Service</th>
-                                <th>Provider</th>
+                                <th>Status</th>
                                 <th>Property</th>
                                 <th>Actions</th>
                             </tr>
@@ -377,7 +377,7 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            {"Unassigned"}
+                                            {userTicket.status}
                                         </td>
 
                                         <td>                                            
@@ -389,7 +389,16 @@ export function DashboardOwnerCluster() {
                                                 "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
                                                 Request quote
                                             </Button>
-                                        </td>
+                                            
+
+                                            {userTicket.status == "active" && userTicket.proposalCount && (                                                
+                                                <Button className="standard-button ms-1"
+                                                onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
+                                                    View {userTicket.proposalCount} Proposal{userTicket.proposalCount > 1 && "s"}
+                                                </Button>                                            
+                                            )}
+                                            
+                                        </td>   
                                     </tr>
                                 ))
                             ) : (
