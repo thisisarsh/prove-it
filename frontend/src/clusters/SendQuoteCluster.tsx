@@ -9,6 +9,18 @@ import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/send-proposal";
+
+export type Proposal = {
+    id: string;
+    detail: string;
+    quotePrice: string;
+    quoteType: string;
+    estimatedHours: string;
+    startDate: string;
+    endDate: string;
+}
+
 export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
@@ -24,7 +36,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     const [endDate, setEndDate] = useState<Date>(new Date());
 
     const postData = useCallback(
-        async (url: string, method = "POST", body: JSON) => {
+        async (url: string, body: Proposal) => {
             const headers = new Headers();
             headers.append("Content-Type", "application/json");
 
@@ -32,7 +44,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 headers.append("Authorization", `Bearer ${user.token}`);
             }
             const requestOptions = {
-                method: method,
+                method: "POST",
                 headers: headers,
                 body: JSON.stringify(body)
             };
@@ -53,7 +65,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     );
 
     const handleSubmit = (e: React.MouseEvent) => {
-        let body = {
+        let body: Proposal = {
             id: ticket.id.toString(),
             detail: ticket.serviceRequest.detail.toString(),
             quotePrice: quotePrice.toString(),
@@ -64,16 +76,16 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         }
         console.log(body);
 
-        // postData(URL, body)
-        // .then((response) => {
-        //     if (response.isSuccess) {
-        //         console.log('SUCCESS POST SP QUOTE');
-        //         console.log(response.data);
-        //     } else {
-        //         setError(response.message);
-        //     }
-        // });
-        //navigate("/dashboard");
+        postData(INVITED_SIGNUP_LINK, body)
+        .then((response) => {
+            if (response.isSuccess) {
+                console.log('SUCCESS POST SP QUOTE');
+                console.log(response.data);
+                navigate("/dashboard");
+            } else {
+                setError(response.message);
+            }
+        });
     }
 
     return (
