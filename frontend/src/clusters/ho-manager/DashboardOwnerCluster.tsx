@@ -106,6 +106,22 @@ export function DashboardOwnerCluster() {
         setShowDeleteConfirmation(true);
     };
 
+    //function to check if a service request has a submitted proposal
+    const submittedProposalCount = (serviceRequest : ServiceRequest | undefined) : number => {
+
+        if (serviceRequest != undefined && Array.isArray(serviceRequest.proposals)) {
+            let submittedCount = 0;
+            for (let i = 0; i<serviceRequest.proposals?.length; i++) {
+                if (serviceRequest.proposals[i].status === "submitted") {
+                    submittedCount += 1
+                }
+            }
+            return submittedCount;
+        }
+
+        return 0;
+    }
+
     // Function to handle the confirmation of deletion
     const handleConfirmDelete = () => {
         fetch(window.config.SERVER_URL + "/deleteproperty", {
@@ -391,10 +407,10 @@ export function DashboardOwnerCluster() {
                                             </Button>
                                             
 
-                                            {userTicket.status == "active" && userTicket.proposalCount && (                                                
+                                            {userTicket.status == "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
                                                 <Button className="standard-button ms-1"
                                                 onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
-                                                    View {userTicket.proposalCount} Proposal{userTicket.proposalCount > 1 && "s"}
+                                                    View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
                                                 </Button>                                            
                                             )}
                                             
