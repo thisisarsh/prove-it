@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { ServiceRequestSP } from "../types";
-import { Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import ErrorMessageContainer from "../components/ErrorMessageContainer";
@@ -18,14 +17,14 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [quotePrice, setQuotePrice] = useState<number>(-1);
+    const [quotePrice, setQuotePrice] = useState<number>(0);
     const [quoteType, setQuoteType] = useState<String>('hourly');
-    const [estimatedHours, setEstimatedHours] = useState<number>(-1);
+    const [estimatedHours, setEstimatedHours] = useState<number>(0);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
 
-    const fetchData = useCallback(
-        async (url: string, method = "GET") => {
+    const postData = useCallback(
+        async (url: string, method = "POST", body: JSON) => {
             const headers = new Headers();
             headers.append("Content-Type", "application/json");
 
@@ -35,6 +34,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
             const requestOptions = {
                 method: method,
                 headers: headers,
+                body: JSON.stringify(body)
             };
 
             try {
@@ -53,35 +53,59 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     );
 
     const handleSubmit = (e: React.MouseEvent) => {
-        navigate("/dashboard");
+        let body = {
+            id: ticket.id.toString(),
+            detail: ticket.serviceRequest.detail.toString(),
+            quotePrice: quotePrice.toString(),
+            quoteType: quoteType.toString(),
+            estimatedHours: estimatedHours.toString(),
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString()
+        }
+        console.log(body);
+
+        // postData(URL, body)
+        // .then((response) => {
+        //     if (response.isSuccess) {
+        //         console.log('SUCCESS POST SP QUOTE');
+        //         console.log(response.data);
+        //     } else {
+        //         setError(response.message);
+        //     }
+        // });
+        //navigate("/dashboard");
     }
 
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
-            <FormGroup label="Quote Price" value="0" onChange={(e) => setQuotePrice(parseFloat(e.target.value))}/>
+            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => setQuotePrice(parseFloat(e.target.value))}/>
             <p style={{textAlign: "left"}}>Quote Type</p>
             <Form style={{textAlign: "center"}}>
                 <Form.Check
                     inline
                     type="radio"
-                    id="hourly"
+                    id="hourly-radio-button"
+                    name="group1"
                     label="Hourly"
+                    onChange={(e) => {setQuoteType("hourly")}}
                     defaultChecked
                 />
                 <Form.Check
                     inline
                     type="radio"
-                    id="fixed"
+                    id="fixed-radio-button"
+                    name="group1"
                     label="Fixed"
+                    onChange={(e) => {setQuoteType("fixed")}}
                 />
             </Form>
             <br></br>
-            <FormGroup label="Estimated Hours" value="price" onChange={(e) => setEstimatedHours(parseInt(e.target.value))}/>
+            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(e) => setEstimatedHours(parseInt(e.target.value))}/>
             <p>Start Date</p>
-            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
             <p>End Date</p>
-            <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+            <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} />
             <br></br>
             <button className="delete-button" onClick={(e) => handleSubmit(e)}>Submit Quote</button>
         </>
