@@ -7,6 +7,7 @@ stages:
   - test
   - release
   - deploy
+  - vuln-scan
   - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
@@ -21,6 +22,10 @@ variables:
   APP_NAME_TEST: null
   APP_NAME_STAGING: null
   APP_NAME_PROD: null
+
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
 .before_script_template:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -529,6 +534,26 @@ deploy-prod-client:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s
   environment: production
+
+zap_baseline_scan:
+  stage: vuln-scan
+  image: docker:19.03.12
+  only:
+    - develop
+  script:
+    - |
+      set +e  # Disable 'exit on error'
+      docker run --rm -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+      -t http://ht-website-ht-uat-coop.apps.prod.htuslab2.com/ -g gen.conf -r /zap/wrk/test-report.html
+      ZAP_EXIT_CODE=$?
+      set -e  # Re-enable 'exit on error'
+      if [ $ZAP_EXIT_CODE -ne 0 ]; then
+        echo "ZAP scan exited with code $ZAP_EXIT_CODE"
+      fi
+  artifacts:
+    paths:
+      - test-report.html
+
 clear-test-env:
   stage: cleanup
   image: quay.io/openshift/origin-cli
