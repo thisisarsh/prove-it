@@ -27,7 +27,7 @@ export function RequestQuoteCluster() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [serviceProviders, setServiceProviders] = useState<ServiceProviderWrapper[]>([]);
+    const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
 
     const fetchData = useCallback(
@@ -75,7 +75,9 @@ export function RequestQuoteCluster() {
          })
         .then(responseJson => {
             if (responseJson.isSuccess) {
+                console.log(responseJson.data);
                 setServiceProviders(responseJson.data);
+                console.log(serviceProviders);
             } else {
                 setError("Error: " + responseJson.message);
             }
@@ -159,15 +161,15 @@ export function RequestQuoteCluster() {
                 </>
             )}
 
-            {!isLoading && serviceProviders.length > 0 && (
-                <Row className="g-2">
-                    {serviceProviders.map((serviceProviderObj) => (
-                        <Col className="g-2">
-                            <ServiceProviderCard sp={serviceProviderObj.serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
-                        </Col>
-                    ))}
-                </Row>
-            )}
+            {/*{!isLoading && serviceProviders.length > 0 && (*/}
+            {/*    <Row className="g-2">*/}
+            {/*        {serviceProviders.map((serviceProviderObj) => (*/}
+            {/*            <Col className="g-2">*/}
+            {/*                <ServiceProviderCard sp={serviceProviderObj.serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>*/}
+            {/*            </Col>*/}
+            {/*        ))}*/}
+            {/*    </Row>*/}
+            {/*)}*/}
 
             {!isLoading && serviceProviders.length == 0 && (
                 <p>You don't have any private service providers! Start by inviting a service provider...</p>

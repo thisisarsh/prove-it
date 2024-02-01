@@ -163,6 +163,8 @@ exports.getPrivateProviders = (req, res) => {
 
     let headers = HEADERS;
     headers.Authorization = req.headers.authorization;
+    console.log(req.body.childId);
+    console.log(req.body.propertyId);
 
     let findServiceProviderObject =
         {
@@ -184,7 +186,7 @@ exports.getPrivateProviders = (req, res) => {
     .then(response => {
         if (response.data.isSuccess) {
             let refinedData = [];
-            
+            console.log(response.data.data);
             //extract the service provider information from the reponse objects
             for (let i=0; i<response.data.data.length; i++) {
                 refinedData.push(response.data.data[i].serviceProvider);

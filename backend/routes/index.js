@@ -26,7 +26,7 @@ router.get('/propertytypes', controllerProperty.getPropertyTypes);
 router.post('/set-role', controller.setRole)
 router.get('/properties-owner', dashboardOwnerController.getProperties);
 router.post('/get-property-details', dashboardOwnerController.getPropertyDetails);
-router.post('/find-sp', dashboardOwnerController.findServiceProvider);
+router.post('/find-sp', serviceRequestController.getPrivateProviders);
 router.post('/properties-tenant', dashboardTenantController.getProperties);
 //router.post('/properties-service', dashboardServiceController.getProperties);
 router.get('/properties-tenant', dashboardTenantController.getProperties)
