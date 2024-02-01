@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { TenantProperty, ServiceRequest } from "../../types";
+import  Offcanvas  from 'react-bootstrap/Offcanvas';
+import Nav from 'react-bootstrap/Nav'
 
 import "../../styles/pages/dashboard.css";
 
@@ -25,6 +27,10 @@ export function DashboardTenantCluster() {
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const toggleOffcanvas = () => {
+        setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -78,32 +84,31 @@ export function DashboardTenantCluster() {
         }
     }, [user, user?.token]);
 
-    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
-
-    // Function to toggle the nav panel
-    const toggleNavPanel = () => {
-        setIsNavPanelVisible(!isNavPanelVisible);
-    };
-
     return (
         <div className="dashboard-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Tenant</h1>
-                <button className="menu-toggle-button" onClick={toggleNavPanel}>
-                    ☰
+                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
+                        ☰
                 </button>
             </div>
 
             {/* Nav Panel */}
-            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
-                {/* List your navigation options here */}
-                <span className="user-icon">👤</span>
-                <a onClick={() => (navigate("/invite/serviceprovider"))}>Invite Service Provider</a>
-                <div className="logout-container">
+            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav>
+                    <ul className="nav-list">
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                        </li>
+                    </ul>
+                    </Nav>
                     <button className="logout-button" onClick={logout}>Log out</button>
-                </div>
-                {/* Add more links as needed */}
-            </div>
+                </Offcanvas.Body>
+            </Offcanvas>
                 {/* Property block */}
                 <div className="properties-container">
                     <h1 className="dashboard-label">Properties</h1>
@@ -181,10 +186,6 @@ export function DashboardTenantCluster() {
                         </tr>
                     </table>
                 </div>
-                {/* Nav Panel Overlay */}
-                {isNavPanelVisible && (
-                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
-                )}
                 {/* Footer */}
                 <footer className="dashboard-footer">
                 <div className="footer-content">

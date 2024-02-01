@@ -1,5 +1,3 @@
-@import 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css';
-
 html,
 body {
     margin: 0;
@@ -14,7 +12,7 @@ body {
     background: #f4f7fa;
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
-    color: #495057;
+    padding-top: 3rem;
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -31,7 +29,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -55,34 +53,6 @@ body {
 .account-icon {
     /* Add your styles here, for example: */
     font-size: 1.5rem;
-}
-
-/* Navigation panel styles */
-.nav-panel {
-    background-color: #fff; 
-    border-left: 1px solid #ddd; 
-    position: fixed; 
-    top: 0;
-    bottom: 0;
-    right: -250px; 
-    width: 250px;
-    transition: all 0.3s;
-    padding: 1rem;
-    z-index: 1050; 
-}
-
-/* Visible class for showing the nav panel */
-.visible {
-    left: 0;
-}
-
-/* Nav panel link styles */
-.nav-panel a {
-    color: #194185; 
-    margin-bottom: 0.5rem; 
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem; 
 }
 
 /* Logout button styles */
@@ -110,12 +80,11 @@ body {
     padding-right: 1rem; 
     padding-bottom: 0.75rem;
     width: 100%;
-    margin-top: 4rem;
 }
 
 .new-request-container,
-.properties-container{
-    padding-top: 24px;
+.properties-container {
+    padding-top: 4rem;
 }
 
 /* Adjust the label for the properties to match the Services label */
@@ -146,15 +115,11 @@ body {
 /* Table header styles */
 .dashboard-table .dashboard-header {
     background: #e9ecef; 
-    color: #3a3e42; 
+    color:#333435;
     border-top: none;
     margin-top: 8rem;
 }
 
-/* Table data cell styles */
-.dashboard-table td {
-    font-weight: bold;
-}
 .dashboard-table th,
 .dashboard-table td {
     border: 1px solid #dee2e6; 
@@ -187,7 +152,8 @@ body {
 /* Add property and Request service button styles */
 .add-property-button,
 .request-service-button,
-.delete-button {
+.delete-button,
+.add-service-buttom {
     background-color: #194185;
     color: white;
     border-radius: 0.25rem;
@@ -197,10 +163,15 @@ body {
     cursor: pointer;
 }
 
+.add-service-buttom {
+    margin: 1rem;
+}
+
 /* Hover effect for buttons */
 .add-property-button:hover,
 .request-service-button:hover,
-.delete-button:hover {
+.delete-button:hover,
+.add-service-buttom:hover {
     background-color: #194185;
 }
 
@@ -242,13 +213,23 @@ body {
     margin-top: 1rem;
 }
 
-/* Overlay for navigation panel */
-.nav-panel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1040; 
+/* Custom styles for the tab headers */
+.custom-tab-header {
+    background-color: #e9ecef;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+    border-radius: 25px 25px 0 0;
+}
+
+.add-service-tab:hover,
+.custom-tab-link:hover {
+    border-radius: 5px 5px 0 0;
+    background-color: lightblue; /* Change background color on hover */
+}
+
+/* Custom styles for the tab content */
+.custom-tab-content {
+    background-color: white;
+    padding: 15px; /* Adjust padding as needed */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+    border-radius: 0 0 25px 25px;
 }

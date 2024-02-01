@@ -11,6 +11,9 @@ import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail } from "../../types";
+import  Offcanvas  from 'react-bootstrap/Offcanvas';
+import Nav from 'react-bootstrap/Nav'
+
 
 import "../../styles/pages/dashboard.css";
 import { Button } from "react-bootstrap";
@@ -34,13 +37,15 @@ export function DashboardOwnerCluster() {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [showTenant, setShowTenant] = useState(false);
-
-    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
-
     
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
+
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const toggleOffcanvas = () => {
+        setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -225,36 +230,48 @@ export function DashboardOwnerCluster() {
         setShowTenant(false);
     }
     
-    // Function to toggle the nav panel
-    const toggleNavPanel = () => {
-        setIsNavPanelVisible(!isNavPanelVisible);
-    };
 
     return (
     <body>
         <div className="dashboard-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
-                <button className="menu-toggle-button" onClick={toggleNavPanel}>
-                    ☰
+                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
+                        ☰
                 </button>
             </div>
 
             {/* Nav Panel */}
-            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
-                {/* List your navigation options here */}
-                <span className="user-icon">👤</span>
-                <a onClick={() => navigate("/addproperty")}>Add Property</a>
-                <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
-                <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
-                <a onClick={() => navigate("/property")}>Property</a>
-                <a onClick={() => navigate("/ho/tenants")}>Tenants</a>
-                <a onClick={() => navigate("/ho/service-providers")}>Service Provider</a>
-                <div className="logout-container">
+            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav>
+                    <ul className="nav-list">
+                        <li>
+                        <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
+                        </li>
+                    </ul>
+                    </Nav>
                     <button className="logout-button" onClick={logout}>Log out</button>
-                </div>
-                {/* Add more links as needed */}
-            </div>
+                </Offcanvas.Body>
+            </Offcanvas>
                 {/* Property block */}
                 <div className="properties-container">
                     <h1 className="dashboard-label">Properties</h1>
@@ -397,10 +414,6 @@ export function DashboardOwnerCluster() {
                         </tr>
                     </table>
                 </div>
-            {/* Nav Panel Overlay */}
-                {isNavPanelVisible && (
-                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
-            )}
             {/* Footer */}
             <footer className="dashboard-footer">
                 <div className="footer-content">
@@ -437,42 +450,52 @@ export function DashboardOwnerCluster() {
                                 <>
                                     <tr>
                                         <td>Property Name: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.name}</td>
                                     </tr>
                                     <tr>
                                         <td>Street Adress: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.streetAddress}</td>
                                     </tr>
                                     <tr>
                                         <td>City: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.cityName}</td>
                                     </tr>
                                     <tr>
                                         <td>County: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.countyName}</td>
                                     </tr>
                                     <tr>
                                         <td>State: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.stateName}</td>
                                     </tr>
                                     <tr>
                                         <td>Zip Code: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.zipcode}</td>
                                     </tr>
                                     <tr>
                                         <td>Property Type: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.propertyType}</td>
                                     </tr>
                                     <tr>
                                         <td>Rent: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.rent}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Primary: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.isPrimary}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Tenant Active: </td>
+                                        <td>‎ </td>
                                         <td>{propertyDetail.isTenantActive}</td>
                                     </tr>
                                 </>
@@ -488,11 +511,11 @@ export function DashboardOwnerCluster() {
                 <button onClick={handleCloseDetail}>
                     Close
                 </button>
-                 </Modal.Footer>
+                </Modal.Footer>
             </Modal>
 
-             {/* Show tenant in property Popup */}
-             <Modal show={showTenant} onHide={handleCloseTenant}>
+            {/* Show tenant in property Popup */}
+            <Modal show={showTenant} onHide={handleCloseTenant}>
                 <Modal.Header closeButton>
                     <Modal.Title>Tenant in Property</Modal.Title>
                 </Modal.Header>
@@ -533,7 +556,7 @@ export function DashboardOwnerCluster() {
                 <button onClick={handleCloseTenant}>
                     Close
                 </button>
-                 </Modal.Footer>
+                </Modal.Footer>
             </Modal>
         </div>
     </body>

@@ -15,9 +15,11 @@ import { useNavigate } from "react-router-dom";
 
 import "../../styles/pages/dashboard.css";
 import { DashboardServiceParent } from "../../types";
-import { Accordion } from "react-bootstrap";
+import  Tab  from "react-bootstrap/Tab";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
+import  Offcanvas  from 'react-bootstrap/Offcanvas';
+import Nav from 'react-bootstrap/Nav'
 /**
  *
  * @returns Void
@@ -34,6 +36,10 @@ export function DashboardServiceCluster() {
     //const [completedRequests, setCompletedRequests] = useState<ServiceRequest[]>([]);
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const toggleOffcanvas = () => {
+        setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
 
 
     const fetchData = useCallback(
@@ -83,34 +89,40 @@ export function DashboardServiceCluster() {
 
     //console.log(properties);
 
-    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
-
-    // Function to toggle the nav panel
-    const toggleNavPanel = () => {
-        setIsNavPanelVisible(!isNavPanelVisible);
-    };
-
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
                 <h1 className="dashboard-title">Dashboard Service Provider</h1>
-                <button className="menu-toggle-button" onClick={toggleNavPanel}>
-                    ☰
+                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
+                        ☰
                 </button>
             </div>
 
             {/* Nav Panel */}
-            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
-                {/* List your navigation options here */}
-                <span className="user-icon">👤</span>
-                <a onClick={() => navigate("/add-service")}>Add a service</a>
-                <a onClick={() => navigate("/services")}>Service Request</a>
-                <a onClick={() => navigate("/clients")}>Clients</a>
-                <a onClick={() => navigate("/services/complete")}>Completed Request</a>
-                <div className="logout-container">
+            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav>
+                    <ul className="nav-list">
+                        <li>
+                        <Nav.Link onClick={() => navigate("/add-service")}>Add a service</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/services")}>Service Request</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/clients")}>Clients</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/services/complete")}>Completed Request</Nav.Link>
+                        </li>
+                    </ul>
+                    </Nav>
                     <button className="logout-button" onClick={logout}>Log out</button>
-                </div>
-            </div>
+                </Offcanvas.Body>
+            </Offcanvas>
 
             {error && <ErrorMessageContainer message={error}/>}
             {isLoading && <Spinner/>}
@@ -142,21 +154,33 @@ export function DashboardServiceCluster() {
                 <h1 className="dashboard-label">My Services</h1>
 
                 {dashboardServices ? (
-                    <Accordion defaultActiveKey={"0"}>
+                    <Tab.Container defaultActiveKey="0">
+                    <Nav variant="tabs" className="custom-tab-header">
                         {dashboardServices.map((dashboardService, index) => (
-                            <Accordion.Item eventKey={index.toString()}>
-                                <Accordion.Header>{dashboardService.serviceType}</Accordion.Header>
-                                <Accordion.Body>
-                                    {dashboardService.childs.map(childService => (
-                                        <>
-                                            {childService.serviceType}
-                                            <br/>
-                                        </>
-                                    ))}
-                                </Accordion.Body>
-                            </Accordion.Item>
+                            <Nav.Item key={index.toString()} className="custom-tab-link">
+                                <Nav.Link eventKey={index.toString()}>{dashboardService.serviceType}</Nav.Link>
+                            </Nav.Item>
+                            
                         ))}
-                    </Accordion>
+                        <Nav.Item>
+                            <Nav.Link className="add-service-tab" onClick={() => {navigate("/add-service")}}>
+                                <span style={{ fontWeight: 'bold' }}>Add a service +</span>
+                            </Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                    <Tab.Content>
+                        {dashboardServices.map((dashboardService, index) => (
+                            <Tab.Pane key={index} eventKey={index.toString()} className="custom-tab-content">
+                                {dashboardService.childs.map(childService => (
+                                    <div key={childService.serviceType}>
+                                        {childService.serviceType}
+                                        <br/>
+                                    </div>
+                                ))}
+                            </Tab.Pane>
+                        ))}
+                    </Tab.Content>
+                </Tab.Container>
                 ) : (
                     <span>
                         You haven't added any services yet! Start by
@@ -208,10 +232,6 @@ export function DashboardServiceCluster() {
                     </tbody>
                 </table>
             </div>
-                {/* Nav Panel Overlay */}
-                {isNavPanelVisible && (
-                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
-                )}
                 {/* Footer */}
                 <footer className="dashboard-footer">
                 <div className="footer-content">
