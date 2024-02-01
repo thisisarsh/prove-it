@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { RequestDetails, ServiceProvider} from "../../types";
+import { RequestDetails, ServiceProvider, ServiceProviderWrapper } from "../../types";
 import { Col, Row } from "react-bootstrap";
 import { ServiceProviderCard } from "../../components/ServiceProviderCard";
 import { ServiceRequestCard } from "../../components/ServiceRequestCard";
@@ -10,24 +10,19 @@ import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
 
 export function RequestQuoteCluster() {
-
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-
 
     const PRIVATE_PROVIDERS_LINK = window.config.SERVER_URL + "/private-providers";
     const REQUEST_DETAILS_LINK = window.config.SERVER_URL + "/request-details";
     const REQUEST_TICKET_LINK = window.config.SERVER_URL + "/service-request/ticket";
     const REQUEST_ID = searchParams.get('id');
-    const REQUEST_PROPERTY_ID = searchParams.get('proId');
-    const REQUEST_SERVICE_ID = searchParams.get('serId');
     
-
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
+    const [serviceProviders, setServiceProviders] = useState<ServiceProviderWrapper[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
 
     const fetchData = useCallback(
@@ -59,31 +54,19 @@ export function RequestQuoteCluster() {
     );
 
     useEffect(() => {
-        fetch(PRIVATE_PROVIDERS_LINK, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + user?.token
-            },
-            body: JSON.stringify({childId: REQUEST_SERVICE_ID, propertyId: REQUEST_PROPERTY_ID})
-        })
+        fetchData(PRIVATE_PROVIDERS_LINK)
         .then(response => {
-            if (!response.ok) {
-                 setError("Error: Network response was not ok");
+            if(!response.isSuccess) {
+                setError("Error: Network response was not ok");
             }
-            return response.json();
-         })
-        .then(responseJson => {
-            if (responseJson.isSuccess) {
-                setServiceProviders(responseJson.data);
-            } else {
-                setError("Error: " + responseJson.message);
-            }
+            console.log(response.data);
+
+            setServiceProviders(response.data);
         });
 
         fetchData(REQUEST_DETAILS_LINK + "?id=" + REQUEST_ID)
         .then(response => {
-            if (response.isSuccess) {
+            if(response.isSuccess) {
                 setRequestDetails(response.data);
             } else {
                 setError("Error: " + response.message);
@@ -161,9 +144,9 @@ export function RequestQuoteCluster() {
 
             {!isLoading && serviceProviders.length > 0 && (
                 <Row className="g-2">
-                    {serviceProviders.map((serviceProvider) => (
+                    {serviceProviders.map((serviceProviderObj) => (
                         <Col className="g-2">
-                            <ServiceProviderCard sp={serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
+                            <ServiceProviderCard sp={serviceProviderObj.serviceProvider} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
                         </Col>
                     ))}
                 </Row>

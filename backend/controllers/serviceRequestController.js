@@ -7,9 +7,9 @@ const TENANT_PROPERTY_LINK = "https://apiqa.hometrumpeter.com/property-managemen
 const REQUEST_TIMELINES_LINK = "https://apiqa.hometrumpeter.com/service-provider/timelines";
 const INITIATED_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/initiated";
 const GET_TENANT_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/tenant/tickets";
-const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/open-tickets";
+const GET_MANAGER_TICKET_LINK = "https://apiqa.hometrumpeter.com/service-request/initiator/service-requests";
 const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/service";
-const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/sp";
+const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/customer/sp";
 const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request-detail/"
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 
@@ -145,25 +145,11 @@ exports.getManagerTicket = (req, res) => {
 
     let Headers = HEADERS;
     Headers.Authorization = req.headers.authorization;
-
-    async function sr_getall(service_requests) {
-        let responseArr = [];
-        for(const sr of service_requests) {
-            let response = await axios.get(`https://apiqa.hometrumpeter.com/service-provider/services-request-detail/${sr.id}`, {headers: Headers})
-            responseArr.push(response.data.data)
-        }
-        
-        return(responseArr);
-    }
     
     axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
     .then(response => {
         service_requests = response.data.data.serviceRequests;
-
-        return sr_getall(service_requests)
-    })
-    .then(srList => {
-        res.send(srList);
+        res.send(service_requests);
     })
     .catch(error => {
         console.error(error);
@@ -176,37 +162,10 @@ exports.getPrivateProviders = (req, res) => {
 
     let headers = HEADERS;
     headers.Authorization = req.headers.authorization;
-
-    let findServiceProviderObject = 
-        {
-            "typeId": req.body.childId,
-            "propertyId": req.body.propertyId,
-            "serviceProviderType":"0",
-            "cities":[],
-            "city":"",
-            "showMiles":false,
-            "showTime":false,
-            "showBounded":false,
-            "showLicensed":false,
-            "skipedLicensed":true,
-            "showInsured":false,
-            "showVerified":false
-        };
     
-    axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
+    axios.get(FIND_SERVICE_PROVIDER_LINK, {headers: headers})
     .then(response => {
-        if (response.data.isSuccess) {
-            let refinedData = [];
-            
-            //extract the service provider information from the reponse objects
-            for (let i=0; i<response.data.data.length; i++) {
-                refinedData.push(response.data.data[i].serviceProvider);
-            }
-
-            res.send({isSuccess: true, data: refinedData});
-        } else {
-            res.send(response.data);
-        }
+        res.send(response.data);
     })
     .catch(error => {
         console.error(error);
