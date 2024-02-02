@@ -53,71 +53,35 @@ exports.getPropertyDetails = (req, res) => {
     //console.log(req.body.stateId);
 
     axios.get(GET_PROPERTY_DETAIL_LINK + req.body.id, {'headers': HEADERS})
-    .then(response => {
-        if (response.data?.isSuccess) {
-            //console.log("RESPONSE");
-            //console.log(response.data.data);
-            const propertyData = response.data.data;
-            refinedData = {
-                name: propertyData.name,
-                cityName: propertyData.city.name,
-                countyName: propertyData.county.name,
-                stateName: propertyData.state.name,
-                propertyType: propertyData.propertyType.type,
-                isDeletable: propertyData.isDeletable,
-                isPrimary: propertyData.isPrimary.toString(),
-                isTenantActive: propertyData.isTenantActive.toString(),
-                streetAddress: propertyData.streetAddress,
-                zipcode: propertyData.zipcode.code,
-                rent: propertyData.rent,
-                isSuccess: true
+        .then(response => {
+            if (response.data?.isSuccess) {
+                //console.log("RESPONSE");
+                //console.log(response.data.data);
+                const propertyData = response.data.data;
+                refinedData = {
+                    name: propertyData.name,
+                    cityName: propertyData.city.name,
+                    countyName: propertyData.county.name,
+                    stateName: propertyData.state.name,
+                    propertyType: propertyData.propertyType.type,
+                    isDeletable: propertyData.isDeletable,
+                    isPrimary: propertyData.isPrimary.toString(),
+                    isTenantActive: propertyData.isTenantActive.toString(),
+                    streetAddress: propertyData.streetAddress,
+                    zipcode: propertyData.zipcode.code,
+                    rent: propertyData.rent,
+                    isSuccess: true
+                }
+                //const refinedDataArray = [refinedData];
+                //return res.send(refinedDataArray ?? []);
+                return res.send(refinedData ?? {});
+
+            } else {
+                return res.send({error: response.data.message});
             }
-            //const refinedDataArray = [refinedData];
-            //return res.send(refinedDataArray ?? []);
-            return res.send(refinedData ?? {});
-
-        } else {
-            return res.send({error: response.data.message});
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        res.send({error: error.message});
-    });
-}
-
-exports.findServiceProvider = (req, res) => {
-    let findServiceProviderHeaders = HEADERS;
-    findServiceProviderHeaders.Authorization = req.headers.authorization;
-
-    let findServiceProviderObject = 
-        {
-            "typeId": req.body.childId,
-            "propertyId": req.body.propertyId,
-            "serviceProviderType":"0",
-            "cities":[],
-            "city":"",
-            "showMiles":false,
-            "showTime":false,
-            "showBounded":false,
-            "showLicensed":false,
-            "skipedLicensed":true,
-            "showInsured":false,
-            "showVerified":false
-        };
-
-
-    axios.post(FIND_SERVICE_PROVIDER, findServiceProviderObject, {'headers': getPropertiesHeaders})
-    .then(response => {
-        if (response.data?.isSuccess) {
-            console.log(response.data.data ?? []);
-            return res.send(response.data.data ?? []);
-        } else {
-            return res.send({error: response.data.message});
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        res.send({error: error.message});
-    });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            res.send({error: error.message});
+        });
 }
