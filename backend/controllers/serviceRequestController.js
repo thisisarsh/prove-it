@@ -184,6 +184,10 @@ exports.getPrivateProviders = (req, res) => {
         };
 
     axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
+    //console.log(req.body.childId);
+    //console.log(req.body.propertyId);
+
+    axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
     .then(response => {
         if (response.data.isSuccess) {
             let refinedData = [];

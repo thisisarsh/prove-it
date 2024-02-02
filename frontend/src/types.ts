@@ -49,6 +49,13 @@ export interface ServiceRequest {
     id: string;   
     timeline: Timeline;
     serviceType: ServiceType;
+    status: string;
+    proposalCount: number | undefined;
+    proposals: Proposal[] | undefined;
+    property: Property;
+    id: string;   
+    timeline: Timeline;
+    serviceType: ServiceType;
 }
 
 export interface PropertyJSON {
@@ -199,6 +206,7 @@ export interface DashboardServiceChild {
 
 export interface ServiceProviderWrapper {
     serviceProvider: ServiceProvider
+    serviceProvider: ServiceProvider
 }
 
 export interface ServiceProvider {
@@ -239,6 +247,13 @@ export interface RequestDetails {
     status: string,
     timeline: Timeline,
     proposals: Proposal[] | undefined,
+}
+
+export interface TenantinPropertyDetail {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
 }
 
 export interface TenantinPropertyDetail {
