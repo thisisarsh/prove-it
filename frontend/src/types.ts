@@ -206,7 +206,6 @@ export interface DashboardServiceChild {
 
 export interface ServiceProviderWrapper {
     serviceProvider: ServiceProvider
-    serviceProvider: ServiceProvider
 }
 
 export interface ServiceProvider {
