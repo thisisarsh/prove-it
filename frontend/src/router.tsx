@@ -27,7 +27,7 @@ import { RequestService } from "./routes/RequestService";
 import { RequestQuote } from "./routes/RequestQuote";
 import { AddService } from "./routes/AddService";
 import { Proposals } from "./routes/Proposals";
-
+import { SendQuote } from "./routes/SendQuote";
 
 export const Router = createBrowserRouter([
     {
@@ -170,6 +170,14 @@ export const Router = createBrowserRouter([
         element:
         <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
             <Proposals/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/send-quote",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
+            <SendQuote/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
     }

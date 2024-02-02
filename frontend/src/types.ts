@@ -49,6 +49,13 @@ export interface ServiceRequest {
     id: string;   
     timeline: Timeline;
     serviceType: ServiceType;
+    status: string;
+    proposalCount: number | undefined;
+    proposals: Proposal[] | undefined;
+    property: Property;
+    id: string;   
+    timeline: Timeline;
+    serviceType: ServiceType;
 }
 
 export interface PropertyJSON {
@@ -130,29 +137,56 @@ export interface Timeline {
 
 export interface ServiceType {
     id: string;
-    serviceType: string;
+    serviceType: string | null;
 }
 
 export interface Proposal {
-    id: string;
-    serviceRequestId: string;
-    initiatorId: string;
-    serviceProviderId: string;
-    serviceProvider: ServiceProvider;
-    quotePrice: number | undefined;
-    estimatedHours: number | undefined;
-    startDate: string | undefined;
-    endDate: string | undefined;
-    detail: string | undefined;
-    status: string;
+  id: string;
+  serviceRequestId: string;
+  initiatorId: string;
+  serviceProviderId: string;
+  serviceProvider: ServiceProvider;
+  quotePrice: number | undefined;
+  estimatedHours: number | undefined;
+  startDate: string | undefined;
+  endDate: string | undefined;
+  detail: string | undefined;
+  status: string;
 }
 
-export interface ServiceRequestManager {
+
+export interface ServiceRequest {
     id: string;
     property: Property;
     timeline: Timeline;
     serviceType: ServiceType;
-    proposals: Proposal;
+    proposals: Proposal[] | undefined;
+}
+
+export interface ServiceRequestSP {
+    createdAt: string;
+    id: string;
+    status: string;
+    timeline: {
+      title: string;
+    }
+    initiator: {
+      firstName: string;
+      lastName: string;
+      id: string;
+    }
+    property: {
+      id: string;
+      name: string;
+      streetAddress: string
+    };
+    serviceRequest: {
+      detail: string;
+    }
+    serviceType: {
+      id: string;
+      serviceType: string;
+    }
 }
 
 export interface ServiceOffering {

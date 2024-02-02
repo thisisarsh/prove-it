@@ -10,12 +10,11 @@ import { useLogout } from "../../hooks/useLogout";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-//import { Property } from "../types.ts";
-//import { ServiceRequest } from "../types.ts";
 
 import "../../styles/pages/dashboard.css";
-import { DashboardServiceParent } from "../../types";
+import { DashboardServiceParent, ServiceRequestSP } from "../../types";
 import  Tab  from "react-bootstrap/Tab";
+import Modal from 'react-bootstrap/Modal';
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
@@ -29,6 +28,9 @@ export function DashboardServiceCluster() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
+    const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
+    const [showDetail, setShowDetail] = useState<boolean>(false);
+    const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
 
     //const [properties, setProperties] = useState<Property[] | null>(null);
     //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
@@ -40,7 +42,6 @@ export function DashboardServiceCluster() {
     const toggleOffcanvas = () => {
         setIsOffcanvasOpen(!isOffcanvasOpen);
     };
-
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -84,10 +85,40 @@ export function DashboardServiceCluster() {
         .catch(error => {
             console.error(error);
             setError('An error occured');
+        });
+
+        fetchData(window.config.SERVER_URL + "/sp-service-requests")
+        .then(response => {
+            setIsLoading(false);
+            if (response.isSuccess) {
+                setTickets(response.data);
+            } else {
+                setError(response.message);
+            }
         })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured');
+        });
     }, [user, fetchData]);
 
-    //console.log(properties);
+    const handleDetailClick = (id: string) => {
+        const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
+            return(obj.id === id);
+        })[0]
+        console.log(ticket);
+        setTicketDetail(ticket);
+        setShowDetail(true);
+    }
+
+    const handleCloseDetail = () => {
+        setTicketDetail(undefined);
+        setShowDetail(false);
+    }
+
+    const handleQuoteClick = (ticket: ServiceRequestSP) => {
+        navigate("/send-quote", {state: {ticket: ticket}});
+    }
 
     return (
         <div className="dashboard-container">
@@ -139,12 +170,28 @@ export function DashboardServiceCluster() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colSpan={3}>
-                                You have no new service request.
-                            </td>
-                        </tr>
-                    </tbody>
+                            {isLoading ? (
+                                <td colSpan={2}>Loading Properties...</td>
+                            ) : Array.isArray(tickets) &&
+                                tickets.length > 0 ? (
+                                tickets.map((ticket) => (
+                                    <tr key={ticket.id}>
+                                        <td>{ticket.serviceType.serviceType}</td>
+                                        <td>{ticket.property.name}</td>
+                                        <td>
+                                            <button className="delete-button" onClick={() => handleDetailClick(ticket.id)}>Details</button>
+                                            <button className="delete-button" onClick={() => handleQuoteClick(ticket)}>Quote</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={3}>
+                                        You have no new service request.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
                 </table>
             </div>
 
@@ -194,7 +241,7 @@ export function DashboardServiceCluster() {
             <div className="request-container mb-5">
                 <h1 className="dashboard-label">Current Requests</h1>
                 <table className="dashboard-table">
-                <thead className="dashboard-header">    
+                    <thead className="dashboard-header">    
                         <tr>
                             <th>Service</th>
                             <th>Property</th>
@@ -216,7 +263,7 @@ export function DashboardServiceCluster() {
             <div className="request-container mb-5">
                 <h1 className="dashboard-label">Completed Requests</h1>
                 <table className="dashboard-table">
-                <thead className="dashboard-header">
+                    <thead className="dashboard-header">
                         <tr>
                             <th>Service</th>
                             <th>Property</th>
@@ -232,17 +279,69 @@ export function DashboardServiceCluster() {
                     </tbody>
                 </table>
             </div>
-                {/* Footer */}
-                <footer className="dashboard-footer">
-                <div className="footer-content">
-                    <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
-                    <div className="footer-links">
-                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
-                        <a onClick={() => navigate("/tos")}>Terms of Service</a>
-                        <a onClick={() => navigate("/contact")}>Contact Us</a>
-                    </div>
+
+            {/* Show more detail about property Popup */}
+            <Modal show={showDetail} onHide={handleCloseDetail}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Property Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <table className="property-detail-table">
+                        <tbody>
+                            {ticketDetail != null ? (
+                                <>
+                                    <tr>
+                                        <td>Service Type: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.serviceType.serviceType}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Property Name: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.property.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Address: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.property.streetAddress}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Request Date: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.createdAt}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Request Timeline: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.timeline.title}</td>
+                                    </tr>
+                                </>
+                            ) : (
+                                <tr>
+                                    <td colSpan={2}>No details available.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </Modal.Body>
+                <Modal.Footer>
+                <button className="delete-button" onClick={handleCloseDetail}>
+                    Close
+                </button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Footer */}
+            <footer className="dashboard-footer">
+            <div className="footer-content">
+                <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
+                <div className="footer-links">
+                    <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                    <a onClick={() => navigate("/tos")}>Terms of Service</a>
+                    <a onClick={() => navigate("/contact")}>Contact Us</a>
                 </div>
-                </footer>
+            </div>
+            </footer>
         </div>
     );
 }

@@ -58,10 +58,12 @@ router.get('/ticket/tenant/tickets', serviceRequestController.getTenantTicket);
 router.get('/ticket/manager/tickets', serviceRequestController.getManagerTicket);
 router.post('/service', serviceRequestController.addService);
 router.get('/user-services', dashboardServiceController.userServices);
+router.get('/sp-service-requests', dashboardServiceController.getRequests);
 
 router.post('/private-providers', serviceRequestController.getPrivateProviders);
 router.get('/request-details', serviceRequestController.getRequestDetails);
 router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);
-router.get('/approve-proposal', serviceRequestController.approveProposal);  
+router.post('/send-proposal', serviceRequestController.sendProposal);
+router.get('/approve-proposal', serviceRequestController.approveProposal);
 
 module.exports = router;

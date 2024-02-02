@@ -5,7 +5,7 @@ require('dotenv').config();
 const SERVICE_PROVIDER_LINK = 'https://apiqa.hometrumpeter.com/customer/service-provider/';
 const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
 const USER_SERVICES_LINK = 'https://apiqa.hometrumpeter.com/service-provider/user/services/';
-
+const SP_SERVICE_REQUESTS = 'https://apiqa.hometrumpeter.com/service-request/sp-services-requests';
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -69,4 +69,19 @@ exports.userServices = (req, res) => {
         res.status(500).json({error: "Error fetching data"})
         console.error(error);
     });
+}
+
+exports.getRequests = (req, res) => {
+  let userServicesHeaders = HEADERS;
+  userServicesHeaders.Authorization = req.headers.authorization;
+
+  axios.get(SP_SERVICE_REQUESTS, {headers: userServicesHeaders})
+  .then(response => {
+      console.log(response.data.data);
+      res.send(response.data);
+  })
+  .catch(error => {
+      res.status(500).json({error: "Error fetching data"})
+      console.error(error);
+  });
 }

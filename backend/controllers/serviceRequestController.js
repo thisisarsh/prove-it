@@ -12,6 +12,7 @@ const ADD_SERVICE_LINK = "https://apiqa.hometrumpeter.com/service-provider/servi
 const FIND_SERVICE_PROVIDER_LINK =  "https://apiqa.hometrumpeter.com/service-provider/sp";
 const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request-detail/"
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
+const SEND_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/send-proposal/";
 const APPROVE_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/approve-proposal/";
 
 const HEADERS = {
@@ -233,6 +234,22 @@ exports.serviceRequestTicket = (req, res) => {
         console.error(error);
         res.status(500).json({error: error.message});
     })
+}
+
+exports.sendProposal = (req, res) => {
+  console.log("Sending proposal from service provider");
+
+  let sendProposalHeaders = HEADERS;
+  sendProposalHeaders.Authorization = req.headers.authorization;
+
+  axios.post(SEND_PROPOSAL_LINK, req.body, {headers: sendProposalHeaders})
+  .then(response => {
+      res.send(response.data);
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
 }
 
 exports.approveProposal = (req, res) => {
