@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { ServiceRequestSP } from "../types";
 import { useNavigate } from "react-router-dom";
@@ -27,10 +27,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     const ticket = ticketObj.ticket;
 
     const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [quotePrice, setQuotePrice] = useState<number>(0);
-    const [quoteType, setQuoteType] = useState<String>('hourly');
+    const [quoteType, setQuoteType] = useState<string>('hourly');
     const [estimatedHours, setEstimatedHours] = useState<number>(0);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
@@ -64,8 +63,8 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
-    const handleSubmit = (e: React.MouseEvent) => {
-        let body: Proposal = {
+    const handleSubmit = () => {
+        const body: Proposal = {
             id: ticket.id.toString(),
             detail: ticket.serviceRequest.detail.toString(),
             quotePrice: quotePrice.toString(),
@@ -100,7 +99,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                     id="hourly-radio-button"
                     name="group1"
                     label="Hourly"
-                    onChange={(e) => {setQuoteType("hourly")}}
+                    onChange={() => {setQuoteType("hourly")}}
                     defaultChecked
                 />
                 <Form.Check
@@ -109,7 +108,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                     id="fixed-radio-button"
                     name="group1"
                     label="Fixed"
-                    onChange={(e) => {setQuoteType("fixed")}}
+                    onChange={() => {setQuoteType("fixed")}}
                 />
             </Form>
             <br></br>

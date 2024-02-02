@@ -102,8 +102,8 @@ export function DashboardServiceCluster() {
         });
     }, [user, fetchData]);
 
-    const handleDetailClick = (id: String) => {
-        let ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
+    const handleDetailClick = (id: string) => {
+        const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
             return(obj.id === id);
         })[0]
         console.log(ticket);

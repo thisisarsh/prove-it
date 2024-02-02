@@ -164,28 +164,28 @@ export interface ServiceRequest {
 }
 
 export interface ServiceRequestSP {
-    createdAt: String;
+    createdAt: string;
     id: string;
-    status: String;
+    status: string;
     timeline: {
-      title: String;
+      title: string;
     }
     initiator: {
-      firstName: String;
-      lastName: String;
-      id: String;
+      firstName: string;
+      lastName: string;
+      id: string;
     }
     property: {
-      id: String;
-      name: String;
-      streetAddress: String
+      id: string;
+      name: string;
+      streetAddress: string
     };
     serviceRequest: {
-      detail: String;
+      detail: string;
     }
     serviceType: {
-      id: String;
-      serviceType: String;
+      id: string;
+      serviceType: string;
     }
 }
 
