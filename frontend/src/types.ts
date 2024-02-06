@@ -42,16 +42,9 @@ export interface ServiceRequest {
     detail: string;
     startDate: string;
     endDate: string;
+    proposals: Proposal[] | undefined;
     status: string;
     proposalCount: number | undefined;
-    proposals: Proposal[] | undefined;
-    property: Property;
-    id: string;   
-    timeline: Timeline;
-    serviceType: ServiceType;
-    status: string;
-    proposalCount: number | undefined;
-    proposals: Proposal[] | undefined;
     property: Property;
     id: string;   
     timeline: Timeline;
@@ -152,15 +145,6 @@ export interface Proposal {
   endDate: string | undefined;
   detail: string | undefined;
   status: string;
-}
-
-
-export interface ServiceRequest {
-    id: string;
-    property: Property;
-    timeline: Timeline;
-    serviceType: ServiceType;
-    proposals: Proposal[] | undefined;
 }
 
 export interface ServiceRequestSP {
