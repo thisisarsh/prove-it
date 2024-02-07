@@ -66,4 +66,6 @@ router.post('/service-request/ticket', serviceRequestController.serviceRequestTi
 router.post('/send-proposal', serviceRequestController.sendProposal);
 router.get('/approve-proposal', serviceRequestController.approveProposal);
 
+router.post('/apply-public', backgroundCheckController.applyPublic);
+
 module.exports = router;

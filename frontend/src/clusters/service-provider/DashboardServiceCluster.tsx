@@ -19,6 +19,7 @@ import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
+import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 /**
  *
  * @returns Void
@@ -119,7 +120,6 @@ export function DashboardServiceCluster() {
     const handleQuoteClick = (ticket: ServiceRequestSP) => {
         navigate("/send-quote", {state: {ticket: ticket}});
     }
-
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
@@ -195,6 +195,14 @@ export function DashboardServiceCluster() {
                 </table>
             </div>
 
+            {/*Suggestion to apply for public status*/}
+            {user?.spDetail && (
+                <ApplyPublicPrompt 
+                    isAppliedForPublic={user.spDetail.isAppliedForPublic}
+                    isPublic = {user.spDetail.isPublic}
+                />
+            )}
+
             {/*My services table*/}
             <div className="request-container mb-5">
                 
@@ -239,7 +247,7 @@ export function DashboardServiceCluster() {
 
             {/* Current Requests Table */}
             <div className="request-container mb-5">
-                <h1 className="dashboard-label">Current Requests</h1>
+                <h1 className="dashboard-label">Current Jobs</h1>
                 <table className="dashboard-table">
                     <thead className="dashboard-header">    
                         <tr>
