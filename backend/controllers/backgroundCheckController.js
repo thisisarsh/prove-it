@@ -6,6 +6,7 @@ const GET_PROPERTY_TENANT_LINK = 'https://apiqa.hometrumpeter.com/property-manag
 const BACKGROUND_CHECK_INITIATE_LINK = 'https://apiqa.hometrumpeter.com/background-check/initiate';
 const BACKGROUND_CHECK_STATUS_LINK = 'https://apiqa.hometrumpeter.com/background-check/status/';
 const BACKGROUND_CHECK_APPROVE_LINK = 'https://apiqa.hometrumpeter.com/background-check/approve';
+const SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/sp/detail";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -116,3 +117,30 @@ exports.approveTenant = (req, res) => {
             res.status(500).send({ error: error.message || 'Internal server error' });
         });
 };
+
+exports.applyPublic = (req, res) => {
+    let applyPublicHeaders = HEADERS;
+    applyPublicHeaders.Authorization = req.headers.authorization;
+
+    axios.post(BACKGROUND_CHECK_INITIATE_LINK, req.body.bgCheck, {headers: applyPublicHeaders})
+    .then(bgCheckResponse => {
+        if (bgCheckResponse.data.isSuccess) {
+
+            axios.post(SP_DETAIL_LINK, req.body.spDetail, {headers: applyPublicHeaders})
+            .then(spDetailResponse => {
+                if (spDetailResponse.data.isSuccess) {
+                    res.send({isSuccess: true, message: "Successfully Applied for public status"})
+                } else {
+                    throw new Error("Error saving SP Details: " + spDetailResponse.message);
+                }
+            })
+
+        } else {
+            throw new Error("Error initiating background check: " + bgCheckResponse.message);
+        }
+
+    }).catch(error => {
+        res.send({isSuccess: false, message: error.message});
+    })
+
+}

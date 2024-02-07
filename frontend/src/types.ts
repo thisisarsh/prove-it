@@ -27,6 +27,9 @@ export interface User {
     id: string;
     phoneVerified: boolean;
     role: Role;
+    spDetail: SPDetail | undefined;
+    firstName: string;
+    lastName: string;
 }
 
 export interface Role {
