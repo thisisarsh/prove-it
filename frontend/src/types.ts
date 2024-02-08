@@ -27,6 +27,9 @@ export interface User {
     id: string;
     phoneVerified: boolean;
     role: Role;
+    spDetail: SPDetail | undefined;
+    firstName: string;
+    lastName: string;
 }
 
 export interface Role {
@@ -244,6 +247,17 @@ export interface TenantinPropertyDetail {
     lastName: string;
     phone: string;
     email: string;
+}
+
+export interface Job {
+    activityStatus: string;
+    id: string;
+    initiator: User;
+    property: Property;
+    proposal: Proposal;
+    serviceType: ServiceType;
+    status: string;
+    timeline: Timeline;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

@@ -28,6 +28,7 @@ import { RequestQuote } from "./routes/RequestQuote";
 import { AddService } from "./routes/AddService";
 import { Proposals } from "./routes/Proposals";
 import { SendQuote } from "./routes/SendQuote";
+import { ApplyPublic } from "./routes/ApplyPublic";
 
 export const Router = createBrowserRouter([
     {
@@ -178,6 +179,14 @@ export const Router = createBrowserRouter([
         element:
         <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
             <SendQuote/>
+        </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/apply-public",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
+            <ApplyPublic/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
     }

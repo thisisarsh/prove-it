@@ -12,13 +12,15 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 
 import "../../styles/pages/dashboard.css";
-import { DashboardServiceParent, ServiceRequestSP } from "../../types";
+import { DashboardServiceParent, Job, ServiceRequestSP } from "../../types";
 import  Tab  from "react-bootstrap/Tab";
 import Modal from 'react-bootstrap/Modal';
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
+import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
+import { SPJobTable } from "../../components/SPJobTable";
 /**
  *
  * @returns Void
@@ -31,6 +33,7 @@ export function DashboardServiceCluster() {
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
     const [showDetail, setShowDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
+    const [jobs, setJobs] = useState<Job[]>([]);
 
     //const [properties, setProperties] = useState<Property[] | null>(null);
     //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
@@ -44,17 +47,29 @@ export function DashboardServiceCluster() {
     };
 
     const fetchData = useCallback(
-        async (url: string, method = "GET") => {
+        async (url: string, method = "GET", body? : string) => {
             const headers = new Headers();
             headers.append("Content-Type", "application/json");
 
             if (user) {
                 headers.append("Authorization", `Bearer ${user.token}`);
             }
-            const requestOptions = {
-                method: method,
-                headers: headers,
-            };
+
+            let requestOptions;
+
+            if (method == "GET") {
+                requestOptions = {
+                    method: method,
+                    headers: headers,
+                };
+            } else if (method == "POST") {
+                requestOptions = {
+                    method: method,
+                    headers: headers,
+                    body: body
+                }
+            }
+
 
             try {
                 const response = await fetch(url, requestOptions);
@@ -100,6 +115,19 @@ export function DashboardServiceCluster() {
             console.error(error);
             setError('An error occured');
         });
+
+        fetchData(window.config.SERVER_URL + "/active-jobs")
+        .then(response => {
+            if (response.isSuccess) {
+                setJobs(response.data.jobs);
+            } else {
+                setError(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured (see console)');
+        })
     }, [user, fetchData]);
 
     const handleDetailClick = (id: string) => {
@@ -120,8 +148,37 @@ export function DashboardServiceCluster() {
         navigate("/send-quote", {state: {ticket: ticket}});
     }
 
+    const handleActivateJob = (jobId: string) => {
+        setIsLoading(true);
 
-    console.log(user)
+        fetchData(window.config.SERVER_URL + "/activate-job?id=" + jobId, "POST")
+        .then(response => {
+            setIsLoading(false);
+            if (response.isSuccess) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert("Error: " + response.message);
+            }
+        })
+    }
+
+    const handleCompleteJob = (jobId: string) => {
+        setIsLoading(true);
+
+        fetchData(window.config.SERVER_URL + "/complete-job?id=" + jobId, "POST")
+        .then(response => {
+            setIsLoading(false);
+            if (response.isSuccess) {
+                alert(response.message);
+                location.reload();
+            } else {
+                alert("Error: " + response.message);
+            }
+        })
+    }
+
+    console.log(jobs);
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
@@ -197,6 +254,14 @@ export function DashboardServiceCluster() {
                 </table>
             </div>
 
+            {/*Suggestion to apply for public status*/}
+            {user?.spDetail && (
+                <ApplyPublicPrompt 
+                    isAppliedForPublic={user.spDetail.isAppliedForPublic}
+                    isPublic = {user.spDetail.isPublic}
+                />
+            )}
+
             {/*My services table*/}
             <div className="request-container mb-5">
                 
@@ -240,26 +305,12 @@ export function DashboardServiceCluster() {
             </div>
 
             {/* Current Requests Table */}
-            <div className="request-container mb-5">
-                <h1 className="dashboard-label">Current Requests</h1>
-                <table className="dashboard-table">
-                    <thead className="dashboard-header">    
-                        <tr>
-                            <th>Service</th>
-                            <th>Property</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colSpan={3}>
-                                You're not working on any service Request!
-                                Accept one to get started.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <SPJobTable 
+                jobs={jobs}
+                activateJob={handleActivateJob}
+                completeJob={handleCompleteJob}
+                isLoading={isLoading}
+            />
 
             {/* Completed Requests Table */}
             <div className="request-container mb-5">
