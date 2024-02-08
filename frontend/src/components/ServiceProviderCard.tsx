@@ -8,6 +8,7 @@ interface SPCardProps {
     isLoading: boolean
 }
 
+
 export function ServiceProviderCard(props: SPCardProps) {
 
     console.log(props.sp);
@@ -17,7 +18,11 @@ export function ServiceProviderCard(props: SPCardProps) {
                 <Card.Title>{props.sp.firstName + " " + props.sp.lastName}</Card.Title>
                 <Card.Subtitle>{props.sp.spDetail?.company}</Card.Subtitle>
                 <hr className="mb-3"/>
-
+                {props.sp.spDetail.isPublic ? (
+                    <Card.Subtitle>{"PUBLIC"}</Card.Subtitle>
+                ) : (
+                    <Card.Subtitle>{"PRIVATE"}</Card.Subtitle>
+                )} 
                 <Card.Text>{"Standard Rate: $" + props.sp.spDetail?.perHourRate + "/hr"}</Card.Text>
                 <Card.Text>Typical timeline for service: As soon as possible</Card.Text>
                 <Card.Text>{"Address: " + props.sp.spDetail?.address}</Card.Text>

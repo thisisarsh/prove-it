@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "@types/react-datepicker": "^4.19.5"
+  },
+  "dependencies": {
+    "react-datepicker": "^6.1.0"
   }
 }
