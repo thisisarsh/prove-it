@@ -28,7 +28,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
 
     const [error, setError] = useState<string | null>(null);
 
-    const [quotePrice, setQuotePrice] = useState<number>(0);
+    const [quotePrice, setQuotePrice] = useState<number>(null || 0);
     const [quoteType, setQuoteType] = useState<string>('hourly');
     const [estimatedHours, setEstimatedHours] = useState<number>(0);
     const [startDate, setStartDate] = useState<Date>(new Date());
@@ -118,7 +118,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
             <p>End Date</p>
             <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} />
             <br></br>
-            <button className="delete-button" onClick={(e) => handleSubmit(e)}>Submit Quote</button>
+            <button className="delete-button" onClick={() => handleSubmit()}>Submit Quote</button>
         </>
     )
 }

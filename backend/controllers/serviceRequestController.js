@@ -193,6 +193,7 @@ exports.getPrivateProviders = (req, res) => {
                 refinedData.push(response.data.data[i].serviceProvider);
             }
 
+            console.log(refinedData);
             res.send({isSuccess: true, data: refinedData});
         } else {
             res.send(response.data);

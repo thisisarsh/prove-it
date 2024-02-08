@@ -120,6 +120,8 @@ export function DashboardServiceCluster() {
         navigate("/send-quote", {state: {ticket: ticket}});
     }
 
+
+    console.log(user)
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
