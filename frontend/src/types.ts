@@ -249,4 +249,15 @@ export interface TenantinPropertyDetail {
     email: string;
 }
 
+export interface Job {
+    activityStatus: string;
+    id: string;
+    initiator: User;
+    property: Property;
+    proposal: Proposal;
+    serviceType: ServiceType;
+    status: string;
+    timeline: Timeline;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
