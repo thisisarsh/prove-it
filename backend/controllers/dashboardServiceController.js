@@ -6,6 +6,9 @@ const SERVICE_PROVIDER_LINK = 'https://apiqa.hometrumpeter.com/customer/service-
 const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
 const USER_SERVICES_LINK = 'https://apiqa.hometrumpeter.com/service-provider/user/services/';
 const SP_SERVICE_REQUESTS = 'https://apiqa.hometrumpeter.com/service-request/sp-services-requests';
+const ACTIVE_JOBS_LINK = 'https://apiqa.hometrumpeter.com/job/active-jobs';
+const ACTIVATE_JOB_LINK = 'https://apiqa.hometrumpeter.com/service-provider/activejob/';
+const COMPLETE_JOB_LINK = 'https://apiqa.hometrumpeter.com/service-provider/completejob/'
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -84,4 +87,46 @@ exports.getRequests = (req, res) => {
       res.status(500).json({error: "Error fetching data"})
       console.error(error);
   });
+}
+
+exports.activeJobs = (req, res) => {
+    let getJobsHeaders = HEADERS;
+    getJobsHeaders.Authorization = req.headers.authorization;
+
+    axios.get(ACTIVE_JOBS_LINK, {headers: getJobsHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        res.status(500).json({error: "Error fetcing data"});
+        console.error(error);
+    })
+}
+
+exports.activateJob = (req, res) => {
+    let activateJobHeaders = HEADERS;
+    activateJobHeaders.Authorization = req.headers.authorization;
+
+    axios.post(ACTIVATE_JOB_LINK + req.query.id, {}, {headers: activateJobHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        res.status(500).json({error: "Error fetching data"});
+        console.error(error);
+    })
+}
+
+exports.completeJob = (req, res) => {
+    let completeJobHeaders = HEADERS;
+    completeJobHeaders.Authorization = req.headers.authorization;
+
+    axios.post(COMPLETE_JOB_LINK + req.query.id, {}, {headers: completeJobHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        res.status(500).json({error: "Error fetching data"});
+        console.error(error);
+    })
 }
