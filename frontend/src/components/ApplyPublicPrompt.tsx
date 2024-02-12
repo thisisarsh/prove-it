@@ -1,9 +1,14 @@
 import { Button } from "react-bootstrap"
 import { useNavigate } from "react-router"
+import Spinner from "./Spinner";
+import ErrorMessageContainer from "./ErrorMessageContainer";
 
 interface ApplyPublicPromptProps {
     isAppliedForPublic: boolean;
     isPublic: boolean;
+    isLoading: boolean;
+    error: string | null;
+    checkStatus: () => void;
 }
 
 export function ApplyPublicPrompt(props: ApplyPublicPromptProps) {
@@ -35,6 +40,15 @@ export function ApplyPublicPrompt(props: ApplyPublicPromptProps) {
                     Check your email and fill out the background check request from certn.
                     Once your background check has been processend and approved, you will be granted public status.
                 </p>
+
+                {props.isLoading ? (
+                    <Spinner/>
+                ) : (
+                    <Button className='standard-button' onClick={props.checkStatus}>Check application status</Button>
+                )}
+
+                {props.error && <ErrorMessageContainer message={props.error}/>}
+                
             </div>
         )
     }

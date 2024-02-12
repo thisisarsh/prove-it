@@ -28,6 +28,8 @@ import { SPJobTable } from "../../components/SPJobTable";
 export function DashboardServiceCluster() {
     const { logout } = useLogout();
     const [error, setError] = useState<string | null>(null);
+    const [applicationStatusError, setApplicationStatusError] = useState<string | null>(null);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
@@ -119,7 +121,9 @@ export function DashboardServiceCluster() {
         fetchData(window.config.SERVER_URL + "/active-jobs")
         .then(response => {
             if (response.isSuccess) {
-                setJobs(response.data.jobs);
+                if (Array.isArray(response.data.jobs)) {
+                    setJobs(response.data.jobs);
+                }
             } else {
                 setError(response.message);
             }
@@ -178,7 +182,34 @@ export function DashboardServiceCluster() {
         })
     }
 
-    console.log(jobs);
+    const checkApplicationStatus = () => {
+
+        setIsLoading(true);
+        setApplicationStatusError(null);
+
+        fetchData(window.config.SERVER_URL + "/sp-application-status?userId=" + user?.id)
+        .then(response => {
+            setIsLoading(false);
+            
+            if (!user?.spDetail) {
+                alert("Could not retrieve SpDetail from AuthContext. Please log in again");
+                logout();
+            }
+            else if (response.isSuccess && response.status == "accepted") {
+                alert(response.message ?? "Background check approved");
+                logout();
+
+            } else if (response.isSuccess && response.status == "rejected") {
+                setApplicationStatusError(response.message ?? "Sorry, but your background check was rejected. You are not approved for public provider status");
+            } else if (response.isSuccess && response.status == "pending") {
+               setApplicationStatusError(response.message ?? "Your application is pending. Please check back later");
+            } else {
+                setApplicationStatusError(response.message ?? "An error occured while checking your application status")
+            }
+        })
+    }
+
+    console.log(user);
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
@@ -257,8 +288,11 @@ export function DashboardServiceCluster() {
             {/*Suggestion to apply for public status*/}
             {user?.spDetail && (
                 <ApplyPublicPrompt 
+                    error={applicationStatusError}
+                    isLoading={isLoading}
                     isAppliedForPublic={user.spDetail.isAppliedForPublic}
                     isPublic = {user.spDetail.isPublic}
+                    checkStatus={checkApplicationStatus}
                 />
             )}
 
