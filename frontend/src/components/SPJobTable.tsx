@@ -50,6 +50,7 @@ export function SPJobTable(props: SPJobTableProps) {
                                                     className="standard-button mb-1" 
                                                     style={{width:"100%"}}
                                                     disabled={props.isLoading}
+                                                    onClick={() => {console.log(job)}}
                                                 >
                                                     Details
                                                 </Button>

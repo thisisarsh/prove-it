@@ -137,7 +137,8 @@ export function DashboardServiceCluster() {
     const handleDetailClick = (id: string) => {
         const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
             return(obj.id === id);
-        })[0]
+        })[0];
+        console.log("TICKET");
         console.log(ticket);
         setTicketDetail(ticket);
         setShowDetail(true);
@@ -209,7 +210,6 @@ export function DashboardServiceCluster() {
         })
     }
 
-    console.log(user);
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
@@ -264,7 +264,7 @@ export function DashboardServiceCluster() {
                                 <td colSpan={2}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
-                                tickets.map((ticket) => (
+                                tickets.filter(t => t.status === "initiated").map((ticket) => (
                                     <tr key={ticket.id}>
                                         <td>{ticket.serviceType.serviceType}</td>
                                         <td>{ticket.property.name}</td>
