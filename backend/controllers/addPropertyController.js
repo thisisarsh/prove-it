@@ -32,7 +32,7 @@ exports.state = (req, res) => {
     .catch(error => {
       // Handle errors
       console.error('Error fetching data:', error);
-      res.send(error);
+      res.send('Error: ' + error.message);
     });
 };
 
@@ -55,7 +55,7 @@ exports.city = (req, res) => {
     .catch(error => {
       // Handle errors
       console.error('Error fetching data:', error);
-      res.send(error);
+      res.send('Error: ' + error.message);
     });
 };
 
@@ -77,7 +77,7 @@ exports.zip = (req, res) => {
     .catch(error => {
       // Handle errors
       console.error('Error fetching data:', error);
-      res.send(error);
+      res.send('Error: ' + error.message);
     });
 };
 
@@ -138,7 +138,7 @@ exports.addProperty = (req, res) => {
                 .catch(error => {
                   // Handle errors
                   console.error('Error fetching data:', error);
-                  res.send(error);
+                  res.send('Error: ' + error.message);
                 });
                 res.send(response.data); 
               }
@@ -160,7 +160,7 @@ exports.addProperty = (req, res) => {
     .catch(error => {
       // Handle errors
       console.error('Error fetching data:', error);
-      res.send(error);
+      res.send('Error: ' + error.message);
     });
 };
 
