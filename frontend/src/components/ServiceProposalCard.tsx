@@ -3,7 +3,8 @@ import { Proposal } from "../types";
 
 interface ServiceProposalCardProps {
     proposal: Proposal;
-    buttonHandler: (proposal: Proposal) => void;
+    approveHandler: (proposal: Proposal) => void;
+    rejectHandler: (proposal: Proposal) => void;
 }
 
 export function ServiceProposalCard(props: ServiceProposalCardProps) {
@@ -22,7 +23,10 @@ export function ServiceProposalCard(props: ServiceProposalCardProps) {
                 {props.proposal.detail && <Card.Text>Detail: {props.proposal.detail}</Card.Text>}
 
                 <div className="d-grid">
-                    <Button onClick={() => {props.buttonHandler(props.proposal)}}className="standard-button">Approve</Button>
+                    <Button onClick={() => {props.approveHandler(props.proposal)}}className="standard-button">Approve</Button>
+                </div>
+                <div className="d-grid" style={{marginTop: '1rem'}}>
+                    <Button onClick={() => {props.rejectHandler(props.proposal)}}className="standard-button">Reject</Button>
                 </div>
             </Card.Body>
 

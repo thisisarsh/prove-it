@@ -246,6 +246,35 @@ export function DashboardOwnerCluster() {
         setShowTenant(false);
     }
     
+    // Function to handle the "Reject" button click
+    const handleRejectRequest = (reqId: string) => {
+        
+        fetch(window.config.SERVER_URL + "/service-provider/reject-service?reqId=" + reqId, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({}),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((responseJson) => {
+                console.log('Backend response:', responseJson);
+                if (responseJson.isSuccess) {
+                    setTenantinPropertyDetail(responseJson.tenants);
+                } else if (!responseJson.isSuccess) {
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+    };
 
     return (
     <body>
@@ -401,19 +430,25 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            <Button className="standard-button" onClick={() => {navigate(
-                                                "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
-                                                Request quote
-                                            </Button>
-                                            
+                                            {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
+                                                <Button className="standard-button" onClick={() => {navigate(
+                                                    "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
+                                                    Request quote
+                                                </Button>
+                                            )}
 
-                                            {userTicket.status == "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
+                                            {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
                                                 <Button className="standard-button ms-1"
                                                 onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
                                                     View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
                                                 </Button>                                            
                                             )}
                                             
+                                            {(userTicket.status != "rejected" && userTicket.status != "withdrawn" && userTicket.status != "completed") && (
+                                                <Button className="standard-button" onClick={() => {handleRejectRequest(userTicket.id)}}>
+                                                    Reject
+                                                </Button>
+                                            )}
                                         </td>   
                                     </tr>
                                 ))

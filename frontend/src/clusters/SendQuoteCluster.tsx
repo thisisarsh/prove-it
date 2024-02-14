@@ -28,9 +28,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
 
     const [error, setError] = useState<string | null>(null);
 
-    const [quotePrice, setQuotePrice] = useState<number>(null || 0);
+    const [quotePrice, setQuotePrice] = useState<string>('0');
     const [quoteType, setQuoteType] = useState<string>('hourly');
-    const [estimatedHours, setEstimatedHours] = useState<number>(0);
+    const [estimatedHours, setEstimatedHours] = useState<string>('0');
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
 
@@ -63,6 +63,14 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+        e.preventDefault();
+        setter(e.target.value);
+    };
+
     const handleSubmit = () => {
         const body: Proposal = {
             id: ticket.id.toString(),
@@ -90,7 +98,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
-            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => setQuotePrice(parseFloat(e.target.value))}/>
+            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(
+                e: React.ChangeEvent<HTMLInputElement>,
+            ) => handleInputChange(e, setQuotePrice)}/>
             <p style={{textAlign: "left"}}>Quote Type</p>
             <Form style={{textAlign: "center"}}>
                 <Form.Check
@@ -112,7 +122,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 />
             </Form>
             <br></br>
-            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(e) => setEstimatedHours(parseInt(e.target.value))}/>
+            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(
+                e: React.ChangeEvent<HTMLInputElement>,
+            ) => handleInputChange(e, setEstimatedHours)}/>
             <p>Start Date</p>
             <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
             <p>End Date</p>
