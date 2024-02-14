@@ -16,6 +16,7 @@ const SEND_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/sen
 const APPROVE_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/approve-proposal/";
 const REJECT_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/reject-proposal/";
 const MANAGER_REJECT_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/reject-service/";
+const WITHDRAW_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/proposal-withdraw/";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -296,6 +297,22 @@ exports.managerRejectRequest = (req, res) => {
   axios.delete(MANAGER_REJECT_REQUEST_LINK + req.query.reqId, {headers: managerRejectRequestHeaders})
   .then(response => {
       res.send(response.data)
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
+}
+
+exports.spWithdrawProposal = (req, res) => {
+  console.log("Withdrawing proposal submitted by service provider");
+
+  let withdrawProposalHeaders = HEADERS;
+  withdrawProposalHeaders.Authorization = req.headers.authorization;
+
+  axios.post(WITHDRAW_PROPOSAL_LINK + req.query.id, req.body, {headers: withdrawProposalHeaders})
+  .then(response => {
+      res.send(response.data);
   })
   .catch(error => {
       console.error(error);

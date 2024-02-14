@@ -65,8 +65,9 @@ router.get('/request-details', serviceRequestController.getRequestDetails);
 router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);
 router.post('/send-proposal', serviceRequestController.sendProposal);
 router.get('/approve-proposal', serviceRequestController.approveProposal);
-router.delete('/reject-proposal', serviceRequestController.approveProposal);
+router.delete('/reject-proposal', serviceRequestController.rejectProposal);
 router.delete('/service-provider/reject-service', serviceRequestController.managerRejectRequest);
+router.post('/sp-proposal-withdraw', serviceRequestController.spWithdrawProposal);
 
 router.post('/apply-public', backgroundCheckController.applyPublic);
 router.get('/active-jobs', dashboardServiceController.activeJobs);
