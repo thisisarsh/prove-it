@@ -108,6 +108,15 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
+                console.log(response.data);
+
+                let ticket;
+
+                for (ticket of response.data) {
+                    if(!ticket.serviceType){
+                        ticket.serviceType = "NULL"
+                    }
+                }
                 setTickets(response.data);
             } else {
                 setError(response.message);

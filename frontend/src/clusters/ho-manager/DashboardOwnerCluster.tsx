@@ -66,8 +66,9 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
-                //console.log("PROPERTIES");
-                //console.log(data);
+
+                console.log("PROPERTIES");
+                console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -431,7 +432,7 @@ export function DashboardOwnerCluster() {
                                 <Button
                                     className="standard-button"
                                     onClick={() => {
-                                        navigate("/request-service");
+                                        navigate("/ho-request-service");
                                     }}>
                                         Request a Service
                                 </Button>
@@ -587,4 +588,3 @@ export function DashboardOwnerCluster() {
     </body>
     );
 }
-

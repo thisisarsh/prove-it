@@ -63,6 +63,8 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
+    // const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {}
+
     const handleSubmit = () => {
         const body: Proposal = {
             id: ticket.id.toString(),
@@ -91,6 +93,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         <>
             {error && <ErrorMessageContainer message={error}/>}
             <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => setQuotePrice(parseFloat(e.target.value))}/>
+            {/*<FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => handlePriceChange(e)}/>*/}
             <p style={{textAlign: "left"}}>Quote Type</p>
             <Form style={{textAlign: "center"}}>
                 <Form.Check

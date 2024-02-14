@@ -14,6 +14,7 @@ const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/s
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 const SEND_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/send-proposal/";
 const APPROVE_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/approve-proposal/";
+const HO_SERVICE_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -260,6 +261,22 @@ exports.approveProposal = (req, res) => {
     approveProposalHeaders.Authorization = req.headers.authorization;
 
     axios.get(APPROVE_PROPOSAL_LINK + req.query.id, {headers: approveProposalHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
+}
+
+exports.hoServiceRequest = (req, res) => {
+    console.log("Posting service request for HO");
+
+    let hoServiceRequestHeaders = HEADERS;
+    hoServiceRequestHeaders.Authorization = req.headers.authorization;
+
+    axios.post(HO_SERVICE_REQUEST_LINK, req.body, {headers: hoServiceRequestHeaders})
     .then(response => {
         res.send(response.data);
     })

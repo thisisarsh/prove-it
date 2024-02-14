@@ -26,7 +26,9 @@ exports.login = (req, res) => {
   .then(response => {
     // Handle the data from the API response
     //console.log(response.data.isSuccess === true);
-
+    console.log("===============================================")
+    console.log(response.data);
+    console.log("===============================================")
     if(!response.data.isSuccess) {
       return res.status(401).send({
         accessToken: null,
@@ -39,13 +41,11 @@ exports.login = (req, res) => {
     user.token = response.data.token;
     user.refreshToken = response.data.refreshToken;
     let role = response.data.rolename;
-
-    const token = generateAccessToken({ username: response.data.username });
     //console.log(response.data.data.user);
     res.json({
       user: user,
       role: role,
-      token: token
+      token: user.token
     });
   })
   .catch(error => {

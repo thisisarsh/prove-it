@@ -6,10 +6,13 @@ const sanitizeHtml = require('sanitize-html');
 const HT_QA_API = "https://apiqa.hometrumpeter.com";
 const INVITE_USER_LINK = HT_QA_API + "/user/invite";
 
-const clean = sanitizeHtml(dirty, {
-    allowedTags: [],
-    allowedAttributes: {}
-});
+const clean = (dirty) => {
+    sanitizeHtml(dirty, {
+            allowedTags: [],
+            allowedAttributes: {}
+        }
+    )};
+
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
