@@ -260,4 +260,18 @@ export interface Job {
     timeline: Timeline;
 }
 
+export interface ChecksResult {
+    checkName: string;
+    result: string;
+    status: string;
+    statusLabel: string;
+}
+
+export interface TenantBGResult {
+    id: string;
+    tenantId: string;
+    checksResult: ChecksResult[];
+    isSuccess: boolean;
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

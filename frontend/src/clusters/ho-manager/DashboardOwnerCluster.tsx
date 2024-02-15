@@ -246,7 +246,7 @@ export function DashboardOwnerCluster() {
         setShowTenant(false);
     }
     
-
+    console.log(properties);
     return (
     <body>
         <div className="dashboard-container">
