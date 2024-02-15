@@ -110,6 +110,8 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
+                console.log("NEW REQUESTS");
+                console.log(response.data)
                 setTickets(response.data);
             } else {
                 setError(response.message);
@@ -282,7 +284,7 @@ export function DashboardServiceCluster() {
                     </thead>
                     <tbody>
                             {isLoading ? (
-                                <td colSpan={2}>Loading Properties...</td>
+                                <td colSpan={3}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
                                 tickets.filter(t => t.status === "initiated").map((ticket) => (
@@ -304,7 +306,7 @@ export function DashboardServiceCluster() {
                             )}
 
                             {isLoading ? (
-                                <td colSpan={2}>Loading Properties...</td>
+                                <td colSpan={3}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
                                 tickets.filter(t => t.status === "submitted").map((ticket) => (
@@ -312,6 +314,7 @@ export function DashboardServiceCluster() {
                                         <td>{ticket.serviceType.serviceType}</td>
                                         <td>{ticket.property.name}</td>
                                         <td>
+                                            <button className="delete-button" onClick={() => handleTicketDetailClick(ticket.id)}>Details</button>
                                             <button className="delete-button" style={{background:"maroon"}} onClick={() => handleWithdrawClick(ticket.id)}>Withdraw</button>
                                         </td>
                                     </tr>
@@ -443,6 +446,11 @@ export function DashboardServiceCluster() {
                                         <td>Request Timeline: </td>
                                         <td>‎ </td>
                                         <td>{ticketDetail.timeline.title}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Details: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.serviceRequest.detail}</td>
                                     </tr>
                                 </>
                             ) : (

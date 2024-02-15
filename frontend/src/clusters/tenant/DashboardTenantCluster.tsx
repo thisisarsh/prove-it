@@ -8,6 +8,8 @@ import { TenantProperty, ServiceRequest } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge';
+
 
 import "../../styles/pages/dashboard.css";
 
@@ -241,7 +243,11 @@ export function DashboardTenantCluster() {
                                     <tr>
                                         <td>{userTicket.serviceType.serviceType}</td>
                                         <td>{userTicket.property.streetAddress}</td>
-                                        <td>{userTicket.status}</td>
+                                        <td>
+                                            <Badge pill bg="warning">
+                                                {userTicket.status}
+                                            </Badge>
+                                        </td>
                                         <td>
                                             <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
                                                 Details
@@ -276,7 +282,7 @@ export function DashboardTenantCluster() {
                 {/* Show more detail about property Popup */}
                 <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Property Details</Modal.Title>
+                        <Modal.Title>Service Request Details</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <table className="property-detail-table">

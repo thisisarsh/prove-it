@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
-
+import Badge from 'react-bootstrap/Badge';
 
 import "../../styles/pages/dashboard.css";
 import { Button } from "react-bootstrap";
@@ -427,7 +427,30 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            {userTicket.status}
+                                            {(userTicket.status === "requested" && 
+                                                <Badge pill bg="warning">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "rejected" && 
+                                                <Badge pill bg="danger">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "withdrawn" && 
+                                                <Badge pill bg="danger">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "pending" && 
+                                                <Badge pill bg="secondary">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "started" && 
+                                                <Badge pill bg="primary">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "completed" && 
+                                                <Badge pill bg="success">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "initiated" &&
+                                                <Badge pill bg="primary">{userTicket.status}</Badge>
+                                            )}
+                                            {(userTicket.status === "active" &&
+                                                <Badge pill bg="primary">{userTicket.status}</Badge>
+                                            )}
                                         </td>
 
                                         <td>                                            
