@@ -17,7 +17,6 @@ import "../../styles/pages/dashboard.css";
  */
 export function DashboardTenantCluster() {
     const { logout } = useLogout();
-    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<TenantProperty[] | null>(null);
     const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
@@ -69,7 +68,6 @@ export function DashboardTenantCluster() {
                 return response.json();
             } catch (error) {
                 console.error("Error:", error);
-                setError("An error occured");
                 throw error;
             }
         },
@@ -153,12 +151,11 @@ export function DashboardTenantCluster() {
                 console.log(response);
                 setUpdate(true);
             } else {
-                setError(response.message);
+                console.error(response.message);
             }
         })
         .catch(error => {
             console.error(error);
-            setError('An error occured');
         });
     }
 
