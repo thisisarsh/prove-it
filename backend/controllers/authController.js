@@ -40,12 +40,10 @@ exports.login = (req, res) => {
     user.refreshToken = response.data.refreshToken;
     let role = response.data.rolename;
 
-    const token = generateAccessToken({ username: response.data.username });
-    //console.log(response.data.data.user);
     res.json({
       user: user,
       role: role,
-      token: token
+      token: user.token
     });
   })
   .catch(error => {
