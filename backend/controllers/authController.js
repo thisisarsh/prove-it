@@ -19,16 +19,6 @@ const HEADERS = {
   'Content-Type': 'application/json', 
 };
 
-const SECRET = 'proveit';
-
-function generateAccessToken(username) {
-  return jwt.sign(
-    username,
-    SECRET,
-    { expiresIn: '1800s' }
-  );
-}
-
 exports.login = (req, res) => {
   //console.log(HEADERS);
   //console.log(req.body);
@@ -50,18 +40,16 @@ exports.login = (req, res) => {
     user.refreshToken = response.data.refreshToken;
     let role = response.data.rolename;
 
-    const token = generateAccessToken({ username: response.data.username });
-    //console.log(response.data.data.user);
     res.json({
       user: user,
       role: role,
-      token: token
+      token: user.token
     });
   })
   .catch(error => {
     // Handle errors
     console.error('Error fetching data:', error);
-    res.send(error);
+    res.send('Error: ' + error.message);
   });
 }
 
@@ -76,7 +64,7 @@ exports.signup = (req, res) => {
   .catch(error => {
     // Handle errors
     console.error('Error fetching data:', error);
-    res.send(error);
+    res.send('Error: ' + error.message);
   });
 }
 
@@ -95,7 +83,7 @@ exports.contactsend = (req, res) => {
   .catch(error => {
     // Handle errors
     console.error('Error fetching data:', error);
-    res.send(error);
+    res.send('Error: ' + error.message);
   });
 }
 
@@ -114,7 +102,7 @@ exports.contactverify = (req, res) => {
   .catch(error => {
     // Handle errors
     console.error('Error fetching data:', error);
-    res.send(error);
+    res.send('Error: ' + error.message);
   });
 }
 
@@ -132,7 +120,7 @@ exports.setRole = (req, res) => {
   })
   .catch(error => {
     console.error('Error fetching data:', error);
-    res.send(error);
+    res.send('Error: ' + error.message);
   });
 }
 
