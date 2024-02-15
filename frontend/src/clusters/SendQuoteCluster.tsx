@@ -28,9 +28,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
 
     const [error, setError] = useState<string | null>(null);
 
-    const [quotePrice, setQuotePrice] = useState<number>(null || 0);
+    const [quotePrice, setQuotePrice] = useState<string>('0');
     const [quoteType, setQuoteType] = useState<string>('hourly');
-    const [estimatedHours, setEstimatedHours] = useState<number>(0);
+    const [estimatedHours, setEstimatedHours] = useState<string>('0');
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
 
@@ -63,8 +63,6 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
-    // const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {}
-
     const handleSubmit = () => {
         const body: Proposal = {
             id: ticket.id.toString(),
@@ -92,8 +90,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
-            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => setQuotePrice(parseFloat(e.target.value))}/>
-            {/*<FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(e) => handlePriceChange(e)}/>*/}
+            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(
+                e: React.ChangeEvent<HTMLInputElement>,
+            ) => handleInputChange(e, setQuotePrice)}/>
             <p style={{textAlign: "left"}}>Quote Type</p>
             <Form style={{textAlign: "center"}}>
                 <Form.Check

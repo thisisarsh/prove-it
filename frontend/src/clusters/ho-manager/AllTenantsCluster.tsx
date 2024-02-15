@@ -5,8 +5,11 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from "../../components/Spinner";
+import { TenantBGResult } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
+
+import "../../styles/pages/allTenantTab.css";
 
 interface Tenant {
     id: string;
@@ -31,6 +34,7 @@ export function AllTenantsCluster() {
     const { logout } = useLogout();
 
     const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+    const [tenantBGResult, setTenantBGResult] = useState<TenantBGResult | null>(null);
 
     const [bcModal, setBCModalShow] = useState(false);
     const [AgreementModal, setAgreementModalShow] = useState(false);
@@ -38,7 +42,36 @@ export function AllTenantsCluster() {
     const handleBCModalClose = () => setBCModalShow(false);
     const handleBCModalShow = (tenant: Tenant) => {
         setSelectedTenant(tenant);
+        fetch(window.config.SERVER_URL + "/background-check/tenant-application", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({ id: tenant.id }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                //console.log(response.json);
+                return response.json();
+            })
+            .then((responseJson) => {
+                //console.log('Backend response:', responseJson);
+                if (responseJson != null) {
+                    setTenantBGResult(responseJson);
+                } else if (responseJson == null) {
+                    //console.log(responseJson);
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+        
         setBCModalShow(true);
+
     }
     const handleAgreementModalClose = () => setAgreementModalShow(false);
     const handleAgreementModalShow = (tenant: Tenant) =>{
@@ -160,7 +193,56 @@ export function AllTenantsCluster() {
     }
 
     const handleBCReject = () => {
-        // WIP : Add functionality for rejection
+        if (selectedTenant) {
+            setIsLoading(true);
+            const queryParams = new URLSearchParams({
+                userId: selectedTenant.id
+            }).toString();
+
+            fetch(`${window.config.SERVER_URL}/background-check/tenant/reject?${queryParams}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user?.token}`,
+                },
+            })
+                .finally(() => {
+                    setIsLoading(false);
+                    setAgreementModalShow(false);
+                });
+        }
+    }
+
+    const handleBCDownload = (tenantBGResult : TenantBGResult) => {
+        setIsLoading(true);
+        fetch(window.config.SERVER_URL + "/background-check/tenant-application-download", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({ applicantId: tenantBGResult.id, id: tenantBGResult.tenantId }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                //console.log(response.json);
+                return response.json();
+            })
+            .then((responseJson) => {
+                //console.log('Backend response:', responseJson);
+                if (responseJson.isSuccess) {
+                    window.open(responseJson.reportUrl, "_blank");
+                } else if (!responseJson.isSuccess) {
+                    //console.log(responseJson);
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -195,7 +277,7 @@ export function AllTenantsCluster() {
 
     return (
         <body>
-            <div className="dashboard-container">
+            <div className="tenant-tab-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
@@ -205,7 +287,7 @@ export function AllTenantsCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Tenant Tab</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <Nav>
@@ -233,9 +315,8 @@ export function AllTenantsCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
-            </div>
-            <div className="properties-container">
-                    <h1 className="dashboard-label">Service Providers</h1>
+            <div className="all-tenant-container">
+                    <h1 className="dashboard-label">Tenant</h1>
                     {isLoading ? <Spinner /> : (
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
@@ -285,23 +366,60 @@ export function AllTenantsCluster() {
                 </div>
             </footer>
         <div>
+            </div>
+           
             <Modal show={bcModal} onHide={handleBCModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Background Check</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+                <Modal.Body>
+                    {tenantBGResult != null && Array.isArray(tenantBGResult.checksResult) ? (
+                        tenantBGResult.checksResult.length > 1 ? (
+                        <>
+                        <table className="property-detail-table">
+                            <thead className="dashboard-header">
+                                <tr>
+                                    <th>Check</th>
+                                    <th>Status</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tenantBGResult.checksResult.map((result) => (
+                                    <tr>
+                                        <td>{result.checkName}</td>
+                                        <td>{result.result}</td>
+                                        <td>{result.statusLabel}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <Button variant="info" onClick={() => handleBCDownload(tenantBGResult)}>
+                            Download Result
+                        </Button>
+                        <Button variant="success" onClick={handleBCApprove}>
+                            Accept
+                        </Button>
+                        <Button variant="danger" onClick={handleBCReject}>
+                            Reject
+                        </Button>
+                        </>
+                        ) : (
+                            <h1>Background Check initiated</h1>
+                        )
+                    ) : (
+                        <>
+                        <p>Tenant have no info on background check, press the button below to initiate the background check</p>
+                        <Button variant="info" onClick={handleBCInitiation}>
+                            Initiate
+                        </Button>
+                        </>
+                    )}
+                </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleBCModalClose}>
                         Close
-                    </Button>
-                    <Button variant="info" onClick={handleBCInitiation}>
-                        Initiate
-                    </Button>
-                    <Button variant="success" onClick={handleBCApprove}>
-                        Accept
-                    </Button>
-                    <Button variant="danger" onClick={handleBCReject}>
-                        Reject
                     </Button>
                 </Modal.Footer>
             </Modal>

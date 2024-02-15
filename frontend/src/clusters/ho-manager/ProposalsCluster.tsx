@@ -24,6 +24,7 @@ export function ProposalsCluster() {
 
     const REQUEST_DETAILS_LINK = window.config.SERVER_URL + "/request-details";
     const APPROVE_PROPOSAL_LINK = window.config.SERVER_URL + "/approve-proposal";
+    const REJECT_PROPOSAL_LINK = window.config.SERVER_URL + "/reject-proposal";
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -101,6 +102,47 @@ export function ProposalsCluster() {
         })
     }
 
+    async function handleRejectProposal(proposal: Proposal) {
+        setError(null);
+        setIsLoading(true);
+        console.log("Rejecting proposal: " + proposal.id);
+
+        fetch(REJECT_PROPOSAL_LINK + "?id=" + proposal.id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token
+            }
+        })
+        .then(response => {
+            setIsLoading(false);
+            if (!response.ok) {
+                setError("Error: Network resposne was not ok");
+            }
+            return response.json();
+        })
+        .then(responseJson => {
+            if (responseJson.isSuccess) {
+                console.log(responseJson.message);
+                fetchData(REQUEST_DETAILS_LINK + "?id=" + searchParams.get('requestId'))
+                .then(response => {
+                    console.log(response);
+                    if (response.isSuccess) {
+                        setRequestDetails(response.data);
+                        setProposals(response.data.proposals.filter(checkSubmitted))
+                    } else {
+                        setError(response.message ?? "Error fetching request details");
+                    }
+                })
+            } else {
+                setError(responseJson.message);
+            }
+        })
+        .catch(error => {
+            setError("Error approving proposal: " + error)
+        })
+    }
+
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
@@ -128,7 +170,7 @@ export function ProposalsCluster() {
                         {proposals.length > 0 ? (
                             proposals.map(proposal => (
                                 <Col>
-                                    <ServiceProposalCard proposal={proposal} buttonHandler={handleApproveProposal}/>
+                                    <ServiceProposalCard proposal={proposal} approveHandler={handleApproveProposal} rejectHandler={handleRejectProposal}/>
                                 </Col>
                             ))
                         ) : (

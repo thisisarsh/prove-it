@@ -46,6 +46,9 @@ router.get('/owner-service-provider', ownerServiceProviderController.getServiceP
 
 router.post('/background-check/tenant', backgroundCheckController.checkTenant)
 router.post('/background-check/tenant/approve', backgroundCheckController.approveTenant)
+router.post('/background-check/tenant/reject', backgroundCheckController.rejectTenant)
+router.post('/background-check/tenant-application', backgroundCheckController.tenantApplicationStatus)
+router.post('/background-check/tenant-application-download', backgroundCheckController.tenantApplicationStatusDownload)
 
 router.post('/agreement/initiate', agreementController.sendAgreement)
 router.post('/agreement/submit', agreementController.submitAgreement)
@@ -65,6 +68,10 @@ router.get('/request-details', serviceRequestController.getRequestDetails);
 router.post('/service-request/ticket', serviceRequestController.serviceRequestTicket);
 router.post('/send-proposal', serviceRequestController.sendProposal);
 router.get('/approve-proposal', serviceRequestController.approveProposal);
+router.delete('/reject-proposal', serviceRequestController.rejectProposal);
+router.delete('/service-provider/reject-service', serviceRequestController.managerRejectRequest);
+router.post('/sp-proposal-withdraw', serviceRequestController.spWithdrawProposal);
+router.post('/service-request-withdraw', serviceRequestController.tenWithdrawServiceRequest);
 
 router.post('/apply-public', backgroundCheckController.applyPublic);
 router.get('/active-jobs', dashboardServiceController.activeJobs);

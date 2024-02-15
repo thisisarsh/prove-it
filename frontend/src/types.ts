@@ -38,6 +38,7 @@ export interface Role {
 }
 
 export interface ServiceRequest {
+    createdAt: string;
     serviceTypeId: string;
     details: string;
     propertyName: string;
@@ -143,6 +144,7 @@ export interface Proposal {
   serviceProviderId: string;
   serviceProvider: ServiceProvider;
   quotePrice: number | undefined;
+  quoteType: string;
   estimatedHours: number | undefined;
   startDate: string | undefined;
   endDate: string | undefined;
@@ -258,6 +260,20 @@ export interface Job {
     serviceType: ServiceType;
     status: string;
     timeline: Timeline;
+}
+
+export interface ChecksResult {
+    checkName: string;
+    result: string;
+    status: string;
+    statusLabel: string;
+}
+
+export interface TenantBGResult {
+    id: string;
+    tenantId: string;
+    checksResult: ChecksResult[];
+    isSuccess: boolean;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
