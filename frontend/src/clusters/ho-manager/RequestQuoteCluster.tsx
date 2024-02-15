@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
 
+
 export function RequestQuoteCluster() {
 
     const user = useAuthContext().state.user;

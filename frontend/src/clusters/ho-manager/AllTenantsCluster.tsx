@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import { useLogout } from "../../hooks/useLogout";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from "../../components/Spinner";
 import { TenantBGResult } from "../../types";
+import  Offcanvas  from 'react-bootstrap/Offcanvas';
+import Nav from 'react-bootstrap/Nav'
+
 
 interface Tenant {
     id: string;
@@ -24,6 +26,11 @@ export function AllTenantsCluster() {
     const [tenantsData, setTenantsData] = useState<TenantPropertyProps[]>([]);
     const { state } = useAuthContext();
     const { user } = state;
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const toggleOffcanvas = () => {
+        setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
+    const { logout } = useLogout();
 
     const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
     const [tenantBGResult, setTenantBGResult] = useState<TenantBGResult | null>(null);
@@ -72,10 +79,6 @@ export function AllTenantsCluster() {
     }
 
     const navigate = useNavigate();
-
-    const handleGoBack = () => {
-        navigate(-1);
-    };
 
     const handleBCInitiation = () => {
 
@@ -272,21 +275,65 @@ export function AllTenantsCluster() {
     }, [user?.token]);
 
     return (
-        <div>
-            <Button variant="secondary" onClick={handleGoBack}>{'< Go Back'}</Button>
-            {isLoading ? <Spinner /> : (
-                <Table striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Tenant</th>
-                        <th>Property</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {tenantsData.map((item, index) => (
+        <body>
+            <div className="dashboard-container">
+            <div className="header">
+                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
+                        ☰
+                </button>
+            </div>
+            {/* Nav Panel */}
+            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav>
+                    <ul className="nav-list">
+                        <li>
+                        <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
+                        </li>
+                    </ul>
+                    </Nav>
+                    <button className="logout-button" onClick={logout}>Log out</button>
+                </Offcanvas.Body>
+            </Offcanvas>
+            </div>
+            <div className="properties-container">
+                    <h1 className="dashboard-label">Service Providers</h1>
+                    {isLoading ? <Spinner /> : (
+                    <table className="dashboard-table">
+                        <thead className="dashboard-header">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Property</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {tenantsData.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.tenant.firstName} {item.tenant.lastName}</td>
+                            <td>{item.tenant.firstName}</td>
+                            <td>{item.tenant.lastName}</td>
+                            <td>{item.tenant.email}</td>
                             <td>{item.property}</td>
                             <td>
                                 <Button variant="primary" size="sm" onClick={() => handleBCModalShow(item.tenant)}>Background Check</Button>
@@ -295,9 +342,30 @@ export function AllTenantsCluster() {
                             </td>
                         </tr>
                     ))}
+                        <tr>
+                            <td className="dashboard-empty-property" colSpan={5}>
+                                    <button className="add-property-button" onClick={() => {
+                                        navigate("/invite/tenant"); }}>
+                                            Invite a tenent
+                                    </button>
+                            </td>
+                        </tr>
                     </tbody>
-                </Table>
-            )}
+                    </table>
+                    )}
+                </div>
+            {/* Footer */}
+            <footer className="dashboard-footer">
+                <div className="footer-content">
+                    <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
+                    <div className="footer-links">
+                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                        <a onClick={() => navigate("/tos")}>Terms of Service</a>
+                        <a onClick={() => navigate("/contact")}>Contact Us</a>
+                    </div>
+                </div>
+            </footer>
+        <div>
             <Modal show={bcModal} onHide={handleBCModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Background Check</Modal.Title>
@@ -374,5 +442,6 @@ export function AllTenantsCluster() {
                 </Modal.Footer>
             </Modal>
         </div>
+    </body>
     );
 }

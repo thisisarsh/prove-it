@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { ServiceProviderDetail } from "../../types";
+import  Offcanvas  from 'react-bootstrap/Offcanvas';
+import Nav from 'react-bootstrap/Nav'
 
 import "../../styles/pages/dashboard.css";
 /**
@@ -22,12 +24,14 @@ export function AllServiceProviderCluster() {
     );
     const [showDetail, setShowDetail] = useState(false);
 
-    const [isNavPanelVisible, setIsNavPanelVisible] = useState(false);
-
     
     const { state } = useAuthContext();
     const { user } = state;
     const navigate = useNavigate();
+    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const toggleOffcanvas = () => {
+        setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -69,34 +73,46 @@ export function AllServiceProviderCluster() {
         setShowDetail(false);
     }
 
-    // Function to toggle the nav panel
-    const toggleNavPanel = () => {
-        setIsNavPanelVisible(!isNavPanelVisible);
-    };
-
     return (
     <body>
         <div className="dashboard-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
-                <button className="menu-toggle-button" onClick={toggleNavPanel}>
-                    ☰
+                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
+                        ☰
                 </button>
             </div>
-
             {/* Nav Panel */}
-            <div className={`nav-panel ${isNavPanelVisible ? 'visible' : ''}`}>
-                {/* List your navigation options here */}
-                <span className="user-icon">👤</span>
-                <a onClick={() => navigate("/addproperty")}>Add Property</a>
-                <a onClick={() => navigate("/invite/tenant")}>Invite Tenant</a>
-                <a onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</a>
-                <a onClick={() => navigate("/property")}>Property</a>
-                <a onClick={() => navigate("/ho/tenants")}>Tenants</a>
-                <div className="logout-container">
+            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav>
+                    <ul className="nav-list">
+                        <li>
+                        <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
+                        </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
+                        </li>
+                    </ul>
+                    </Nav>
                     <button className="logout-button" onClick={logout}>Log out</button>
-                </div>
-                {/* Add more links as needed */}
+                </Offcanvas.Body>
+            </Offcanvas>
             </div>
                 {/* Property block */}
                 <div className="properties-container">
@@ -147,7 +163,7 @@ export function AllServiceProviderCluster() {
                             <tr>
                                 <td
                                     className="dashboard-empty-property"
-                                    colSpan={3}
+                                    colSpan={5}
                                 >
                                     <button
                                         className="add-property-button"
@@ -161,10 +177,6 @@ export function AllServiceProviderCluster() {
                         </tbody>
                     </table>
                 </div>
-            {/* Nav Panel Overlay */}
-                {isNavPanelVisible && (
-                <div className="nav-panel-overlay" onClick={toggleNavPanel}></div>
-            )}
             {/* Footer */}
             <footer className="dashboard-footer">
                 <div className="footer-content">
@@ -238,7 +250,6 @@ export function AllServiceProviderCluster() {
                 </button>
                  </Modal.Footer>
             </Modal>
-        </div>
     </body>
     );
 }

@@ -1,9 +1,17 @@
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const sanitizeHtml = require('sanitize-html');
 
 const HT_QA_API = "https://apiqa.hometrumpeter.com";
 const INVITE_USER_LINK = HT_QA_API + "/user/invite";
+
+const clean = (dirty) => {
+    sanitizeHtml(dirty, {
+        allowedTags: [],
+        allowedAttributes: {}
+    }
+)};
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -44,6 +52,13 @@ exports.inviteUser = (req, res) => {
     // Need to send request to both links
     // INVITE_USER_LINK will generate user id and store the invite user in HT database
     // sendEmail() will send the email through ProveIT system and redirect the user back to ProveIT system.
+
+    //sanitization of input
+    const firstName = sanitizeHtml(req.body.firstName);
+    const lastName = sanitizeHtml(req.body.lastName);
+    const roleName = sanitizeHtml(req.body.roleName)
+    const propertyName = sanitizeHtml(req.body.propertyName);
+    const encodedUserEmail = encodeURIComponent(sanitizeHtml(req.body.user.email));   
 
     const recipient = req.body.user.email;
     const subject = 'Invitation to Join HomeTrumpeter';
@@ -94,7 +109,7 @@ exports.inviteUser = (req, res) => {
                                             <h1>You're Invited!</h1>
                                         </div>
                                         <div class="content">
-                                            <p>Hello ${req.body.user.firstName} ${req.body.user.lastName},</p>
+                                            <p>Hello ${firstName} ${lastName},</p>
                                             <p>You have been invited to join as a ${req.body.roleName} for ${req.body.propertyName} at HomeTrumpeter.</p>
                                             <a href="${process.env.FRONT_URL}/signup/invited?email=${encodeURIComponent(req.body.user.email)}&role=${req.body.roleName}" class="button">Join Now</a>
                                         </div>
