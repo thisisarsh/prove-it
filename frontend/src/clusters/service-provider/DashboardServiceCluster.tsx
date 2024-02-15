@@ -22,26 +22,6 @@ import Nav from 'react-bootstrap/Nav'
 import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
 
-interface JobDetail {
-    activityStatus: string;
-    id: string;
-    initiator: {
-        firstName: string;
-        lastName: string;
-    };
-    property: { streetAddress: string };
-    proposal: {
-        detail: string;
-        estimatedHours: number;
-        quotePrice: number;
-        quoteType: string;
-    };
-    serviceRequest: { detail: string };
-    serviceType: { serviceType: string };
-    status: string;
-    timeline: { title: string };
-}
-
 /**
  *
  * @returns Void
@@ -56,8 +36,6 @@ export function DashboardServiceCluster() {
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
     const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
-    const [showJobDetail, setShowJobDetail] = useState<boolean>(false);
-    const [jobDetail, setJobDetail] = useState<Job | undefined>(undefined);
     const [jobs, setJobs] = useState<Job[]>([]);
 
     //const [properties, setProperties] = useState<Property[] | null>(null);
@@ -156,21 +134,6 @@ export function DashboardServiceCluster() {
             setError('An error occured (see console)');
         })
     }, [user, fetchData]);
-
-    const handleJobDetailClick = (id: string) => {
-        const job: Job | undefined = jobs?.filter(obj => {
-            return(obj.id === id);
-        })[0];
-        console.log("JOB");
-        console.log(job);
-        setJobDetail(job);
-        setShowJobDetail(true);
-    }
-
-    const handleCloseJobDetail = () => {
-        setJobDetail(undefined);
-        setShowJobDetail(false);
-    }
 
     const handleTicketDetailClick = (id: string) => {
         const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
@@ -419,7 +382,6 @@ export function DashboardServiceCluster() {
                 activateJob={handleActivateJob}
                 completeJob={handleCompleteJob}
                 isLoading={isLoading}
-                handleDetailClick={handleJobDetailClick}
             />
 
             {/* Completed Requests Table */}
@@ -442,57 +404,6 @@ export function DashboardServiceCluster() {
                     </tbody>
                 </table>
             </div>
-
-            {/* Show more detail about job popup */}
-            <Modal show={showJobDetail} onHide={handleCloseJobDetail}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Job Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <table className="property-detail-table">
-                        <tbody>
-                            {ticketDetail != null ? (
-                                <>
-                                    <tr>
-                                        <td>Service Type: </td>
-                                        <td>‎ </td>
-                                        <td>{ticketDetail.serviceType.serviceType}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Property Name: </td>
-                                        <td>‎ </td>
-                                        <td>{ticketDetail.property.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Address: </td>
-                                        <td>‎ </td>
-                                        <td>{ticketDetail.property.streetAddress}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Request Date: </td>
-                                        <td>‎ </td>
-                                        <td>{ticketDetail.createdAt}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Request Timeline: </td>
-                                        <td>‎ </td>
-                                        <td>{ticketDetail.timeline.title}</td>
-                                    </tr>
-                                </>
-                            ) : (
-                                <tr>
-                                    <td colSpan={2}>No details available.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </Modal.Body>
-                <Modal.Footer>
-                <button className="delete-button" onClick={handleCloseJobDetail}>
-                    Close
-                </button>
-                </Modal.Footer>
-            </Modal>
 
             {/* Show more detail about property Popup */}
             <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>

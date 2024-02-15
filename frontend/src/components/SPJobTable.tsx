@@ -2,7 +2,7 @@ import { Button, Col, Row } from "react-bootstrap";
 import { Job } from "../types"
 import Spinner from "./Spinner";
 import Modal from 'react-bootstrap/Modal';
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 
 interface SPJobTableProps {
     jobs: Job[];
