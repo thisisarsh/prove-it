@@ -71,6 +71,7 @@ router.get('/approve-proposal', serviceRequestController.approveProposal);
 router.delete('/reject-proposal', serviceRequestController.rejectProposal);
 router.delete('/service-provider/reject-service', serviceRequestController.managerRejectRequest);
 router.post('/sp-proposal-withdraw', serviceRequestController.spWithdrawProposal);
+router.post('/service-request-withdraw', serviceRequestController.tenWithdrawServiceRequest);
 
 router.post('/apply-public', backgroundCheckController.applyPublic);
 router.get('/active-jobs', dashboardServiceController.activeJobs);

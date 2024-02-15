@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
@@ -17,12 +17,13 @@ import "../../styles/pages/dashboard.css";
  */
 export function DashboardTenantCluster() {
     const { logout } = useLogout();
-    //const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<TenantProperty[] | null>(null);
     const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
     const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
+    const [update, setUpdate] = useState<boolean>(false);
 
     //const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     //const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -34,6 +35,46 @@ export function DashboardTenantCluster() {
     const toggleOffcanvas = () => {
         setIsOffcanvasOpen(!isOffcanvasOpen);
     };
+
+    const fetchData = useCallback(
+        async (url: string, method = "GET", body? : string) => {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            if (user) {
+                headers.append("Authorization", `Bearer ${user.token}`);
+            }
+
+            let requestOptions;
+
+            if (method == "GET") {
+                requestOptions = {
+                    method: method,
+                    headers: headers,
+                };
+            } else if (method == "POST") {
+                requestOptions = {
+                    method: method,
+                    headers: headers,
+                    body: body
+                }
+            }
+
+
+            try {
+                const response = await fetch(url, requestOptions);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            } catch (error) {
+                console.error("Error:", error);
+                setError("An error occured");
+                throw error;
+            }
+        },
+        [user],
+    );
 
     useEffect(() => {
         setIsLoading(true);
@@ -84,8 +125,9 @@ export function DashboardTenantCluster() {
                 .catch((error) => {
                     console.error("Error fetching data: " + error);
                 });
+            setUpdate(false);
         }
-    }, [user, user?.token]);
+    }, [user, user?.token, update]);
 
     const handleTicketDetailClick = (id: string) => {
         const ticket: ServiceRequest | undefined = tickets?.filter(obj => {
@@ -100,6 +142,24 @@ export function DashboardTenantCluster() {
     const handleCloseTicketDetail = () => {
         setTicketDetail(undefined);
         setShowTicketDetail(false);
+    }
+
+    const handleWithdrawClick = (id: string) => {
+        fetchData(window.config.SERVER_URL + "/service-request-withdraw?id=" + id, "POST")
+        .then(response => {
+            if (response.isSuccess) {
+                console.log("SUCCESSFULLY WITHDREW SERVICE REQUEST: " + id);
+                console.log(user);
+                console.log(response);
+                setUpdate(true);
+            } else {
+                setError(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured');
+        });
     }
 
     return (
@@ -190,7 +250,7 @@ export function DashboardTenantCluster() {
                                                 Details
                                             </button>
                                             {userTicket.status === "requested" &&
-                                                <button className="delete-button" style={{background:'maroon'}} onClick={() => console.log('withdraw')}>
+                                                <button className="delete-button" style={{background:'maroon'}} onClick={() => handleWithdrawClick(userTicket.id)}>
                                                     Withdraw
                                                 </button>
                                             }

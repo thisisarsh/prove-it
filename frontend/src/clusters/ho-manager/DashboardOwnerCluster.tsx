@@ -25,6 +25,8 @@ export function DashboardOwnerCluster() {
     const { logout } = useLogout();
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [update, setUpdate] = useState<boolean>(false);
+
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
     const [propertyDetail, setPropertyDetail] = useState<PropertyDetail | null>(null);
@@ -96,7 +98,9 @@ export function DashboardOwnerCluster() {
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
-    }, [user?.token]);
+
+        setUpdate(false);
+    }, [user?.token, update]);
 
     //console.log(properties);
 
@@ -143,8 +147,8 @@ export function DashboardOwnerCluster() {
                 //console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
                     alert("Successfully Deleted Property");
-                    //reload page to show update
-                    window.location.reload();
+                    // reload page to show update -> call API again
+                    setUpdate(true);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
                     alert(responseJson.message);
@@ -267,6 +271,7 @@ export function DashboardOwnerCluster() {
                 console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
                     setTenantinPropertyDetail(responseJson.tenants);
+                    setUpdate(true);
                 } else if (!responseJson.isSuccess) {
                     alert(responseJson.message);
                 }

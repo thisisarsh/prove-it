@@ -30,6 +30,7 @@ export function DashboardServiceCluster() {
     const { logout } = useLogout();
     const [error, setError] = useState<string | null>(null);
     const [applicationStatusError, setApplicationStatusError] = useState<string | null>(null);
+    const [update, setUpdate] = useState<boolean>(false);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
@@ -133,7 +134,8 @@ export function DashboardServiceCluster() {
             console.error(error);
             setError('An error occured (see console)');
         })
-    }, [user, fetchData]);
+        setUpdate(false);
+    }, [user, fetchData, update]);
 
     const handleTicketDetailClick = (id: string) => {
         const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
@@ -158,8 +160,10 @@ export function DashboardServiceCluster() {
         fetchData(window.config.SERVER_URL + "/sp-proposal-withdraw?id=" + id, "POST")
         .then(response => {
             if (response.isSuccess) {
+                console.log("SUCCESSFULLY WITHDREW PROPOSAL: " + id);
                 console.log(user);
                 console.log(response);
+                setUpdate(true);
             } else {
                 setError(response.message);
             }
