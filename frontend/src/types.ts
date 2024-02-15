@@ -38,6 +38,7 @@ export interface Role {
 }
 
 export interface ServiceRequest {
+    createdAt: string;
     serviceTypeId: string;
     details: string;
     propertyName: string;

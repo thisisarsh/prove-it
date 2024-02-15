@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { TenantProperty, ServiceRequest } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
+import Modal from 'react-bootstrap/Modal';
 
 import "../../styles/pages/dashboard.css";
 
@@ -20,6 +21,8 @@ export function DashboardTenantCluster() {
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<TenantProperty[] | null>(null);
     const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
+    const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
+    const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
 
     //const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     //const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -83,6 +86,21 @@ export function DashboardTenantCluster() {
                 });
         }
     }, [user, user?.token]);
+
+    const handleTicketDetailClick = (id: string) => {
+        const ticket: ServiceRequest | undefined = tickets?.filter(obj => {
+            return(obj.id === id);
+        })[0];
+        console.log("TICKET");
+        console.log(ticket);
+        setTicketDetail(ticket);
+        setShowTicketDetail(true);
+    }
+
+    const handleCloseTicketDetail = () => {
+        setTicketDetail(undefined);
+        setShowTicketDetail(false);
+    }
 
     return (
         <div className="dashboard-container">
@@ -152,25 +170,36 @@ export function DashboardTenantCluster() {
                         <thead className="dashboard-header">
                             <tr>
                                 <th className="dashboard-header">Service</th>
-                                <th>Provider</th>
                                 <th>Property</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {isLoading ? (
-                                <td colSpan={2}>Loading Service Requests...</td>
+                                <td colSpan={4}>Loading Service Requests...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
-                                tickets.map((userTicket) => (
+                                tickets.filter(t => !['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
                                     <tr>
                                         <td>{userTicket.serviceType.serviceType}</td>
-                                        <td>{"Unassigned"}</td>
-                                        <td>{userTicket.property.name}</td>
+                                        <td>{userTicket.property.streetAddress}</td>
+                                        <td>{userTicket.status}</td>
+                                        <td>
+                                            <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
+                                                Details
+                                            </button>
+                                            {userTicket.status === "requested" &&
+                                                <button className="delete-button" style={{background:'maroon'}} onClick={() => console.log('withdraw')}>
+                                                    Withdraw
+                                                </button>
+                                            }
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={2}>
+                                    <td colSpan={4}>
                                         You don't have any service requests yet.
                                         Start by requesting a service!
                                     </td>
@@ -178,7 +207,7 @@ export function DashboardTenantCluster() {
                             )}
                         </tbody>
                         <tr>
-                            <td className="dashboard-empty-service" colSpan={3}>
+                            <td className="dashboard-empty-service" colSpan={4}>
                                 <button className="request-service-button"
                                     onClick={() => {navigate("/request-service");}}> Request a Service
                                 </button>
@@ -186,6 +215,58 @@ export function DashboardTenantCluster() {
                         </tr>
                     </table>
                 </div>
+
+                {/* Show more detail about property Popup */}
+                <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Property Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <table className="property-detail-table">
+                            <tbody>
+                                {ticketDetail != null ? (
+                                    <>
+                                        <tr>
+                                            <td>Service Type: </td>
+                                            <td>‎ </td>
+                                            <td>{ticketDetail.serviceType.serviceType}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Property Name: </td>
+                                            <td>‎ </td>
+                                            <td>{ticketDetail.property.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Address: </td>
+                                            <td>‎ </td>
+                                            <td>{ticketDetail.property.streetAddress}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Request Date: </td>
+                                            <td>‎ </td>
+                                            <td>{ticketDetail.createdAt}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Request Timeline: </td>
+                                            <td>‎ </td>
+                                            <td>{ticketDetail.timeline.title}</td>
+                                        </tr>
+                                    </>
+                                ) : (
+                                    <tr>
+                                        <td colSpan={2}>No details available.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <button className="delete-button" onClick={handleCloseTicketDetail}>
+                        Close
+                    </button>
+                    </Modal.Footer>
+                </Modal>
+
                 {/* Footer */}
                 <footer className="dashboard-footer">
                 <div className="footer-content">
@@ -199,5 +280,5 @@ export function DashboardTenantCluster() {
                 </footer>
         </div>
     );
-}
 
+}
