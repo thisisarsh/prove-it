@@ -25,6 +25,8 @@ export function DashboardOwnerCluster() {
     const { logout } = useLogout();
     //const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [update, setUpdate] = useState<boolean>(false);
+
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
     const [propertyDetail, setPropertyDetail] = useState<PropertyDetail | null>(null);
@@ -96,7 +98,9 @@ export function DashboardOwnerCluster() {
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
-    }, [user?.token]);
+
+        setUpdate(false);
+    }, [user?.token, update]);
 
     //console.log(properties);
 
@@ -143,8 +147,8 @@ export function DashboardOwnerCluster() {
                 //console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
                     alert("Successfully Deleted Property");
-                    //reload page to show update
-                    window.location.reload();
+                    // reload page to show update -> call API again
+                    setUpdate(true);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
                     alert(responseJson.message);
@@ -246,7 +250,37 @@ export function DashboardOwnerCluster() {
         setShowTenant(false);
     }
     
-    console.log(properties);
+    // Function to handle the "Reject" button click
+    const handleRejectRequest = (reqId: string) => {
+        
+        fetch(window.config.SERVER_URL + "/service-provider/reject-service?reqId=" + reqId, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({}),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((responseJson) => {
+                console.log('Backend response:', responseJson);
+                if (responseJson.isSuccess) {
+                    setTenantinPropertyDetail(responseJson.tenants);
+                    setUpdate(true);
+                } else if (!responseJson.isSuccess) {
+                    alert(responseJson.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });
+    };
+
     return (
     <body>
         <div className="dashboard-container">
@@ -401,19 +435,25 @@ export function DashboardOwnerCluster() {
                                         </td>
 
                                         <td>
-                                            <Button className="standard-button" onClick={() => {navigate(
-                                                "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
-                                                Request quote
-                                            </Button>
-                                            
+                                            {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
+                                                <Button className="standard-button" onClick={() => {navigate(
+                                                    "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
+                                                    Request quote
+                                                </Button>
+                                            )}
 
-                                            {userTicket.status == "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
+                                            {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
                                                 <Button className="standard-button ms-1"
                                                 onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
                                                     View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
                                                 </Button>                                            
                                             )}
                                             
+                                            {(userTicket.status != "rejected" && userTicket.status != "withdrawn" && userTicket.status != "completed") && (
+                                                <Button className="standard-button" onClick={() => {handleRejectRequest(userTicket.id)}}>
+                                                    Reject
+                                                </Button>
+                                            )}
                                         </td>   
                                     </tr>
                                 ))

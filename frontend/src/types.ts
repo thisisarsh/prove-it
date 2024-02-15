@@ -38,6 +38,7 @@ export interface Role {
 }
 
 export interface ServiceRequest {
+    createdAt: string;
     serviceTypeId: string;
     details: string;
     propertyName: string;
@@ -143,6 +144,7 @@ export interface Proposal {
   serviceProviderId: string;
   serviceProvider: ServiceProvider;
   quotePrice: number | undefined;
+  quoteType: string;
   estimatedHours: number | undefined;
   startDate: string | undefined;
   endDate: string | undefined;

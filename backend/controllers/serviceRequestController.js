@@ -14,6 +14,11 @@ const REQUEST_DETAILS_LINK = "https://apiqa.hometrumpeter.com/service-provider/s
 const SERVICE_REQUEST_TICKET_LINK = "https://apiqa.hometrumpeter.com/ticket/services-request";
 const SEND_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/send-proposal/";
 const APPROVE_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/approve-proposal/";
+const REJECT_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/reject-proposal/";
+const MANAGER_REJECT_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/reject-service/";
+const WITHDRAW_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/proposal-withdraw/";
+const WITHDRAW_SERVICE_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/service-request-withdraw/";
+
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -267,4 +272,68 @@ exports.approveProposal = (req, res) => {
         console.error(error);
         res.status(500).json({error: error.message});
     })
+}
+
+exports.rejectProposal = (req, res) => {
+  console.log("Rejecting proposal for " + req.query.id);
+
+  let rejectProposalHeaders = HEADERS;
+  rejectProposalHeaders.Authorization = req.headers.authorization;
+
+  axios.delete(REJECT_PROPOSAL_LINK + req.query.id, {headers: rejectProposalHeaders})
+  .then(response => {
+      res.send(response.data)
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
+}
+
+exports.managerRejectRequest = (req, res) => {
+  console.log("Rejecting service request for " + req.query.reqId);
+
+  let managerRejectRequestHeaders = HEADERS;
+  managerRejectRequestHeaders.Authorization = req.headers.authorization;
+
+  axios.delete(MANAGER_REJECT_REQUEST_LINK + req.query.reqId, {headers: managerRejectRequestHeaders})
+  .then(response => {
+      res.send(response.data)
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
+}
+
+exports.spWithdrawProposal = (req, res) => {
+  console.log("Withdrawing proposal submitted by service provider: " + req.query.id);
+
+  let withdrawProposalHeaders = HEADERS;
+  withdrawProposalHeaders.Authorization = req.headers.authorization;
+
+  axios.post(WITHDRAW_PROPOSAL_LINK + req.query.id, req.body, {headers: withdrawProposalHeaders})
+  .then(response => {
+      res.send(response.data);
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
+}
+
+exports.tenWithdrawServiceRequest = (req, res) => {
+  console.log("Withdrawing service request submitted by tenant: " + req.query.id);
+
+  let withdrawServiceRequestHeaders = HEADERS;
+  withdrawServiceRequestHeaders.Authorization = req.headers.authorization;
+
+  axios.post(WITHDRAW_SERVICE_REQUEST_LINK + req.query.id, req.body, {headers: withdrawServiceRequestHeaders})
+  .then(response => {
+      res.send(response.data);
+  })
+  .catch(error => {
+      console.error(error);
+      res.status(500).json({error: error.message});
+  })
 }

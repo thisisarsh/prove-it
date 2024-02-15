@@ -21,6 +21,7 @@ import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
+
 /**
  *
  * @returns Void
@@ -29,11 +30,12 @@ export function DashboardServiceCluster() {
     const { logout } = useLogout();
     const [error, setError] = useState<string | null>(null);
     const [applicationStatusError, setApplicationStatusError] = useState<string | null>(null);
+    const [update, setUpdate] = useState<boolean>(false);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dashboardServices, setDashboardServices] = useState<DashboardServiceParent[]>([]);
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
-    const [showDetail, setShowDetail] = useState<boolean>(false);
+    const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
     const [jobs, setJobs] = useState<Job[]>([]);
 
@@ -132,24 +134,44 @@ export function DashboardServiceCluster() {
             console.error(error);
             setError('An error occured (see console)');
         })
-    }, [user, fetchData]);
+        setUpdate(false);
+    }, [user, fetchData, update]);
 
-    const handleDetailClick = (id: string) => {
+    const handleTicketDetailClick = (id: string) => {
         const ticket: ServiceRequestSP | undefined = tickets?.filter(obj => {
             return(obj.id === id);
-        })[0]
+        })[0];
+        console.log("TICKET");
         console.log(ticket);
         setTicketDetail(ticket);
-        setShowDetail(true);
+        setShowTicketDetail(true);
     }
 
-    const handleCloseDetail = () => {
+    const handleCloseTicketDetail = () => {
         setTicketDetail(undefined);
-        setShowDetail(false);
+        setShowTicketDetail(false);
     }
 
     const handleQuoteClick = (ticket: ServiceRequestSP) => {
         navigate("/send-quote", {state: {ticket: ticket}});
+    }
+
+    const handleWithdrawClick = (id: string) => {
+        fetchData(window.config.SERVER_URL + "/sp-proposal-withdraw?id=" + id, "POST")
+        .then(response => {
+            if (response.isSuccess) {
+                console.log("SUCCESSFULLY WITHDREW PROPOSAL: " + id);
+                console.log(user);
+                console.log(response);
+                setUpdate(true);
+            } else {
+                setError(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured');
+        });
     }
 
     const handleActivateJob = (jobId: string) => {
@@ -209,7 +231,6 @@ export function DashboardServiceCluster() {
         })
     }
 
-    console.log(user);
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
@@ -264,13 +285,34 @@ export function DashboardServiceCluster() {
                                 <td colSpan={2}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
-                                tickets.map((ticket) => (
+                                tickets.filter(t => t.status === "initiated").map((ticket) => (
                                     <tr key={ticket.id}>
                                         <td>{ticket.serviceType.serviceType}</td>
                                         <td>{ticket.property.name}</td>
                                         <td>
-                                            <button className="delete-button" onClick={() => handleDetailClick(ticket.id)}>Details</button>
+                                            <button className="delete-button" onClick={() => handleTicketDetailClick(ticket.id)}>Details</button>
                                             <button className="delete-button" onClick={() => handleQuoteClick(ticket)}>Quote</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={3}>
+                                        You have no new service request.
+                                    </td>
+                                </tr>
+                            )}
+
+                            {isLoading ? (
+                                <td colSpan={2}>Loading Properties...</td>
+                            ) : Array.isArray(tickets) &&
+                                tickets.length > 0 ? (
+                                tickets.filter(t => t.status === "submitted").map((ticket) => (
+                                    <tr key={ticket.id}>
+                                        <td>{ticket.serviceType.serviceType}</td>
+                                        <td>{ticket.property.name}</td>
+                                        <td>
+                                            <button className="delete-button" style={{background:"maroon"}} onClick={() => handleWithdrawClick(ticket.id)}>Withdraw</button>
                                         </td>
                                     </tr>
                                 ))
@@ -368,7 +410,7 @@ export function DashboardServiceCluster() {
             </div>
 
             {/* Show more detail about property Popup */}
-            <Modal show={showDetail} onHide={handleCloseDetail}>
+            <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
                 <Modal.Header closeButton>
                     <Modal.Title>Property Details</Modal.Title>
                 </Modal.Header>
@@ -412,7 +454,7 @@ export function DashboardServiceCluster() {
                     </table>
                 </Modal.Body>
                 <Modal.Footer>
-                <button className="delete-button" onClick={handleCloseDetail}>
+                <button className="delete-button" onClick={handleCloseTicketDetail}>
                     Close
                 </button>
                 </Modal.Footer>
