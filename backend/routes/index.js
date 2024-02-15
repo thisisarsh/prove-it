@@ -46,6 +46,9 @@ router.get('/owner-service-provider', ownerServiceProviderController.getServiceP
 
 router.post('/background-check/tenant', backgroundCheckController.checkTenant)
 router.post('/background-check/tenant/approve', backgroundCheckController.approveTenant)
+router.post('/background-check/tenant/reject', backgroundCheckController.rejectTenant)
+router.post('/background-check/tenant-application', backgroundCheckController.tenantApplicationStatus)
+router.post('/background-check/tenant-application-download', backgroundCheckController.tenantApplicationStatusDownload)
 
 router.post('/agreement/initiate', agreementController.sendAgreement)
 router.post('/agreement/submit', agreementController.submitAgreement)

@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { raw } = require('body-parser');
 
 require('dotenv').config();
 
@@ -6,6 +7,7 @@ const GET_PROPERTY_TENANT_LINK = 'https://apiqa.hometrumpeter.com/property-manag
 const BACKGROUND_CHECK_INITIATE_LINK = 'https://apiqa.hometrumpeter.com/background-check/initiate';
 const BACKGROUND_CHECK_STATUS_LINK = 'https://apiqa.hometrumpeter.com/background-check/status/';
 const BACKGROUND_CHECK_APPROVE_LINK = 'https://apiqa.hometrumpeter.com/background-check/approve';
+const BACKGROUND_CHECK_REJECT_LINK = 'https://apiqa.hometrumpeter.com/background-check/reject';
 const SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/sp/detail";
 const BG_CHECK_STATUS_LINK = "https://apiqa.hometrumpeter.com/background-check/status/";
 const GET_SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/sp/detail"
@@ -147,6 +149,53 @@ exports.applyPublic = (req, res) => {
 
 }
 
+exports.rejectTenant = (req, res) => {
+
+    let payload = {
+        applicantId: "",
+        comments: "Bad",
+        userId: req.query.userId,
+        tenantPropertyRefId: ""
+    };
+
+    let checkHeaders = {...HEADERS, Authorization: req.headers.authorization};
+
+    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { "headers": checkHeaders })
+        .then(response => {
+
+            if (!response.data?.isSuccess) {
+                throw new Error(response.data.message);
+            }
+
+            payload.tenantPropertyRefId = response.data.data.tenantPropertyRefId;
+
+            return axios.get(BACKGROUND_CHECK_STATUS_LINK + req.query.userId, { "headers": checkHeaders });
+        })
+        .then(statusResponse => {
+
+            if (!statusResponse.data.isSuccess) {
+                throw new Error(statusResponse.data.message);
+            }
+
+            payload.applicantId = statusResponse.data.data.status.applicantId;
+
+            return axios.post(BACKGROUND_CHECK_REJECT_LINK, payload, { "headers": checkHeaders });
+        })
+        .then(rejectResponse => {
+
+            if (!rejectResponse.data.isSuccess) {
+                throw new Error(rejectResponse.data.message);
+            }
+            console.log("reject background check of tenant" + req.query.userId);
+            console.log(rejectResponse.data.message);
+            res.send({ message: "Tenant rejected successfully" });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(500).send({ error: error.message || 'Internal server error' });
+        });
+};
+
 exports.spApplicationStatus = (req, res) => {
     let appStatusHeaders = HEADERS;
     appStatusHeaders.Authorization = req.headers.authorization;
@@ -235,3 +284,62 @@ exports.spApplicationStatus = (req, res) => {
         res.send({isSuccess: false, message: error.message});
     })
 }
+
+exports.tenantApplicationStatus = (req, res) => {
+    let appStatusHeaders = HEADERS;
+    appStatusHeaders.Authorization = req.headers.authorization;
+
+    console.log(req.body.id);
+    axios.get(BG_CHECK_STATUS_LINK + req.body.id + "?downloadUrl=false", {headers: appStatusHeaders})
+    .then(response => {
+        if (response.data?.isSuccess || response.data.message == "Background check status not found") {
+            const rawData = response.data.data;
+            console.log(response.data);
+            if (response.data.message == "Background check status not found"){
+                const refinedData = {
+                    isSuccess : false
+                }
+                return res.send(refinedData);
+            } else {
+                const refinedData = {
+                    id : rawData.status.applicantId,
+                    tenantId : req.body.id,
+                    checksResult : rawData.status.checksResult ?? [],
+                    isSuccess : true
+                }
+                return res.send(refinedData);
+            }
+        } else {
+            return res.send({error: response.data.message});
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        res.send({error: error.message});
+    });
+}
+
+exports.tenantApplicationStatusDownload = (req, res) => {
+    let appStatusHeaders = HEADERS;
+    appStatusHeaders.Authorization = req.headers.authorization;
+
+    console.log(req.body.applicantId);
+    axios.get(BG_CHECK_STATUS_LINK + req.body.id + "?downloadUrl=true" + "&applicantId=" + req.body.applicantId, {headers: appStatusHeaders})
+    .then(response => {
+        if (response.data?.isSuccess) {
+            const refinedData = {
+                reportUrl: response.data.data.reportUrl,
+                isSuccess: true
+            }
+            console.log("DOWNLOAD");
+            return res.send(refinedData);
+        } else {
+            return res.send({error: response.data.message});
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        res.send({error: error.message});
+    });
+}
+
