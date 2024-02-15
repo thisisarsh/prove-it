@@ -9,6 +9,7 @@ import { TenantBGResult } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 
+import "../../styles/pages/allTenantTab.css";
 
 interface Tenant {
     id: string;
@@ -276,7 +277,7 @@ export function AllTenantsCluster() {
 
     return (
         <body>
-            <div className="dashboard-container">
+            <div className="tenant-tab-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
@@ -286,7 +287,7 @@ export function AllTenantsCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Tenant Tab</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <Nav>
@@ -314,9 +315,8 @@ export function AllTenantsCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
-            </div>
-            <div className="properties-container">
-                    <h1 className="dashboard-label">Service Providers</h1>
+            <div className="all-tenant-container">
+                    <h1 className="dashboard-label">Tenant</h1>
                     {isLoading ? <Spinner /> : (
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
@@ -366,6 +366,8 @@ export function AllTenantsCluster() {
                 </div>
             </footer>
         <div>
+            </div>
+           
             <Modal show={bcModal} onHide={handleBCModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Background Check</Modal.Title>
