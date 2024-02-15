@@ -271,7 +271,7 @@ export function RequestHOServiceCluster() {
                         items={serviceProviders}
                         onSelect={handleServiceProviderSelect}
                         placeholder={
-                            selectedSP ? selectedSP.firstName : "Select a Timeline"
+                            selectedSP ? selectedSP.firstName : "Select a Service Provider"
                         }
                         labelKey="firstName"
                     />
