@@ -143,6 +143,7 @@ export interface Proposal {
   serviceProviderId: string;
   serviceProvider: ServiceProvider;
   quotePrice: number | undefined;
+  quoteType: string;
   estimatedHours: number | undefined;
   startDate: string | undefined;
   endDate: string | undefined;
