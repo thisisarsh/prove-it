@@ -121,7 +121,8 @@ exports.completeJob = (req, res) => {
     let completeJobHeaders = HEADERS;
     completeJobHeaders.Authorization = req.headers.authorization;
 
-    axios.post(COMPLETE_JOB_LINK + req.query.id, {}, {headers: completeJobHeaders})
+    //TODO: Implement this with a modal on the frontend
+    axios.post(COMPLETE_JOB_LINK + req.query.id, {amount:1, serviceHours:1}, {headers: completeJobHeaders})
     .then(response => {
         res.send(response.data);
     })
