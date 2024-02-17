@@ -32,8 +32,6 @@ export function SPJobTable(props: SPJobTableProps) {
 
     return (
         <div className="request-container mb-5">
-                <h1 className="dashboard-label">Current Jobs</h1>
-
                 {props.isLoading && <Spinner/>}
 
                 <table className="dashboard-table">

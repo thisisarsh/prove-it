@@ -75,6 +75,7 @@ router.post('/service-request-withdraw', serviceRequestController.tenWithdrawSer
 
 router.post('/apply-public', backgroundCheckController.applyPublic);
 router.get('/active-jobs', dashboardServiceController.activeJobs);
+router.get('/completed-jobs', dashboardServiceController.completedJobs);
 router.post('/activate-job', dashboardServiceController.activateJob);
 router.post('/complete-job', dashboardServiceController.completeJob);
 router.get('/sp-application-status', backgroundCheckController.spApplicationStatus);
