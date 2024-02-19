@@ -21,6 +21,8 @@ import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
+import Accordion from 'react-bootstrap/Accordion';
+import Badge from 'react-bootstrap/Badge';
 
 /**
  *
@@ -37,7 +39,8 @@ export function DashboardServiceCluster() {
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
     const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
-    const [jobs, setJobs] = useState<Job[]>([]);
+    const [activeJobs, setActiveJobs] = useState<Job[]>([]);
+    const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
 
     //const [properties, setProperties] = useState<Property[] | null>(null);
     //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
@@ -110,6 +113,8 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
+                console.log("NEW REQUESTS");
+                console.log(response.data)
                 setTickets(response.data);
             } else {
                 setError(response.message);
@@ -124,7 +129,9 @@ export function DashboardServiceCluster() {
         .then(response => {
             if (response.isSuccess) {
                 if (Array.isArray(response.data.jobs)) {
-                    setJobs(response.data.jobs);
+                    console.log("ACTIVE JOBS");
+                    console.log(response.data.jobs);
+                    setActiveJobs(response.data.jobs);
                 }
             } else {
                 setError(response.message);
@@ -134,6 +141,24 @@ export function DashboardServiceCluster() {
             console.error(error);
             setError('An error occured (see console)');
         })
+
+        fetchData(window.config.SERVER_URL + "/completed-jobs")
+        .then(response => {
+            if (response.isSuccess) {
+                if (Array.isArray(response.data.jobs)) {
+                    console.log("COMPLETED JOBS");
+                    console.log(response.data.jobs);
+                    setCompletedJobs(response.data.jobs);
+                }
+            } else {
+                setError(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            setError('An error occured (see console)');
+        })
+
         setUpdate(false);
     }, [user, fetchData, update]);
 
@@ -182,7 +207,7 @@ export function DashboardServiceCluster() {
             setIsLoading(false);
             if (response.isSuccess) {
                 alert(response.message);
-                location.reload();
+                setUpdate(true);
             } else {
                 alert("Error: " + response.message);
             }
@@ -197,7 +222,7 @@ export function DashboardServiceCluster() {
             setIsLoading(false);
             if (response.isSuccess) {
                 alert(response.message);
-                location.reload();
+                setUpdate(true);
             } else {
                 alert("Error: " + response.message);
             }
@@ -282,7 +307,7 @@ export function DashboardServiceCluster() {
                     </thead>
                     <tbody>
                             {isLoading ? (
-                                <td colSpan={2}>Loading Properties...</td>
+                                <td colSpan={3}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
                                 tickets.filter(t => t.status === "initiated").map((ticket) => (
@@ -304,7 +329,7 @@ export function DashboardServiceCluster() {
                             )}
 
                             {isLoading ? (
-                                <td colSpan={2}>Loading Properties...</td>
+                                <td colSpan={3}>Loading Properties...</td>
                             ) : Array.isArray(tickets) &&
                                 tickets.length > 0 ? (
                                 tickets.filter(t => t.status === "submitted").map((ticket) => (
@@ -312,6 +337,7 @@ export function DashboardServiceCluster() {
                                         <td>{ticket.serviceType.serviceType}</td>
                                         <td>{ticket.property.name}</td>
                                         <td>
+                                            <button className="delete-button" onClick={() => handleTicketDetailClick(ticket.id)}>Details</button>
                                             <button className="delete-button" style={{background:"maroon"}} onClick={() => handleWithdrawClick(ticket.id)}>Withdraw</button>
                                         </td>
                                     </tr>
@@ -380,33 +406,63 @@ export function DashboardServiceCluster() {
                 
             </div>
 
-            {/* Current Requests Table */}
-            <SPJobTable 
-                jobs={jobs}
-                activateJob={handleActivateJob}
-                completeJob={handleCompleteJob}
-                isLoading={isLoading}
-            />
-
-            {/* Completed Requests Table */}
-            <div className="request-container mb-5">
-                <h1 className="dashboard-label">Completed Requests</h1>
-                <table className="dashboard-table">
-                    <thead className="dashboard-header">
-                        <tr>
-                            <th>Service</th>
-                            <th>Property</th>
-                            <th>Date Completed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colSpan={3}>
-                                You have no completed request!
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div className="properties-container">
+                <h1 className="dashboard-label">Current Service Requests</h1>
+                {/* Current Requests Table */}
+                <Accordion defaultActiveKey="0" style={{paddingTop: '1rem'}}>
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Header>Active</Accordion.Header>
+                        <Accordion.Body>
+                            <SPJobTable
+                                jobs={activeJobs}
+                                activateJob={handleActivateJob}
+                                completeJob={handleCompleteJob}
+                                isLoading={isLoading}
+                            />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+            
+                {/* Completed Requests Table */}
+                <Accordion style={{paddingTop: '1rem'}}>
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Header>Completed</Accordion.Header>
+                        <Accordion.Body>
+                        <table className="dashboard-table">
+                            <thead className="dashboard-header">
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Property</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {isLoading ? (
+                                    <td colSpan={2}>Loading Service Requests...</td>
+                                ) : Array.isArray(completedJobs) && completedJobs.length > 0 ? (
+                                    completedJobs.filter(obj => ['withdrawn', 'rejected', 'completed'].includes(obj.status)).map(job => (
+                                        <tr>
+                                            <td>{job.serviceType.serviceType}</td>
+                                            <td>{job.property.streetAddress}</td>
+                                            <td>
+                                                {(job.activityStatus === "completed" && 
+                                                    <Badge pill bg="success">{job.activityStatus}</Badge>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={3}>
+                                            You have no completed request!
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
             </div>
 
             {/* Show more detail about property Popup */}
@@ -443,6 +499,11 @@ export function DashboardServiceCluster() {
                                         <td>Request Timeline: </td>
                                         <td>‎ </td>
                                         <td>{ticketDetail.timeline.title}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Details: </td>
+                                        <td>‎ </td>
+                                        <td>{ticketDetail.serviceRequest.detail}</td>
                                     </tr>
                                 </>
                             ) : (

@@ -8,6 +8,8 @@ import { TenantProperty, ServiceRequest } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge';
+import Accordion from 'react-bootstrap/Accordion';
 
 import "../../styles/pages/dashboard.css";
 
@@ -223,60 +225,125 @@ export function DashboardTenantCluster() {
                 {/* Service Request block */}
                 <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
-                    <table className="dashboard-table">
-                        <thead className="dashboard-header">
-                            <tr>
-                                <th className="dashboard-header">Service</th>
-                                <th>Property</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isLoading ? (
-                                <td colSpan={4}>Loading Service Requests...</td>
-                            ) : Array.isArray(tickets) &&
-                                tickets.length > 0 ? (
-                                tickets.filter(t => !['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
+
+                    <Accordion defaultActiveKey="0" style={{paddingTop: '1rem'}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Active</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
+                                        <tr>
+                                            <th className="dashboard-header">Service</th>
+                                            <th>Property</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading ? (
+                                            <td colSpan={4}>Loading Service Requests...</td>
+                                        ) : Array.isArray(tickets) &&
+                                            tickets.length > 0 ? (
+                                            tickets.filter(t => !['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
+                                                <tr>
+                                                    <td>{userTicket.serviceType.serviceType}</td>
+                                                    <td>{userTicket.property.streetAddress}</td>
+                                                    <td>
+                                                        <Badge pill bg="warning">
+                                                            {userTicket.status}
+                                                        </Badge>
+                                                    </td>
+                                                    <td>
+                                                        <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
+                                                            Details
+                                                        </button>
+                                                        {userTicket.status === "requested" &&
+                                                            <button className="delete-button" style={{background:'maroon'}} onClick={() => handleWithdrawClick(userTicket.id)}>
+                                                                Withdraw
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={4}>
+                                                    You don't have any service requests yet.
+                                                    Start by requesting a service!
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
                                     <tr>
-                                        <td>{userTicket.serviceType.serviceType}</td>
-                                        <td>{userTicket.property.streetAddress}</td>
-                                        <td>{userTicket.status}</td>
-                                        <td>
-                                            <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
-                                                Details
+                                        <td className="dashboard-empty-service" colSpan={4}>
+                                            <button className="request-service-button"
+                                                onClick={() => {navigate("/request-service");}}> Request a Service
                                             </button>
-                                            {userTicket.status === "requested" &&
-                                                <button className="delete-button" style={{background:'maroon'}} onClick={() => handleWithdrawClick(userTicket.id)}>
-                                                    Withdraw
-                                                </button>
-                                            }
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={4}>
-                                        You don't have any service requests yet.
-                                        Start by requesting a service!
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                        <tr>
-                            <td className="dashboard-empty-service" colSpan={4}>
-                                <button className="request-service-button"
-                                    onClick={() => {navigate("/request-service");}}> Request a Service
-                                </button>
-                            </td>
-                        </tr>
-                    </table>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+
+                    <Accordion style={{paddingTop: '1rem'}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Completed</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
+                                        <tr>
+                                            <th className="dashboard-header">Service</th>
+                                            <th>Property</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading ? (
+                                            <td colSpan={4}>Loading Service Requests...</td>
+                                        ) : Array.isArray(tickets) &&
+                                            tickets.length > 0 ? (
+                                            tickets.filter(t => ['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
+                                                <tr>
+                                                    <td>{userTicket.serviceType.serviceType}</td>
+                                                    <td>{userTicket.property.streetAddress}</td>
+                                                    <td>
+                                                        <Badge pill bg="danger">
+                                                            {userTicket.status}
+                                                        </Badge>
+                                                    </td>
+                                                    <td>
+                                                        <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
+                                                            Details
+                                                        </button>
+                                                        {userTicket.status === "requested" &&
+                                                            <button className="delete-button" style={{background:'maroon'}} onClick={() => handleWithdrawClick(userTicket.id)}>
+                                                                Withdraw
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={4}>
+                                                    You don't have any service requests yet.
+                                                    Start by requesting a service!
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
                 </div>
 
                 {/* Show more detail about property Popup */}
                 <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Property Details</Modal.Title>
+                        <Modal.Title>Service Request Details</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <table className="property-detail-table">
