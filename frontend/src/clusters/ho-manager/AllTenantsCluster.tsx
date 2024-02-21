@@ -151,26 +151,6 @@ export function AllTenantsCluster() {
         }
     }
 
-    const handleSubmitAgreement = () => {
-        if (selectedTenant) {
-            setIsLoading(true);
-            const queryParams = new URLSearchParams({
-                userId: selectedTenant.id
-            }).toString();
-            fetch(`${window.config.SERVER_URL}/agreement/submit?${queryParams}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user?.token}`,
-                },
-            })
-                .finally(() => {
-                    setIsLoading(false);
-                    setAgreementModalShow(false);
-                });
-        }
-    }
-
     const handleApproveAgreement = () => {
         if (selectedTenant) {
             setIsLoading(true);
@@ -275,6 +255,7 @@ export function AllTenantsCluster() {
             });
     }, [user?.token]);
 
+    console.log(selectedTenant);
     return (
         <body>
             <div className="tenant-tab-container">
@@ -435,8 +416,9 @@ export function AllTenantsCluster() {
                     <Button variant="primary" onClick={handleSendAgreement}>
                         Send
                     </Button>
-                    <Button variant="info" onClick={handleSubmitAgreement}>
-                        Submit
+                    <Button className="standard-button" onClick={() =>  
+                        { if (selectedTenant !== null) { navigate("/submit-agreement?id=" + selectedTenant.id); } }}>
+                        Submit Agreement
                     </Button>
                     <Button variant="success" onClick={handleApproveAgreement}>
                         Approve

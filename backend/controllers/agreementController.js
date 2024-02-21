@@ -34,6 +34,8 @@ exports.sendAgreement = (req, res) => {
             if (!agResponse.data?.isSuccess) {
                 throw new Error(agResponse.data.message);
             }
+            console.log("Agreement initiate response");
+            console.log(agResponse.data);
             res.send({ message: "Agreement sent successfully" });
         })
         .catch(error => {
@@ -51,20 +53,20 @@ exports.submitAgreement = (req, res) => {
         ownerId: "",
         managerId: "",
         propertyId: "",
-        rent: 120,
-        integrationFee: 0,
-        htFee: 0,
-        managerFee: 0,
-        advancePayment: 100,
-        rentDueDate: 0,
+        rent: req.body.rent,
+        integrationFee: req.body.integrationFee,
+        htFee: req.body.htFee,
+        managerFee: req.body.managerFee,
+        advancePayment: req.body.advancePayment,
+        rentDueDate: req.body.rentDueDate,
         isDepositPayable: true,
         isRentPayable: true,
         isCustomDueDate: true,
         isRecurringPayment: true,
-        startDate: "2024-01-14T15:08:04.626Z",
-        endDate: "2024-01-14T15:08:04.626Z",
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
         securityDepositStatus: 0,
-        lateFee: 0,
+        lateFee: req.body.lateFee,
         tenantPropertyRefId: ""
     }
 
@@ -84,9 +86,14 @@ exports.submitAgreement = (req, res) => {
         })
         .then(agResponse => {
             if (!agResponse.data?.isSuccess) {
-                throw new Error(agResponse.data.message);
+
+                res.send({ message: agResponse.data.message, isSuccess: false });
+            } else {
+
+                console.log("Submit agreement");
+                console.log(agResponse.data);
+                res.send({ message: "Agreement submitted successfully", isSuccess: true });
             }
-            res.send({ message: "Agreement submitted successfully" });
         })
         .catch(error => {
             console.error('Error:', error);
@@ -133,3 +140,4 @@ exports.approveAgreement = (req, res) => {
             res.status(500).send({ error: error.message || 'Internal server error' });
         });
 };
+
