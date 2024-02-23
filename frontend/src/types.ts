@@ -38,6 +38,7 @@ export interface Role {
 }
 
 export interface ServiceRequest {
+    activityStatus: string | undefined;
     createdAt: string;
     serviceTypeId: string;
     details: string;
