@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import Text from '../components/Text';
-import customButton from "../components/CustomButton";
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 

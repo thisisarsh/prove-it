@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
-// Assuming Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail types are defined in "../../../types"
 import { Property } from '../../../types';
 
 const serverAddress = 'http://localhost:8080';
