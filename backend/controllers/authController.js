@@ -20,8 +20,9 @@ const HEADERS = {
 };
 
 exports.login = (req, res) => {
-  //console.log(HEADERS);
-  //console.log(req.body);
+  // console.log(HEADERS);
+  // console.log(req.body);
+
   axios.post(LOGIN_API, req.body, { 'headers': HEADERS })
   .then(response => {
     // Handle the data from the API response
