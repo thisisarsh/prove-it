@@ -13,7 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
-
+import Badge from 'react-bootstrap/Badge';
+import Accordion from 'react-bootstrap/Accordion';
 
 import "../../styles/pages/dashboard.css";
 import { Button } from "react-bootstrap";
@@ -407,78 +408,165 @@ export function DashboardOwnerCluster() {
                 {/* Service Request block */}
                 <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
-                    <table className="dashboard-table">
-                        <thead className="dashboard-header">
-                            <tr>
-                                <th className="dashboard-header">Service</th>
-                                <th>Status</th>
-                                <th>Property</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isLoading ? (
-                                <td colSpan={2}>Loading Service Requests...</td>
-                            ) : Array.isArray(tickets) &&
-                                tickets.length > 0 ? (
-                                tickets.map((userTicket) => (
-                                    <tr key={userTicket.id}>
-                                        <td>
-                                            {userTicket.serviceType.serviceType}
+                    {/* Accordion drop downs */}
+                    <Accordion defaultActiveKey="0" style={{paddingTop: '1rem'}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Active Jobs</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
+                                        <tr>
+                                            <th className="dashboard-header">Service</th>
+                                            <th>Status</th>
+                                            <th>Property</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading ? (
+                                            <td colSpan={2}>Loading Service Requests...</td>
+                                        ) : Array.isArray(tickets) &&
+                                            tickets.length > 0 ? (
+                                            tickets.filter(obj => !['withdrawn', 'rejected', 'completed'].includes(obj.status)).map((userTicket) => (
+                                                <tr key={userTicket.id}>
+                                                    <td>
+                                                        {userTicket.serviceType.serviceType}
+                                                    </td>
+
+                                                    <td>
+                                                        {(userTicket.status === "requested" &&
+                                                            <Badge pill bg="warning">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "pending" &&
+                                                            <Badge pill bg="secondary">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "started" &&
+                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "initiated" &&
+                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "active" &&
+                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
+                                                        )}
+                                                    </td>
+
+                                                    <td>
+                                                        {userTicket.property.name}
+                                                    </td>
+
+                                                    <td>
+                                                        {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
+                                                            <Button className="standard-button" onClick={() => {navigate(
+                                                                "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
+                                                                Request quote
+                                                            </Button>
+                                                        )}
+
+                                                        {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (
+                                                            <Button className="standard-button ms-1"
+                                                            onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
+                                                                View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
+                                                            </Button>
+                                                        )}
+
+                                                        {(userTicket.status != "rejected" && userTicket.status != "withdrawn" && userTicket.status != "completed") && (
+                                                            <Button className="standard-button" onClick={() => {handleRejectRequest(userTicket.id)}}>
+                                                                Reject
+                                                            </Button>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={4}>
+                                                    You don't have any service requests yet.
+                                                    Start by requesting a service!
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                    <tr>
+                                        <td className="dashboard-empty-service" colSpan={4}>
+                                            <Button
+                                                className="standard-button"
+                                                onClick={() => {
+                                                    navigate("/request-service");
+                                                }}>
+                                                    Request a Service
+                                            </Button>
                                         </td>
-
-                                        <td>
-                                            {userTicket.status}
-                                        </td>
-
-                                        <td>                                            
-                                            {userTicket.property.name}                                                
-                                        </td>
-
-                                        <td>
-                                            {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
-                                                <Button className="standard-button" onClick={() => {navigate(
-                                                    "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
-                                                    Request quote
-                                                </Button>
-                                            )}
-
-                                            {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
-                                                <Button className="standard-button ms-1"
-                                                onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
-                                                    View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
-                                                </Button>                                            
-                                            )}
-                                            
-                                            {(userTicket.status != "rejected" && userTicket.status != "withdrawn" && userTicket.status != "completed") && (
-                                                <Button className="standard-button" onClick={() => {handleRejectRequest(userTicket.id)}}>
-                                                    Reject
-                                                </Button>
-                                            )}
-                                        </td>   
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={4}>
-                                        You don't have any service requests yet.
-                                        Start by requesting a service! 
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                        <tr>
-                            <td className="dashboard-empty-service" colSpan={4}>
-                                <Button
-                                    className="standard-button"
-                                    onClick={() => {
-                                        navigate("/ho-request-service");
-                                    }}>
-                                        Request a Service
-                                </Button>
-                            </td>
-                        </tr>
-                    </table>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+
+                    <Accordion style={{paddingTop: '1rem'}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Completed Jobs</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Status</th>
+                                            <th>Property</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading ? (
+                                            <td colSpan={3}>Loading Service Requests...</td>
+                                        ) : Array.isArray(tickets) &&
+                                            tickets.length > 0 ? (
+                                            tickets.filter(obj => ['withdrawn', 'rejected', 'completed'].includes(obj.status)).map((userTicket) => (
+                                                <tr key={userTicket.id}>
+                                                    <td>
+                                                        {userTicket.serviceType.serviceType}
+                                                    </td>
+
+                                                    <td>
+                                                        {(userTicket.status === "rejected" &&
+                                                            <Badge pill bg="danger">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "withdrawn" &&
+                                                            <Badge pill bg="danger">{userTicket.status}</Badge>
+                                                        )}
+                                                        {(userTicket.status === "completed" &&
+                                                            <Badge pill bg="success">{userTicket.status}</Badge>
+                                                        )}
+                                                    </td>
+
+                                                    <td>
+                                                        {userTicket.property.name}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={3}>
+                                                    You don't have any service requests yet.
+                                                    Start by requesting a service!
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                    <tr>
+                                        <td className="dashboard-empty-service" colSpan={3}>
+                                            <Button
+                                                className="standard-button"
+                                                onClick={() => {
+                                                    navigate("/request-service");
+                                                }}>
+                                                    Request a Service
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
                 </div>
             {/* Footer */}
             <footer className="dashboard-footer">
@@ -628,3 +716,4 @@ export function DashboardOwnerCluster() {
     </body>
     );
 }
+

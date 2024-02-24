@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const TENANT_LINK = 'https://apiqa.hometrumpeter.com/customer/tenant/';
 const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
+const TENANT_REQUESTS_LINK = 'https://apiqa.hometrumpeter.com/service-request/tenant/service-requests';
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -55,5 +56,20 @@ exports.getProperties = (req, res) => {
         res.send({error: error.message});
     })
 
+}
+
+exports.getTenantRequests = (req, res) => {
+    let tenantRequestHeaders = HEADERS;
+    tenantRequestHeaders.Authorization = req.headers.authorization;
+
+    axios.get(TENANT_REQUESTS_LINK, {headers: tenantRequestHeaders})
+    .then(response => {
+        console.log('Fetched tenant service requests', response.data);
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
 }
 

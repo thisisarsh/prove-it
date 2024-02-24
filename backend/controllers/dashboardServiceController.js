@@ -7,6 +7,7 @@ const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
 const USER_SERVICES_LINK = 'https://apiqa.hometrumpeter.com/service-provider/user/services/';
 const SP_SERVICE_REQUESTS = 'https://apiqa.hometrumpeter.com/service-request/sp-services-requests';
 const ACTIVE_JOBS_LINK = 'https://apiqa.hometrumpeter.com/job/active-jobs';
+const COMPLETED_JOBS_LINK = 'https://apiqa.hometrumpeter.com/job/completed-jobs';
 const ACTIVATE_JOB_LINK = 'https://apiqa.hometrumpeter.com/service-provider/activejob/';
 const COMPLETE_JOB_LINK = 'https://apiqa.hometrumpeter.com/service-provider/completejob/'
 
@@ -101,6 +102,20 @@ exports.activeJobs = (req, res) => {
         res.status(500).json({error: "Error fetcing data"});
         console.error(error);
     })
+}
+
+exports.completedJobs = (req, res) => {
+  let getJobsHeaders = HEADERS;
+  getJobsHeaders.Authorization = req.headers.authorization;
+
+  axios.get(COMPLETED_JOBS_LINK, {headers: getJobsHeaders})
+  .then(response => {
+      res.send(response.data);
+  })
+  .catch(error => {
+      res.status(500).json({error: "Error fetcing data"});
+      console.error(error);
+  })
 }
 
 exports.activateJob = (req, res) => {
