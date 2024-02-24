@@ -80,5 +80,7 @@ router.post('/activate-job', dashboardServiceController.activateJob);
 router.post('/complete-job', dashboardServiceController.completeJob);
 router.get('/sp-application-status', backgroundCheckController.spApplicationStatus);
 
+router.post('/ho-service-request', serviceRequestController.hoServiceRequest);
+
 router.get('/tenant/service-requests', dashboardTenantController.getTenantRequests);
 module.exports = router;

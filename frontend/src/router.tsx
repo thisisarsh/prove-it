@@ -29,7 +29,7 @@ import { AddService } from "./routes/AddService";
 import { Proposals } from "./routes/Proposals";
 import { SendQuote } from "./routes/SendQuote";
 import { ApplyPublic } from "./routes/ApplyPublic";
-
+import { HORequestService } from "./routes/HORequestService";
 export const Router = createBrowserRouter([
     {
         path: "/",
@@ -188,6 +188,14 @@ export const Router = createBrowserRouter([
         <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
             <ApplyPublic/>
         </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/ho-request-service",
+        element:
+            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+                <HORequestService/>
+            </ProtectedRoute>,
         errorElement: <ErrorPage />
     }
 ]);

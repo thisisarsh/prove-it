@@ -27,12 +27,13 @@ export function useLogin() {
             body: JSON.stringify({ email, password }),
         });
 
+        console.log(response);
         const json = await response.json();
 
         // Handle BAD/GOOD response
         if (response.status === 200) {
             setIsLoading(false);
-
+            console.log("Login success")
             const user : User = json.user;
             localStorage.setItem("user", JSON.stringify(user))
             dispatch({ type: "LOGIN", payload: { user } });

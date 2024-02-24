@@ -69,8 +69,9 @@ export function DashboardOwnerCluster() {
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
-                //console.log("PROPERTIES");
-                //console.log(data);
+
+                console.log("PROPERTIES");
+                console.log(data);
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
@@ -433,13 +434,13 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "requested" && 
+                                                        {(userTicket.status === "requested" &&
                                                             <Badge pill bg="warning">{userTicket.status}</Badge>
                                                         )}
-                                                        {(userTicket.status === "pending" && 
+                                                        {(userTicket.status === "pending" &&
                                                             <Badge pill bg="secondary">{userTicket.status}</Badge>
                                                         )}
-                                                        {(userTicket.status === "started" && 
+                                                        {(userTicket.status === "started" &&
                                                             <Badge pill bg="primary">{userTicket.status}</Badge>
                                                         )}
                                                         {(userTicket.status === "initiated" &&
@@ -450,8 +451,8 @@ export function DashboardOwnerCluster() {
                                                         )}
                                                     </td>
 
-                                                    <td>                                            
-                                                        {userTicket.property.name}                                                
+                                                    <td>
+                                                        {userTicket.property.name}
                                                     </td>
 
                                                     <td>
@@ -462,26 +463,26 @@ export function DashboardOwnerCluster() {
                                                             </Button>
                                                         )}
 
-                                                        {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (                                                
+                                                        {userTicket.status === "active" && submittedProposalCount(userTicket) > 0 &&  (
                                                             <Button className="standard-button ms-1"
                                                             onClick={() => {navigate('/proposals?requestId=' + userTicket.id)}}>
                                                                 View {submittedProposalCount(userTicket)} Proposal{submittedProposalCount(userTicket) != 1 && "s"}
-                                                            </Button>                                            
+                                                            </Button>
                                                         )}
-                                                        
+
                                                         {(userTicket.status != "rejected" && userTicket.status != "withdrawn" && userTicket.status != "completed") && (
                                                             <Button className="standard-button" onClick={() => {handleRejectRequest(userTicket.id)}}>
                                                                 Reject
                                                             </Button>
                                                         )}
-                                                    </td>   
+                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
                                                 <td colSpan={4}>
                                                     You don't have any service requests yet.
-                                                    Start by requesting a service! 
+                                                    Start by requesting a service!
                                                 </td>
                                             </tr>
                                         )}
@@ -526,19 +527,19 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "rejected" && 
+                                                        {(userTicket.status === "rejected" &&
                                                             <Badge pill bg="danger">{userTicket.status}</Badge>
                                                         )}
-                                                        {(userTicket.status === "withdrawn" && 
+                                                        {(userTicket.status === "withdrawn" &&
                                                             <Badge pill bg="danger">{userTicket.status}</Badge>
                                                         )}
-                                                        {(userTicket.status === "completed" && 
+                                                        {(userTicket.status === "completed" &&
                                                             <Badge pill bg="success">{userTicket.status}</Badge>
                                                         )}
                                                     </td>
 
-                                                    <td>                                            
-                                                        {userTicket.property.name}                                                
+                                                    <td>
+                                                        {userTicket.property.name}
                                                     </td>
                                                 </tr>
                                             ))
@@ -546,7 +547,7 @@ export function DashboardOwnerCluster() {
                                             <tr>
                                                 <td colSpan={3}>
                                                     You don't have any service requests yet.
-                                                    Start by requesting a service! 
+                                                    Start by requesting a service!
                                                 </td>
                                             </tr>
                                         )}

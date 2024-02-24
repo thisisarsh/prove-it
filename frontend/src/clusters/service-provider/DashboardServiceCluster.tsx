@@ -113,6 +113,15 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
+                console.log(response.data);
+
+                let ticket;
+
+                for (ticket of response.data) {
+                    if(!ticket.serviceType){
+                        ticket.serviceType = "NULL"
+                    }
+                }
                 console.log("NEW REQUESTS");
                 console.log(response.data)
                 setTickets(response.data);
@@ -422,7 +431,7 @@ export function DashboardServiceCluster() {
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
-            
+
                 {/* Completed Requests Table */}
                 <Accordion style={{paddingTop: '1rem'}}>
                     <Accordion.Item eventKey="0">
@@ -445,7 +454,7 @@ export function DashboardServiceCluster() {
                                             <td>{job.serviceType.serviceType}</td>
                                             <td>{job.property.streetAddress}</td>
                                             <td>
-                                                {(job.activityStatus === "completed" && 
+                                                {(job.activityStatus === "completed" &&
                                                     <Badge pill bg="success">{job.activityStatus}</Badge>
                                                 )}
                                             </td>

@@ -58,7 +58,7 @@ exports.inviteUser = (req, res) => {
     const lastName = clean(req.body.lastName);
     const roleName = clean(req.body.roleName)
     const propertyName = clean(req.body.propertyName);
-    const encodedUserEmail = encodeURIComponent(clean(req.body.user.email));   
+    const encodedUserEmail = encodeURIComponent(clean(req.body.user.email));
 
     const recipient = req.body.user.email;
     const subject = 'Invitation to Join HomeTrumpeter';
