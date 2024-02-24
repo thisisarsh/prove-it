@@ -1,0 +1,134 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+- intent: request_help
+  examples: |
+    - I need help
+    - I need assistance
+    - I need support
+
+# Create a new intent for the user to request a service
+
+- intent: request_service
+  examples: |
+    - I need my ac repaired
+    - fix my ac
+    - my ac is not working
+    - help for ac service
+    - I need my tub fixed
+    - fix my sink
+    - my shower is not working
+    - help for plumbing service
+    - I need plumbing service
+    - problem with drainage
+    - obtain or renew a license for my pet
+    - problems with thermostat
+    - I need my thermostat fixed
+    - heat is not working in my house
+    - i need child care services
+    - I need a babysitter
+    - I need a nanny
+    - mold in my house
+    - pest control
+    - I need pest control
+    - bed bugs problem
+    - I need bed bugs control
+    - yard waste removal
+    - i need to have my roof replaced
+    - there is so much weed in my yard
+    - paint is peeling off
+    - I need to paint my house
+    
+    
+
+
+    
