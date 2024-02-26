@@ -19,6 +19,7 @@ const MANAGER_REJECT_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-pro
 const WITHDRAW_PROPOSAL_LINK = "https://apiqa.hometrumpeter.com/service-provider/proposal-withdraw/";
 const WITHDRAW_SERVICE_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/service-request-withdraw/";
 
+const HO_SERVICE_REQUEST_LINK = "https://apiqa.hometrumpeter.com/service-provider/services-request";
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
@@ -336,4 +337,20 @@ exports.tenWithdrawServiceRequest = (req, res) => {
       console.error(error);
       res.status(500).json({error: error.message});
   })
+}
+
+exports.hoServiceRequest = (req, res) => {
+    console.log("Posting service request for HO");
+
+    let hoServiceRequestHeaders = HEADERS;
+    hoServiceRequestHeaders.Authorization = req.headers.authorization;
+
+    axios.post(HO_SERVICE_REQUEST_LINK, req.body, {headers: hoServiceRequestHeaders})
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({error: error.message});
+    })
 }

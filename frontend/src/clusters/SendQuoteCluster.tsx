@@ -63,14 +63,6 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        setter: React.Dispatch<React.SetStateAction<string>>,
-    ) => {
-        e.preventDefault();
-        setter(e.target.value);
-    };
-
     const handleSubmit = () => {
         const body: Proposal = {
             id: ticket.id.toString(),
@@ -122,9 +114,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 />
             </Form>
             <br></br>
-            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(
-                e: React.ChangeEvent<HTMLInputElement>,
-            ) => handleInputChange(e, setEstimatedHours)}/>
+            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(e) => setEstimatedHours(parseInt(e.target.value))}/>
             <p>Start Date</p>
             <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
             <p>End Date</p>

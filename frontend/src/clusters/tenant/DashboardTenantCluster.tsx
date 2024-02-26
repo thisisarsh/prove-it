@@ -102,7 +102,7 @@ export function DashboardTenantCluster() {
                 });
                 
             fetch(
-                window.config.SERVER_URL + "/ticket/tenant/tickets",
+                window.config.SERVER_URL + "/tenant/service-requests",
                 {
                     method: "GET",
                     headers: {
@@ -118,7 +118,7 @@ export function DashboardTenantCluster() {
                 })
                 .then((data) => {
                     setIsLoading(false);
-                    setTickets(data);
+                    setTickets(data.data.serviceRequests);
                     console.log("TENANT TICKETS");
                     console.log(data);
                 })
@@ -244,7 +244,7 @@ export function DashboardTenantCluster() {
                                             <td colSpan={4}>Loading Service Requests...</td>
                                         ) : Array.isArray(tickets) &&
                                             tickets.length > 0 ? (
-                                            tickets.filter(t => !['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
+                                            tickets.filter(t => !['withdrawn', 'rejected', 'completed'].includes(t.status)).map((userTicket) => (
                                                 <tr>
                                                     <td>{userTicket.serviceType.serviceType}</td>
                                                     <td>{userTicket.property.streetAddress}</td>
@@ -304,14 +304,20 @@ export function DashboardTenantCluster() {
                                             <td colSpan={4}>Loading Service Requests...</td>
                                         ) : Array.isArray(tickets) &&
                                             tickets.length > 0 ? (
-                                            tickets.filter(t => ['withdrawn', 'rejected'].includes(t.status)).map((userTicket) => (
+                                            tickets.filter(t => ['withdrawn', 'rejected', 'completed'].includes(t.status)).map((userTicket) => (
                                                 <tr>
                                                     <td>{userTicket.serviceType.serviceType}</td>
                                                     <td>{userTicket.property.streetAddress}</td>
                                                     <td>
-                                                        <Badge pill bg="danger">
-                                                            {userTicket.status}
-                                                        </Badge>
+                                                        {userTicket.status == "completed" ? (
+                                                            <Badge pill bg="success">
+                                                                {userTicket.status}
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge pill bg="danger">
+                                                                {userTicket.status}
+                                                            </Badge>
+                                                        )}  
                                                     </td>
                                                     <td>
                                                         <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
@@ -350,6 +356,13 @@ export function DashboardTenantCluster() {
                             <tbody>
                                 {ticketDetail != null ? (
                                     <>
+                                        {ticketDetail.activityStatus &&
+                                            <tr>
+                                                <td>Activity Status:</td>
+                                                <td>‎ </td>
+                                                <td>{ticketDetail.activityStatus}</td>
+                                            </tr>
+                                        }
                                         <tr>
                                             <td>Service Type: </td>
                                             <td>‎ </td>
