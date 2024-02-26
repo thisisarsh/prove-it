@@ -29,7 +29,9 @@ import { AddService } from "./routes/AddService";
 import { Proposals } from "./routes/Proposals";
 import { SendQuote } from "./routes/SendQuote";
 import { ApplyPublic } from "./routes/ApplyPublic";
+import { SubmitAgreement } from "./routes/SubmitAgreement";
 import { HORequestService } from "./routes/HORequestService";
+
 export const Router = createBrowserRouter([
     {
         path: "/",
@@ -189,6 +191,13 @@ export const Router = createBrowserRouter([
             <ApplyPublic/>
         </ProtectedRoute>,
         errorElement: <ErrorPage />
+    },
+    {
+        path:"/submit-agreement",
+        element:
+        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
+            <SubmitAgreement/>
+        </ProtectedRoute>,
     },
     {
         path:"/ho-request-service",
