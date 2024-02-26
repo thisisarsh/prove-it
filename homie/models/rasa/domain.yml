@@ -9,6 +9,7 @@ intents:
   - mood_unhappy
   - bot_challenge
   - request_service
+  - request_help
 
 entities:
   - service_name
