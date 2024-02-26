@@ -30,7 +30,7 @@ exports.getTenants = async (req, res) => {
 
         const tenantsResults = await Promise.all(tenantRequests);
         let tenantsWithProperties = {};
-
+        
         tenantsResults.forEach(result => {
             if (!result.error) {
                 const property = properties.find(p => p.id === result.propertyId);
@@ -41,6 +41,9 @@ exports.getTenants = async (req, res) => {
             }
         });
 
+        console.log("Tenant listL");
+        console.log(tenantsWithProperties);
+        
         return res.send(tenantsWithProperties);
     } catch (error) {
         console.error('Error fetching properties:', error.message);

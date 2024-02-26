@@ -19,8 +19,9 @@ exports.getProperties = (req, res) => {
     axios.get(OWNED_PROPERTIES_LINK, {'headers': getPropertiesHeaders})
     .then(response => {
         if (response.data?.isSuccess) {
-            //console.log(response.data.data ?? []);
-            //console.log("PROPERTY");
+            console.log("Property list");
+            console.log(response.data.data ?? []);
+            
             return res.send(response.data.data ?? []);
         } else {
             return res.send({error: response.data.message});
