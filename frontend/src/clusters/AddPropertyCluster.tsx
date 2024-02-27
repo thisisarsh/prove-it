@@ -175,7 +175,7 @@ export function AddPropertyCluster() {
     };
 
     return (
-        <div className=" main_addProperty">
+        <div className="main_addProperty">
             {/* Dropdown to select the US state */}
             <SearchableDropdown
                 items={states}

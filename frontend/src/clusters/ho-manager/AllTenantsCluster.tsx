@@ -151,27 +151,6 @@ export function AllTenantsCluster() {
         }
     }
 
-    const handleApproveAgreement = () => {
-        if (selectedTenant) {
-            setIsLoading(true);
-            const queryParams = new URLSearchParams({
-                userId: selectedTenant.id
-            }).toString();
-
-            fetch(`${window.config.SERVER_URL}/agreement/approve?${queryParams}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user?.token}`,
-                },
-            })
-                .finally(() => {
-                    setIsLoading(false);
-                    setAgreementModalShow(false);
-                });
-        }
-    }
-
     const handleBCReject = () => {
         if (selectedTenant) {
             setIsLoading(true);
@@ -419,9 +398,6 @@ export function AllTenantsCluster() {
                     <Button className="standard-button" onClick={() =>  
                         { if (selectedTenant !== null) { navigate("/submit-agreement?id=" + selectedTenant.id); } }}>
                         Submit Agreement
-                    </Button>
-                    <Button variant="success" onClick={handleApproveAgreement}>
-                        Approve
                     </Button>
                 </Modal.Footer>
             </Modal>

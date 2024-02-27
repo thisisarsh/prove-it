@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import proveitLogo from "../assets/prove-it-logo-200.png";
 import htLogo from "../assets/ht-logo.svg";
-import htFullAppsetGraphic from "../../../draft-native/assets/ht-appset-full.png";
+import htFullAppsetGraphic from "../assets/ht-appset-full.png";
 import "../styles/pages/homepage.css";
 import Footer from "../components/PageFooter";
 

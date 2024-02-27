@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { raw } = require('body-parser');
 
 require('dotenv').config();
 
@@ -23,6 +24,9 @@ exports.sendAgreement = (req, res) => {
 
     axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { 'headers': headers })
         .then(response => {
+            console.log("TENANT IN PROPERTY RESPONSE:");
+            console.log(response.data.data);
+
             if (!response.data?.isSuccess) {
                 throw new Error(response.data.message);
             }
@@ -31,11 +35,11 @@ exports.sendAgreement = (req, res) => {
             return axios.post(AGREEMENT_INITIATE_LINK, payload, { 'headers': headers });
         })
         .then(agResponse => {
+            console.log("HOMEOWNER AGREEMENT INITIATE RESPONSE:")
+            console.log(agResponse.data);
             if (!agResponse.data?.isSuccess) {
                 throw new Error(agResponse.data.message);
             }
-            console.log("Agreement initiate response");
-            console.log(agResponse.data);
             res.send({ message: "Agreement sent successfully" });
         })
         .catch(error => {
@@ -74,6 +78,9 @@ exports.submitAgreement = (req, res) => {
 
     axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { 'headers': headers })
         .then(response => {
+            console.log("TENANT IN PROPERTY RESPONSE:");
+            console.log(response.data.data);
+
             if (!response.data?.isSuccess) {
                 throw new Error(response.data.message);
             }
@@ -85,6 +92,8 @@ exports.submitAgreement = (req, res) => {
             return axios.post(AGREEMENT_SUBMIT_LINK, payload, { 'headers': headers });
         })
         .then(agResponse => {
+            console.log("HOMEOWNER AGREEMENT SUBMIT RESPONSE:");
+            console.log(agResponse.data);
             if (!agResponse.data?.isSuccess) {
 
                 res.send({ message: agResponse.data.message, isSuccess: false });
@@ -130,6 +139,8 @@ exports.approveAgreement = (req, res) => {
             return axios.post(AGREEMENT_APPROVE_LINK, payload, { 'headers': headers });
         })
         .then(finalResponse => {
+            console.log("TENANT APPROVE AGREEEMNT RESPONSE:");
+            console.log(finalResponse.data);
             if (!finalResponse.data?.isSuccess) {
                 throw new Error(finalResponse.data.message);
             }
@@ -140,4 +151,53 @@ exports.approveAgreement = (req, res) => {
             res.status(500).send({ error: error.message || 'Internal server error' });
         });
 };
+
+exports.seeAgreement = (req, res) => {
+    let payload = {
+        tenantId: req.body.id,
+        propertyId: ""
+    };
+
+    let headers = {...HEADERS, Authorization: req.headers.authorization};
+
+    axios.get(GET_PROPERTY_TENANT_LINK + req.body.id, { 'headers': headers })
+        .then(response => {
+            if (!response.data?.isSuccess) {
+                throw new Error(response.data.message);
+            }
+
+            payload.propertyId = response.data.data.property.id;
+
+            return axios.get(AGREEMENT_VIEW_LINK.replace('{tenantId}', payload.tenantId).replace('{propertyId}', payload.propertyId), { 'headers': headers });
+        })
+        .then(agResponse => {
+            console.log("TENANT SEE AGREEMENT RESPONSE:")
+            console.log(agResponse.data);
+            const rawData = agResponse.data.data.agreement;
+            if (!agResponse.data?.isSuccess && agResponse.data.message == "No Data Found") {
+                res.send(null);
+            } else if (agResponse.data.isSuccess) {
+                refinedData = {
+                    id: rawData.id,
+                    rent: rawData.rent,
+                    rentDueDate: rawData.rentDueDate,
+                    lateFee: rawData.lateFee,
+                    advancePayment: rawData.advancePayment,
+                    startDate: rawData.startDate,
+                    endDate: rawData.endDate,
+                    securityDepositStatus: rawData.securityDepositStatus,
+                    status: rawData.status
+                }
+                res.send(refinedData);
+            } else {
+                throw new Error(agResponse.data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(500).send({ error: error.message || 'Internal server error' });
+        });
+};
+
+
 
