@@ -2,9 +2,10 @@ const axios = require('axios');
 
 require('dotenv').config();
 
-const TENANT_LINK = 'https://apiqa.hometrumpeter.com/customer/tenant/';
+const TENANT_LINK = 'https://apiqa.hometrumpeter.com/property-management/get-property/tenant/';
 const OWNER_LINK = 'https://apiqa.hometrumpeter.com/user/';
 const TENANT_REQUESTS_LINK = 'https://apiqa.hometrumpeter.com/service-request/tenant/service-requests';
+
 
 const HEADERS = {
     'xck': process.env.API_TOKEN,
