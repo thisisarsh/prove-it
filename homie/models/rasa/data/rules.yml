@@ -11,3 +11,17 @@ rules:
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
+
+- rule: Create service asap
+  steps:
+  - intent: create_immediate
+  - action: action_create_service
+
+- rule: Ask time again if a user wants to change time
+  steps:
+  - intent: some_time_later
+  - action: action_find_time
+
+
+
+
