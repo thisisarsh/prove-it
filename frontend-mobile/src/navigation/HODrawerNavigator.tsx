@@ -24,8 +24,8 @@ const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
 const HomeownerDrawerNavigator = () => {
     return (
         <Drawer.Navigator>
-            <Drawer.Screen name="Home" component={HomeScreen} />
-            <Drawer.Screen name="HomeTabs" component={HomeownerTabNavigator} options={{ title: 'Dashboard' }} />
+            <Drawer.Screen name="HOHome" component={HomeScreen} />
+            <Drawer.Screen name="HOHomeTabs" component={HomeownerTabNavigator} options={{ title: 'Dashboard' }} />
             <Drawer.Screen name="Settings" component={SettingsScreen} />
         </Drawer.Navigator>
     );
