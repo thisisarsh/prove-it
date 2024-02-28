@@ -18,7 +18,7 @@
 }
 
 .main_agreement::before {
-    content: "Property Info";
+    content: "Agreement Info";
     position: absolute;
     top: -15px;
     left: 10px;
