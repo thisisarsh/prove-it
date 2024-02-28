@@ -7,11 +7,11 @@ const HT_QA_API = "https://apiqa.hometrumpeter.com";
 const INVITE_USER_LINK = HT_QA_API + "/user/invite";
 
 const clean = (dirty) => {
-    sanitizeHtml(dirty, {
+    return sanitizeHtml(dirty, { // Sanitize inputs to prevent XSS attacks
         allowedTags: [],
         allowedAttributes: {}
-    }
-)};
+    });
+};
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -53,14 +53,14 @@ exports.inviteUser = (req, res) => {
     // INVITE_USER_LINK will generate user id and store the invite user in HT database
     // sendEmail() will send the email through ProveIT system and redirect the user back to ProveIT system.
 
-    //sanitization of input
+    // Sanitization of input
     const firstName = clean(req.body.firstName);
     const lastName = clean(req.body.lastName);
-    const roleName = clean(req.body.roleName)
+    const roleName = clean(req.body.roleName);
     const propertyName = clean(req.body.propertyName);
-    const encodedUserEmail = encodeURIComponent(clean(req.body.user.email));
+    const encodedUserEmail = encodeURIComponent(clean(req.body.user.email)); // Ensuring the email is also sanitized before encoding
 
-    const recipient = req.body.user.email;
+    const recipient = req.body.user.email; 
     const subject = 'Invitation to Join HomeTrumpeter';
     const htmlContent = `<!DOCTYPE html>
                                 <html lang="en">
@@ -116,6 +116,7 @@ exports.inviteUser = (req, res) => {
                                     </div>
                                 </body>
                                 </html>`;
+
 
 
     delete req.body.propertyName;

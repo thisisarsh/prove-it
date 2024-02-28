@@ -12,7 +12,7 @@ from openai import OpenAI
 import json
 import csv
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="")
 
 service_filename = "../nested_services.json"
 timeline_filename = "../timelines.json"
