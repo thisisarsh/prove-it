@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from '@react-navigation/native';
 import { User } from "../../types"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {StackNavigationProp} from "@react-navigation/stack";
+
+import {config} from "../../config";
 
 type RootStackParamList = {
     DashboardOwner: undefined;
@@ -11,6 +14,7 @@ type RootStackParamList = {
     DashboardService: undefined;
     HomeownerDashboard: undefined;
 };
+
 
 export function useLogin() {
     const [error, setError] = useState("");
@@ -22,10 +26,7 @@ export function useLogin() {
         setIsLoading(true);
         setError("");
 
-        const serverAddress = "http://localhost:8080";
-
-        const LOGIN_LINK = serverAddress + "/login";
-        console.log(serverAddress)
+        const LOGIN_LINK = config.SERVER_URL + "/login";
         console.log(LOGIN_LINK);
 
         // API call
@@ -46,22 +47,31 @@ export function useLogin() {
             const user : User = json.user;
             AsyncStorage.setItem("user", JSON.stringify(user))
             dispatch({ type: "LOGIN", payload: { user } });
-            
+
+            let screenName = "";
+
             if (user.phoneVerified && user.role?.role) {
                 switch (user.role?.role) {
                     case "owner":
                     case "manager":
-                        navigation.navigate("HomeownerDashboard");
+                        screenName = "HomeownerDashboard";
                         break;
                     case "tenant":
-                        navigation.navigate("DashboardTenant");
+                        screenName = "TenantDashboard";
                         break;
                     case "service_provider":
-                        navigation.navigate("DashboardService");
+                        screenName = "DashboardService";
                         break;
                     default:
                         throw new Error(`No dashboard route for user's role of ${user.role?.role}`);
                 }
+
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: screenName }],
+                    })
+                );
             }
             // TODO: Add screens for these navs
             // else if (user.phoneVerified) {

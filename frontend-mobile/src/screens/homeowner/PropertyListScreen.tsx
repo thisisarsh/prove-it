@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import Text from '../../components/Text';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 import { Property } from '../../../types';
+import {config} from "../../../config";
 
-const serverAddress = 'http://localhost:8080';
+const serverAddress = config.SERVER_URL;
 
 type PropertyItemProps = {
     item: Property;
