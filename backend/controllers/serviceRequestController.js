@@ -33,7 +33,6 @@ exports.generalServiceTypes = (req, res) => {
 
     axios.get(GENERAL_SERVICE_TYPES_LINK, {headers: genServiceTypeHeaders})
     .then(response => {
-        //console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -43,10 +42,10 @@ exports.generalServiceTypes = (req, res) => {
 }
 
 exports.specificServiceTypes = (req, res) => {
-    console.log("Getting specific services for parent type", req.query.parentId)
 
     if (!req.query.parentId) {
-        req.status(400).json({error: "Please specify the parentId to get unique service types"});
+        res.status(400).json({error: "Please specify the parentId to get unique service types"});
+        return;
     }
 
     let specServiceTypeHeaders = HEADERS;
@@ -105,6 +104,8 @@ exports.tenantTicket = (req, res) => {
 
     let tenantTicketHeaders = HEADERS;
     tenantTicketHeaders.Authorization = req.headers.authorization;
+
+    console.log(req.body);
 
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {

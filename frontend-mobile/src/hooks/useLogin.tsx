@@ -6,12 +6,15 @@ import { User } from "../../types"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {StackNavigationProp} from "@react-navigation/stack";
 
+import {config} from "../../config";
+
 type RootStackParamList = {
     DashboardOwner: undefined;
     DashboardTenant: undefined;
     DashboardService: undefined;
     HomeownerDashboard: undefined;
 };
+
 
 export function useLogin() {
     const [error, setError] = useState("");
@@ -23,10 +26,7 @@ export function useLogin() {
         setIsLoading(true);
         setError("");
 
-        const serverAddress = "http://localhost:8080";
-
-        const LOGIN_LINK = serverAddress + "/login";
-        console.log(serverAddress)
+        const LOGIN_LINK = config.SERVER_URL + "/login";
         console.log(LOGIN_LINK);
 
         // API call

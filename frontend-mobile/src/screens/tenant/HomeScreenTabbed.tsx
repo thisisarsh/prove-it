@@ -1,16 +1,16 @@
-import { View, Text, StyleSheet } from "react-native";
+import {View, StyleSheet, TouchableOpacity} from "react-native";
+import Text from "../../components/Text"
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import React, {useEffect, useState} from "react";
-import {createDrawerNavigator} from "@react-navigation/drawer";
 import {useAuthContext} from "../../hooks/useAuthContext";
 import {TenantProperty} from "../../../types";
+import {config} from "../../../config";
 
 type HomeProps = {
     navigation: NavigationProp<ParamListBase>;
 };
 
-const Drawer = createDrawerNavigator();
-const SERVER_URL = process.env.SERVER_URL;
+const SERVER_URL = config.SERVER_URL;
 
 const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
 
@@ -20,7 +20,9 @@ const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [properties, setProperties] = useState<TenantProperty[] | null>(null);
 
-    const [propertyID, setPropertyID] = useState<string>("");
+    const newServiceRequest = (propertyName: string | null) => {
+
+    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -46,11 +48,18 @@ const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
                     console.error("Error fetching data: " + error);
                 });
         }
-    });
+    }, [user]);
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Property: </Text>
+            <Text>{properties ? properties[0].name : null}</Text>
+            <Text>{properties ? properties[0].streetAddress: null}</Text>
+            <View style={styles.actions}>
+                <TouchableOpacity onPress={() => navigation.navigate("TenantServiceRequest")} style={styles.button}>
+                    <Text>New Service Request</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -60,6 +69,17 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    actions: {
+        flexDirection: 'row',
+    },
+    button: {
+        marginLeft: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderWidth: 1,
+        borderColor: '#007bff',
+        borderRadius: 4,
     },
 });
 export default HomeScreen;
