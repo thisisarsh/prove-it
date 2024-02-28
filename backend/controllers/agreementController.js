@@ -173,10 +173,10 @@ exports.seeAgreement = (req, res) => {
         .then(agResponse => {
             console.log("TENANT SEE AGREEMENT RESPONSE:")
             console.log(agResponse.data);
-            const rawData = agResponse.data.data.agreement;
             if (!agResponse.data?.isSuccess && agResponse.data.message == "No Data Found") {
-                res.send(null);
+                res.send({status: "not found"});
             } else if (agResponse.data.isSuccess) {
+                const rawData = agResponse.data.data.agreement;
                 refinedData = {
                     id: rawData.id,
                     rent: rawData.rent,

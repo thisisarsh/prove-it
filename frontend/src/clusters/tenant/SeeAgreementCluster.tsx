@@ -46,7 +46,6 @@ export function SeeAgreementCluster() {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
                     }
-                    console.log(response.json);
                     return response.json();
                 })
                 .then((data) => {
@@ -111,7 +110,7 @@ export function SeeAgreementCluster() {
             </Offcanvas>
         
             <div className="main_agreement">
-                {agreement != null ? (
+                {agreement?.status != "not found" ? (
                     <Form>
                         <Form.Group as={Row} controlId="rent">
                             <Form.Label column sm="5">Rent</Form.Label>

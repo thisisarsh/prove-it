@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLogout } from "../../hooks/useLogout";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Button from 'react-bootstrap/Button';
@@ -78,7 +78,10 @@ export function AllTenantsCluster() {
         setBCModalShow(true);
 
     }
-    const handleAgreementModalClose = () => setAgreementModalShow(false);
+    const handleAgreementModalClose = () => {
+        setAgreementModalShow(false);
+        setAgreement(null);
+    }
     const handleAgreementModalShow = (tenant: Tenant) =>{
         setSelectedTenant(tenant);
         if (selectedTenant) {
@@ -89,13 +92,13 @@ export function AllTenantsCluster() {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + user?.token,
                 },
-                body: JSON.stringify({ id: selectedTenant.id }),
+                body: JSON.stringify({ id: tenant.id }),
             })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                console.log(response.json);
+                //console.log(response);
                 return response.json();
             })
             .then((data) => {
@@ -264,6 +267,8 @@ export function AllTenantsCluster() {
             });
     }, [user?.token]);
 
+    //console.log(agreement);
+
     return (
         <body>
             <div className="tenant-tab-container">
@@ -416,8 +421,9 @@ export function AllTenantsCluster() {
                 <Modal.Header closeButton>
                     <Modal.Title>Agreement</Modal.Title>
                 </Modal.Header>
+                {isLoading ? <Spinner /> : (
                 <Modal.Body>
-                    {agreement != null ? (
+                    {agreement?.status != "not found" ? (
                             <Form>
                                 <Form.Group as={Row} controlId="rent">
                                     <Form.Label column sm="5">Rent</Form.Label>
@@ -508,6 +514,7 @@ export function AllTenantsCluster() {
                         )
                     }  
                 </Modal.Body>
+                )}
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleAgreementModalClose}>
                         Close
@@ -521,6 +528,7 @@ export function AllTenantsCluster() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+           
         </div>
     </body>
     );
