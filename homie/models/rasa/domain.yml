@@ -9,6 +9,10 @@ intents:
   - mood_unhappy
   - bot_challenge
   - request_service
+  - request_help
+  - change_service
+  - create_immediate
+  - some_time_later
 
 entities:
   - service_name
@@ -16,6 +20,29 @@ entities:
 actions:
   - action_create_service
   - action_find_best_service
+  - action_find_time
+
+slots:
+  best_parent:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  best_child:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  timeline:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  issue_detail:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
 
 responses:
   utter_greet:
@@ -39,6 +66,12 @@ responses:
 
   utter_create_service:
   - text: "I created a service request for you. Does it look right to you?"
+
+  utter_ask_help:
+    - text: "What do you need help with?"
+
+  utter_time_options:
+    - text: "I can create the service request for you as soon as possible or at a later time. What do you prefer?"
 
 session_config:
   session_expiration_time: 60

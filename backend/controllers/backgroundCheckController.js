@@ -17,10 +17,22 @@ const HEADERS = {
     'Content-Type': 'application/json',
 };
 
+// Function to validate userId
+function getValidatedUserId(req, res) {
+    const userId = req.query.userId;
+    if (typeof userId !== 'string' || userId.trim() === '') {
+        res.status(400).send({ error: 'Invalid or missing userId' });
+        return null;
+    }
+    return userId.trim();
+}
+
 exports.checkTenant = (req, res) => {
+    const userId = getValidatedUserId(req, res);
+    if (!userId) return; // Stop execution if userId is invalid
 
     let payload = {
-        userId: req.query.userId,
+        userId: userId,
         firstName: req.query.firstName,
         lastName: req.query.lastName,
         email: req.query.email,
@@ -36,7 +48,7 @@ exports.checkTenant = (req, res) => {
     let checkHeaders = {...HEADERS}
     checkHeaders.Authorization = req.headers.authorization
 
-    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, {'headers': checkHeaders})
+    axios.get(GET_PROPERTY_TENANT_LINK + userId, {'headers': checkHeaders})
         .then(response => {
             console.log("TENANT IN PROPERTY RESPONSE:");
             console.log(response.data.data);
@@ -76,13 +88,15 @@ exports.checkTenant = (req, res) => {
 }
 
 exports.approveTenant = (req, res) => {
+    const userId = getValidatedUserId(req, res);
+    if (!userId) return;
 
     // WIP : Need to fix comments
 
     let payload = {
         applicantId: "",
         comments: "Good",
-        userId: req.query.userId,
+        userId: userId,
         tenantPropertyRefId: ""
     };
 
@@ -91,7 +105,7 @@ exports.approveTenant = (req, res) => {
     // Need to get applicant id first
     // If it doesn't work try setting downloadURL to false
 
-    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { "headers": checkHeaders })
+    axios.get(GET_PROPERTY_TENANT_LINK + userId, { "headers": checkHeaders })
         .then(response => {
             console.log("TENANT IN PROPERTY RESPONSE:");
             console.log(response.data.data);
@@ -102,7 +116,7 @@ exports.approveTenant = (req, res) => {
 
             payload.tenantPropertyRefId = response.data.data.tenantPropertyRefId;
 
-            return axios.get(BACKGROUND_CHECK_STATUS_LINK + req.query.userId, { "headers": checkHeaders });
+            return axios.get(BACKGROUND_CHECK_STATUS_LINK + userId, { "headers": checkHeaders });
         })
         .then(statusResponse => {
             console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
@@ -163,16 +177,19 @@ exports.applyPublic = (req, res) => {
 
 exports.rejectTenant = (req, res) => {
 
+    const userId = getValidatedUserId(req, res);
+    if (!userId) return;
+
     let payload = {
         applicantId: "",
         comments: "Bad",
-        userId: req.query.userId,
+        userId: userId,
         tenantPropertyRefId: ""
     };
 
     let checkHeaders = {...HEADERS, Authorization: req.headers.authorization};
 
-    axios.get(GET_PROPERTY_TENANT_LINK + req.query.userId, { "headers": checkHeaders })
+    axios.get(GET_PROPERTY_TENANT_LINK + userId, { "headers": checkHeaders })
         .then(response => {
             console.log("TENANT IN PROPERTY RESPONSE:");
             console.log(response.data.data);
@@ -183,7 +200,7 @@ exports.rejectTenant = (req, res) => {
 
             payload.tenantPropertyRefId = response.data.data.tenantPropertyRefId;
 
-            return axios.get(BACKGROUND_CHECK_STATUS_LINK + req.query.userId, { "headers": checkHeaders });
+            return axios.get(BACKGROUND_CHECK_STATUS_LINK + userId, { "headers": checkHeaders });
         })
         .then(statusResponse => {
             console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
@@ -203,8 +220,7 @@ exports.rejectTenant = (req, res) => {
             if (!rejectResponse.data.isSuccess) {
                 throw new Error(rejectResponse.data.message);
             }
-            console.log("reject background check of tenant" + req.query.userId);
-            console.log(rejectResponse.data.message);
+            console.log("reject background check of tenant: %s", userId);
             res.send({ message: "Tenant rejected successfully" });
         })
         .catch(error => {
@@ -214,11 +230,15 @@ exports.rejectTenant = (req, res) => {
 };
 
 exports.spApplicationStatus = (req, res) => {
+    
+    const userId = getValidatedUserId(req, res);
+    if (!userId) return; 
+
     let appStatusHeaders = HEADERS;
     appStatusHeaders.Authorization = req.headers.authorization;
     const PASSING_RESULTS = ["REVIEW", "CLEARED"]
 
-    const bgCheck = axios.get(BG_CHECK_STATUS_LINK + req.query.userId + "?downloadUrl=false", {headers: appStatusHeaders})
+    const bgCheck = axios.get(BG_CHECK_STATUS_LINK + userId + "?downloadUrl=false", {headers: appStatusHeaders})
     const spDetail = axios.get(GET_SP_DETAIL_LINK, {headers: appStatusHeaders})
  
     Promise.all([bgCheck, spDetail])
@@ -226,7 +246,7 @@ exports.spApplicationStatus = (req, res) => {
         const bgCheckResponse = responses[0];
         const spDetailResponse = responses[1];
         
-        console.log('Background check for userId' + req.query.userId, bgCheckResponse.data);
+        console.log('Background check for userId: %s', userId, bgCheckResponse.data);
 
         if (!bgCheckResponse.data.isSuccess) {
             throw new Error(bgCheckResponse.data.message ?? "Failed to fetch background check");
@@ -243,7 +263,7 @@ exports.spApplicationStatus = (req, res) => {
         const REPORT_RESULT = bgCheckResponse.data?.data?.status?.application?.result;
         const APPLICANT_ID = bgCheckResponse.data?.data?.status?.applicantId;
 
-        console.log("Report result for service provider with id " + req.query.userId + " ", REPORT_RESULT);
+        console.log("Report result for service provider with id: %s ", userId, REPORT_RESULT);
 
         if (!REPORT_RESULT) {
             throw new Error("Could not parse report status from background check");
@@ -256,22 +276,22 @@ exports.spApplicationStatus = (req, res) => {
         let spDetail = spDetailResponse.data.data;
         
         if (PASSING_RESULTS.includes(REPORT_RESULT)) {
-            console.log("Service provider with ID " + req.query.userId + "is approved");
+            console.log("Service provider with ID %s is approved", userId);
             spDetail.isPublic = true;
             spDetail.isAppliedForPublic = false;
             spDetail.isBGChecked = true;
 
             const approveBgCheckBody = {
                 applicantId: APPLICANT_ID,
-                userId: req.query.userId,
+                userId: userId,
                 comments: "Automatically passed by ProveIT system"
             }
 
-            console.log("Posting service provider details on approval for service provider id " + req.query.userId);
+            console.log("Posting service provider details on approval for service provider id %s", userId);
             console.log(spDetail);
             const postSpDetail = axios.post(SP_DETAIL_LINK, spDetail, {headers: appStatusHeaders});
 
-            console.log("Posting background check approval for service provider with id" + req.query.userId);
+            console.log("Posting background check approval for service provider with id %s", userId);
             const approveBGCheck = axios.post(BACKGROUND_CHECK_APPROVE_LINK, approveBgCheckBody, {headers: appStatusHeaders});
             
             Promise.all([postSpDetail, approveBGCheck])
@@ -293,7 +313,7 @@ exports.spApplicationStatus = (req, res) => {
                 res.send({isSuccess: true, status: "accepted", message: "Your background check has been approved. You have now been granted public provider status. Please log in again to activate your public status."})
             })
         } else {
-            console.log("Service provider with id " + req.query.userId + " is rejected");
+            console.log("Service provider with id %s is rejected", userId);
             res.send({isSuccess: true, status: "rejected", message: "Sorry, but your background check has been rejected. You are not approved for public provider status."});
         }
     }).catch(error => {

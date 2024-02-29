@@ -127,6 +127,44 @@ nlu:
     - there is so much weed in my yard
     - paint is peeling off
     - I need to paint my house
+
+- intent: change_service
+  examples: |
+    - I want to change the service
+    - change the service
+
+- intent: some_time_later
+  examples: |
+    - some time later
+    - later
+    - around 5 days
+    - 5 days later
+    - tomorrow
+    - next week
+    - in 2 days
+    - in 3 days
+    - in 4 days
+    - in 5 days
+    - after 5 days
+    - after 2 days
+    - after 3 days
+    - not now
+    - whenever you can
+    - whenever it is possible
+
+- intent: create_immediate
+  examples: |
+    - now
+    - right now
+    - immediately
+    - as soon as possible
+    - asap
+    - now please
+    - right now please
+    - immediately please
+    - as soon as possible please
+    - asap please
+    
     
     
 

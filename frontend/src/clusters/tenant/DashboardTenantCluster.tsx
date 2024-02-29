@@ -11,6 +11,8 @@ import Modal from 'react-bootstrap/Modal';
 import Badge from 'react-bootstrap/Badge';
 import Accordion from 'react-bootstrap/Accordion';
 
+import Homie from "../../components/Homie";
+
 import "../../styles/pages/dashboard.css";
 
 /**
@@ -26,8 +28,7 @@ export function DashboardTenantCluster() {
     const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
     const [update, setUpdate] = useState<boolean>(false);
 
-    //const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-    //const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [propertyID, setPropertyID] = useState<string>("");
 
     const { state } = useAuthContext();
     const { user } = state;
@@ -90,12 +91,12 @@ export function DashboardTenantCluster() {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
                     }
-                    //console.log(response.json);
                     return response.json();
                 })
                 .then((data) => {
                     setIsLoading(false);
                     setProperties(data);
+                    setPropertyID(data[0].id)
                 })
                 .catch((error) => {
                     console.error("Error fetching data: " + error);
@@ -418,6 +419,7 @@ export function DashboardTenantCluster() {
                     </div>
                 </div>
                 </footer>
+            <Homie propertyId={propertyID}/>
         </div>
     );
 

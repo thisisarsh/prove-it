@@ -33,8 +33,6 @@ exports.generalServiceTypes = (req, res) => {
 
     axios.get(GENERAL_SERVICE_TYPES_LINK, {headers: genServiceTypeHeaders})
     .then(response => {
-        console.log("TENANT/HOMEOWNER GET GENERAL SERVICE TYPE RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -44,10 +42,10 @@ exports.generalServiceTypes = (req, res) => {
 }
 
 exports.specificServiceTypes = (req, res) => {
-    console.log("Getting specific services for parent type", req.query.parentId)
 
     if (!req.query.parentId) {
-        req.status(400).json({error: "Please specify the parentId to get unique service types"});
+        res.status(400).json({error: "Please specify the parentId to get unique service types"});
+        return;
     }
 
     let specServiceTypeHeaders = HEADERS;
@@ -55,8 +53,7 @@ exports.specificServiceTypes = (req, res) => {
 
     axios.get(SPECIFIC_SERVICE_TYPES_LINK + req.query.parentId, {headers: HEADERS})
     .then(response => {
-        console.log("TENANT/HOMEOWNER GET SPECIFIC SERVICE TYPE RESPONSE:");
-        console.log(response.data);
+        //console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -77,8 +74,7 @@ exports.tenantProperty = (req, res) => {
 
     axios.get(TENANT_PROPERTY_LINK + req.query.tenantId, {headers: HEADERS})
     .then(response => {
-        console.log("TENANT/HOMEOWNER GET TENANT PROPERTY RESPONSE:");
-        console.log(response.data);
+        //console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -88,15 +84,13 @@ exports.tenantProperty = (req, res) => {
 }
 
 exports.requestTimelines = (req, res) => {
-    //console.log("Getting request timelines...");
+    console.log("Getting request timelines...");
 
     let requestTimelineHeaders = HEADERS;
     requestTimelineHeaders.Authorization = req.headers.authorization;
 
     axios.get(REQUEST_TIMELINES_LINK, {headers: requestTimelineHeaders})
     .then(response => {
-        console.log("TENANT/HOMEOWNER GET REQUEST TIMELINE RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -106,15 +100,13 @@ exports.requestTimelines = (req, res) => {
 }
 
 exports.tenantTicket = (req, res) => {
-    //console.log("Processing tenant ticket...");
+    console.log("Processing tenant ticket...");
 
     let tenantTicketHeaders = HEADERS;
     tenantTicketHeaders.Authorization = req.headers.authorization;
 
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {
-        console.log("TENANT TICKET INITIATE RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -131,8 +123,6 @@ exports.getTenantTicket = (req, res) => {
 
     axios.get(GET_TENANT_TICKET_LINK, {headers: Headers})
     .then(response => {
-        console.log("TENANT GET TICKET RESPONSE:");
-        console.log(response.data);
         res.send(response.data.data);
     })
     .catch(error => {
@@ -149,8 +139,6 @@ exports.addService = (req, res) => {
 
     axios.post(ADD_SERVICE_LINK, req.body, {headers: addServiceHeaders})
     .then(response => {
-        console.log("SERVICE PROVIDER ADD SERVICE RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -167,8 +155,6 @@ exports.getManagerTicket = (req, res) => {
     
     axios.get(GET_MANAGER_TICKET_LINK, {headers: Headers})
     .then(response => {
-        console.log("HOMEOWNER GET TICKET RESPONSE:");
-        console.log(response.data);
         service_requests = response.data.data.serviceRequests;
         res.send(service_requests);
     })
@@ -204,8 +190,6 @@ exports.getPrivateProviders = (req, res) => {
 
     axios.post(FIND_SERVICE_PROVIDER_LINK, findServiceProviderObject, {headers: headers})
     .then(response => {
-        console.log("HOMEOWNER FIND SERVICE PROVIDER RESPONSE:");
-        console.log(response.data);
         if (response.data.isSuccess) {
             let refinedData = [];
             //console.log(response.data.data);
@@ -234,8 +218,6 @@ exports.getRequestDetails = (req, res) => {
 
     axios.get(REQUEST_DETAILS_LINK + req.query.id, {headers: requestDetailHeaders})
     .then(response => {
-        console.log("HOMEOWNER GET REQUEST DETAILS RESPONSE:");
-        console.log(response.data);
         res.send(response.data)
     })
     .catch(error => {
@@ -252,8 +234,6 @@ exports.serviceRequestTicket = (req, res) => {
 
     axios.post(SERVICE_REQUEST_TICKET_LINK, req.body, {headers: serviceRequestTicketHeaders})
     .then(response => {
-        console.log("HOMEOWNER SERVICE REQUEST TICKET RESPONSE:")
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -270,8 +250,6 @@ exports.sendProposal = (req, res) => {
 
   axios.post(SEND_PROPOSAL_LINK, req.body, {headers: sendProposalHeaders})
   .then(response => {
-      console.log("SERVICE PROVIDER SEND PROPOSAL RESPONSE:");
-      console.log(response.data);
       res.send(response.data);
   })
   .catch(error => {
@@ -288,8 +266,6 @@ exports.approveProposal = (req, res) => {
 
     axios.get(APPROVE_PROPOSAL_LINK + req.query.id, {headers: approveProposalHeaders})
     .then(response => {
-        console.log("HOMEOWNER APPROVE PROPOSAL RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -306,8 +282,6 @@ exports.rejectProposal = (req, res) => {
 
   axios.delete(REJECT_PROPOSAL_LINK + req.query.id, {headers: rejectProposalHeaders})
   .then(response => {
-      console.log("HOMEOWNER REJECT PROPOSAL RESPONSE:");
-      console.log(response.data);
       res.send(response.data)
   })
   .catch(error => {
@@ -324,8 +298,6 @@ exports.managerRejectRequest = (req, res) => {
 
   axios.delete(MANAGER_REJECT_REQUEST_LINK + req.query.reqId, {headers: managerRejectRequestHeaders})
   .then(response => {
-      console.log("HOMEOWNER REJECT SERVICE REQUEST RESPONSE:");
-      console.log(response.data);
       res.send(response.data)
   })
   .catch(error => {
@@ -342,8 +314,6 @@ exports.spWithdrawProposal = (req, res) => {
 
   axios.post(WITHDRAW_PROPOSAL_LINK + req.query.id, req.body, {headers: withdrawProposalHeaders})
   .then(response => {
-      console.log("SERVICE PROVIDER WITHDRAW PROPOSAL RESPONSE:")
-      console.log(response.data);
       res.send(response.data);
   })
   .catch(error => {
@@ -360,8 +330,6 @@ exports.tenWithdrawServiceRequest = (req, res) => {
 
   axios.post(WITHDRAW_SERVICE_REQUEST_LINK + req.query.id, req.body, {headers: withdrawServiceRequestHeaders})
   .then(response => {
-      console.log("TENANT WITHDRAW PROPOSAL RESPONSE:")
-      console.log(response.data);
       res.send(response.data);
   })
   .catch(error => {
@@ -378,8 +346,6 @@ exports.hoServiceRequest = (req, res) => {
 
     axios.post(HO_SERVICE_REQUEST_LINK, req.body, {headers: hoServiceRequestHeaders})
     .then(response => {
-        console.log("HOMEOWNER POST SERVICE REQUEST RESPONSE:");
-        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {

@@ -7,7 +7,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
 import { View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
-
 const App = () => {
     const [isReady, setIsReady] = useState(false);
 
@@ -32,9 +31,9 @@ const App = () => {
 
   return (
       <AuthProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+          <NavigationContainer>
+              <AppNavigator />
+          </NavigationContainer>
       </AuthProvider>
   );
 };
