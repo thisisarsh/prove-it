@@ -279,28 +279,14 @@ export function AllTenantsCluster() {
                     <Offcanvas.Title>Tenant Tab</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
+                <div className="nav-container">
                         <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
