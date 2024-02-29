@@ -1,4 +1,4 @@
-import InviteUserCluster from "../clusters/InviteUserCluster";
+import InviteUserCluster from "../clusters/ho-manager/InviteUserCluster";
 import "../styles/pages/addProperty.css";
 
 export function InviteTenant() {

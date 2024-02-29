@@ -1,5 +1,5 @@
 import htLogo from "../assets/ht-logo.svg";
-import { RequestServiceCluster } from "../clusters/RequestServiceCluster";
+import { RequestServiceCluster } from "../clusters/tenant/RequestServiceCluster";
 
 export function RequestService() {
     return (

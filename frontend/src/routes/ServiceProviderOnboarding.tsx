@@ -1,4 +1,4 @@
-import { ServiceProviderOnboardingCluster } from "../clusters/ServiceProviderOnboardingCluster";
+import { ServiceProviderOnboardingCluster } from "../clusters/service-provider/ServiceProviderOnboardingCluster";
 
 export function ServiceProviderOnboarding() {
     return (

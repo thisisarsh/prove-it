@@ -1,4 +1,4 @@
-import { AgreementSubmitCluster } from "../clusters/AgreementSubmitCluster";
+import { AgreementSubmitCluster } from "../clusters/ho-manager/AgreementSubmitCluster";
 import "../styles/pages/addProperty.css";
 
 export function SubmitAgreement() {

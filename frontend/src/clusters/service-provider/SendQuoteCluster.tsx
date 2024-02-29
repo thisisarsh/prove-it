@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../hooks/useAuthContext"
 import { ServiceRequestSP } from "../types";
 import { useNavigate } from "react-router-dom";
 
@@ -63,6 +63,14 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         [user],
     );
 
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+        e.preventDefault();
+        setter(e.target.value);
+    };
+
     const handleSubmit = () => {
         const body: Proposal = {
             id: ticket.id.toString(),
@@ -76,15 +84,15 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         console.log(body);
 
         postData(INVITED_SIGNUP_LINK, body)
-        .then((response) => {
-            if (response.isSuccess) {
-                console.log('SUCCESS POST SP QUOTE');
-                console.log(response.data);
-                navigate("/dashboard");
-            } else {
-                setError(response.message);
-            }
-        });
+            .then((response) => {
+                if (response.isSuccess) {
+                    console.log('SUCCESS POST SP QUOTE');
+                    console.log(response.data);
+                    navigate("/dashboard");
+                } else {
+                    setError(response.message);
+                }
+            });
     }
 
     return (
@@ -114,7 +122,9 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 />
             </Form>
             <br></br>
-            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(e) => setEstimatedHours(parseInt(e.target.value))}/>
+            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(
+                e: React.ChangeEvent<HTMLInputElement>,
+            ) => handleInputChange(e, setEstimatedHours)}/>
             <p>Start Date</p>
             <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
             <p>End Date</p>

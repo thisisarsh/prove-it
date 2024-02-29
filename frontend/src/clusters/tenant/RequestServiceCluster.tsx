@@ -1,13 +1,13 @@
 import { Button, Form } from "react-bootstrap";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import {useState, useEffect, useCallback} from "react";
-import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../types";
-import SearchableDropdown from "../components/DropDownList";
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
-import Spinner from "../components/Spinner";
+import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../../types";
+import SearchableDropdown from "../../components/DropDownList";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 
-import "../styles/components/createServiceRequest.css"
+import "../../styles/components/createServiceRequest.css"
 
 export function RequestServiceCluster() {
     const user = useAuthContext().state.user;

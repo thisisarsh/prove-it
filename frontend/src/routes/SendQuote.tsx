@@ -1,5 +1,5 @@
 import htLogo from "../assets/ht-logo.svg";
-import { SendQuoteCluster } from "../clusters/SendQuoteCluster";
+import { SendQuoteCluster } from "../clusters/service-provider/SendQuoteCluster";
 import { ServiceRequestSP } from "../types";
 
 import { useLocation } from "react-router-dom";
