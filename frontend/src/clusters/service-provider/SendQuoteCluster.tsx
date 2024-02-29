@@ -6,6 +6,7 @@ import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { FormGroup } from "../../components/Forms";
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
+import { FormControl } from "react-bootstrap";
 
 const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/send-proposal";
 
@@ -96,9 +97,17 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
-            <FormGroup label="Quote Price" value={quotePrice.toString()} onChange={(
-                e: React.ChangeEvent<HTMLInputElement>,
-            ) => handleInputChange(e, setQuotePrice)}/>
+            <Form.Group> 
+                <Form.Label>Quote Price</Form.Label>
+                <FormControl
+                    type="number"
+                    placeholder="Enter quote price"
+                    value={quotePrice} 
+                    onChange={(
+                        e: React.ChangeEvent<HTMLInputElement>,
+                        ) => handleInputChange(e, setQuotePrice)}
+                />
+            </Form.Group>
             <p style={{textAlign: "left"}}>Quote Type</p>
             <Form style={{textAlign: "center"}}>
                 <Form.Check
@@ -120,9 +129,17 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 />
             </Form>
             <br></br>
-            <FormGroup label="Estimated Hours" value={estimatedHours.toString()} onChange={(
-                e: React.ChangeEvent<HTMLInputElement>,
-            ) => handleInputChange(e, setEstimatedHours)}/>
+            <Form.Group>
+                <Form.Label>Estimated Hours</Form.Label>
+                <Form.Control
+                type="number"
+                placeholder="Enter estimated hours"
+                value={estimatedHours} 
+                onChange={(
+                    e: React.ChangeEvent<HTMLInputElement>,
+                    ) => handleInputChange(e, setEstimatedHours)}
+                /> 
+            </Form.Group>
             <p>Start Date</p>
             <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
             <p>End Date</p>
