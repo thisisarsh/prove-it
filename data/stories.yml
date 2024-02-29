@@ -1,0 +1,67 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: request service path normal
+  steps:
+  - intent: request_service
+  - action: action_find_best_service
+  - action: utter_create_service
+  - intent: affirm
+  - action: utter_time_options
+  - intent: create_immediate
+  - action: action_create_service
+
+- story: request service path with change
+  steps:
+  - intent: request_service
+  - action: action_find_best_service
+  - action: utter_create_service
+  - intent: deny
+  - action: utter_ask_help
+  - intent: request_service
+  - action: action_find_best_service
+  - action: utter_create_service
+  - intent: affirm
+  - action: utter_time_options
+  - intent: create_immediate
+  - action: action_create_service
+
+- story: request service path with time change
+  steps:
+  - intent: request_service
+  - action: action_find_best_service
+  - action: utter_create_service
+  - intent: affirm
+  - action: utter_time_options
+  - intent: some_time_later
+  - action: action_find_time
+  - intent: affirm
+  - action: action_create_service
