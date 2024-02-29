@@ -225,7 +225,7 @@ export function SeeAgreementCluster() {
             </div>    
 
                 {/* Footer */}
-                <footer className="dashboard-footer">
+                <footer className="agreement-footer">
                 <div className="footer-content">
                     <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
                     <div className="footer-links">
