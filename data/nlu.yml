@@ -1,4 +1,5 @@
 version: "3.1"
+
 nlu:
 - intent: greet
   examples: |
@@ -15,6 +16,7 @@ nlu:
     - goodmorning
     - goodevening
     - good afternoon
+
 - intent: goodbye
   examples: |
     - cu
@@ -27,8 +29,7 @@ nlu:
     - see you around
     - bye bye
     - see you later
-    - thank you
-    - thanks
+
 - intent: affirm
   examples: |
     - yes
@@ -37,10 +38,7 @@ nlu:
     - of course
     - that sounds good
     - correct
-    - yup
-    - okay
-    - yeah yeah
-    - yeah
+
 - intent: deny
   examples: |
     - no
@@ -50,7 +48,7 @@ nlu:
     - don't like that
     - no way
     - not really
-    - no that is [not good](deny)
+
 - intent: mood_great
   examples: |
     - perfect
@@ -67,6 +65,7 @@ nlu:
     - so so perfect
     - so good
     - so perfect
+
 - intent: mood_unhappy
   examples: |
     - my day was horrible
@@ -83,60 +82,57 @@ nlu:
     - extremly sad
     - so saad
     - so sad
+
 - intent: bot_challenge
   examples: |
     - are you a bot?
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
+
 - intent: request_help
   examples: |
     - I need help
     - I need assistance
     - I need support
-    - I need help man
-    - bro, i need help
-    - i need help
+
+# Create a new intent for the user to request a service
+
 - intent: request_service
   examples: |
-    - I need my [ac](problem) repaired
-    - fix my [ac](problem)
-    - my [ac](problem) is not working
-    - help for [ac](problem) service
-    - I need my [tub](problem) fixed
-    - fix my [sink](problem)
-    - my [shower](problem) is not working
-    - help for [plumbing](problem) service
-    - I need [plumbing](problem) service
-    - problem with [drainage](problem)
-    - obtain or renew a [license for my pet](problem)
-    - problems with [thermostat](problem)
-    - I need my [thermostat](problem) fixed
-    - [heat](problem) is not working in my house
-    - i need [child care](problem) services
-    - I need a [babysitter](problem)
-    - I need a [nanny](problem)
-    - [mold](problem) in my house
-    - [pest](problem) control
-    - I need [pest control](problem)
-    - [bed bugs](problem) problem
-    - I need [bed bugs](problem) control
-    - [yard waste](problem) removal
-    - i need to have my [roof replaced](problem)
-    - there is so much [weed in my yard](problem)
-    - [paint is peeling](problem) off
-    - I need to [paint my house](problem)
-    - I have a [leaking pipe](problem)
-    - my [roof](problem) is [cracking](problem)
-    - There is a problem with my [garage door](problem)
-    - The [thermostat](problem) is not working
-    - [thermostat](problem) is not changing the temprature
-    - i need to [paint my living room](problem)
-    - a [heard](problem) some wierd noise coming from the [roof](problem)
+    - I need my ac repaired
+    - fix my ac
+    - my ac is not working
+    - help for ac service
+    - I need my tub fixed
+    - fix my sink
+    - my shower is not working
+    - help for plumbing service
+    - I need plumbing service
+    - problem with drainage
+    - obtain or renew a license for my pet
+    - problems with thermostat
+    - I need my thermostat fixed
+    - heat is not working in my house
+    - i need child care services
+    - I need a babysitter
+    - I need a nanny
+    - mold in my house
+    - pest control
+    - I need pest control
+    - bed bugs problem
+    - I need bed bugs control
+    - yard waste removal
+    - i need to have my roof replaced
+    - there is so much weed in my yard
+    - paint is peeling off
+    - I need to paint my house
+
 - intent: change_service
   examples: |
     - I want to change the service
     - change the service
+
 - intent: some_time_later
   examples: |
     - some time later
@@ -155,10 +151,7 @@ nlu:
     - not now
     - whenever you can
     - whenever it is possible
-    - after a week
-    - I will [be](problem) gone in two weeks, I need to [be](problem) finish it by a week
-    - I want it done by the next week
-    - in a week
+
 - intent: create_immediate
   examples: |
     - now
@@ -171,4 +164,9 @@ nlu:
     - immediately please
     - as soon as possible please
     - asap please
-    - i want it [now](time)
+    
+    
+    
+
+
+    
