@@ -1,13 +1,11 @@
 import { useCallback, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext"
-import { ServiceRequestSP } from "../types";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { ServiceRequestSP } from "../../types";
 import { useNavigate } from "react-router-dom";
-
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
-import { FormGroup } from "../components/Forms";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import { FormGroup } from "../../components/Forms";
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/send-proposal";
 
