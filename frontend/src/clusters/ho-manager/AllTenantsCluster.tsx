@@ -83,33 +83,30 @@ export function AllTenantsCluster() {
         setAgreement(null);
     }
     const handleAgreementModalShow = (tenant: Tenant) =>{
-        setSelectedTenant(tenant);
-        if (selectedTenant) {
-            setIsLoading(true);
-            fetch(window.config.SERVER_URL + "/agreement/tenant-see", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + user?.token,
-                },
-                body: JSON.stringify({ id: tenant.id }),
-            })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                //console.log(response);
-                return response.json();
-            })
-            .then((data) => {
-                setIsLoading(false);
-                setAgreement(data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data: " + error);
-            });   
-        }
-        setAgreementModalShow(true);
+        setIsLoading(true);
+        fetch(window.config.SERVER_URL + "/agreement/tenant-see", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + user?.token,
+            },
+            body: JSON.stringify({ id: tenant.id }),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            //console.log(response);
+            return response.json();
+        })
+        .then((data) => {
+            setAgreement(data);              
+            setIsLoading(false);
+        })
+        .catch((error) => {
+            console.error("Error fetching data: " + error);
+        })
+        .finally (()=> setAgreementModalShow(true))
     };
 
     const navigate = useNavigate();
