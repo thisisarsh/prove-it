@@ -300,31 +300,16 @@ export function DashboardOwnerCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title className="navHeader">HomeOwner Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link className="nav-link" onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -584,18 +569,22 @@ export function DashboardOwnerCluster() {
                 </div>
             </footer>
 
-            {/* Delete Confirmation Popup */}
-            {showDeleteConfirmation && (
-                <div className="delete-confirmation-popup">
-                    <p>
-                        Are you sure to delete "{selectedProperty?.name}"
+            {/* Delete Confirmation Popup  */}
+                <Modal show={showDeleteConfirmation} onHide={handleCancelDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Delete Property?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>
+                        Are you sure to delete the "{selectedProperty?.name}"
                         property?
-                    </p>
-                    <button onClick={handleConfirmDelete}>Yes</button>
-                    <button onClick={handleCancelDelete}>No</button>
-                </div>
-            )}
-
+                        </p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button onClick={handleConfirmDelete} className="delete-button">Yes</button> 
+                        <button onClick={handleCancelDelete} className="delete-button">No</button>
+                    </Modal.Footer>
+                </Modal>
             {/* Show more detail about property Popup */}
             <Modal show={showDetail} onHide={handleCloseDetail}>
                 <Modal.Header closeButton>
@@ -608,52 +597,42 @@ export function DashboardOwnerCluster() {
                                 <>
                                     <tr>
                                         <td>Property Name: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.name}</td>
                                     </tr>
                                     <tr>
                                         <td>Street Adress: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.streetAddress}</td>
                                     </tr>
                                     <tr>
                                         <td>City: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.cityName}</td>
                                     </tr>
                                     <tr>
                                         <td>County: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.countyName}</td>
                                     </tr>
                                     <tr>
                                         <td>State: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.stateName}</td>
                                     </tr>
                                     <tr>
                                         <td>Zip Code: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.zipcode}</td>
                                     </tr>
                                     <tr>
                                         <td>Property Type: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.propertyType}</td>
                                     </tr>
                                     <tr>
                                         <td>Rent: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.rent}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Primary: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.isPrimary}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Tenant Active: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.isTenantActive}</td>
                                     </tr>
                                 </>
@@ -666,37 +645,45 @@ export function DashboardOwnerCluster() {
                     </table>
                 </Modal.Body>
                 <Modal.Footer>
-                <button onClick={handleCloseDetail}>
+                <button onClick={handleCloseDetail} className="delete-button">
                     Close
                 </button>
                 </Modal.Footer>
             </Modal>
 
             {/* Show tenant in property Popup */}
-            <Modal show={showTenant} onHide={handleCloseTenant}>
+            <Modal show={showTenant} onHide={handleCloseTenant} className="DashboardModal">
                 <Modal.Header closeButton>
-                    <Modal.Title>Tenant in Property</Modal.Title>
+                    <Modal.Title>Tenant at {selectedProperty?.name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {Array.isArray(tenantinPropertyDetail) &&
                     tenantinPropertyDetail != null &&
                     tenantinPropertyDetail.length > 0 ? (
                         <table className="property-detail-table">
-                            <thead className="dashboard-header">
-                                <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Phone</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 {tenantinPropertyDetail.map((tenant) => (
                                     <tr>
+                                        <td>First Name: </td>
                                         <td>{tenant.firstName}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Last Name: </td>
                                         <td>{tenant.lastName}</td>
-                                        <td>{tenant.phone}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Email: </td>
                                         <td>{tenant.email}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Phone Number: </td>
+                                        <td>{tenant.phone}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -704,14 +691,14 @@ export function DashboardOwnerCluster() {
                     ) : (
                         <>
                         <p>No tenant assigned to property. You can invite tenant by click the button below</p>
-                        <button onClick={() => navigate("/invite/tenant")}>
+                        <button onClick={() => navigate("/invite/tenant")} className="delete-button">
                             Invite Tenant
                         </button>
                         </>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                <button onClick={handleCloseTenant}>
+                <button onClick={handleCloseTenant} className="delete-button">
                     Close
                 </button>
                 </Modal.Footer>

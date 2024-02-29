@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { City, PropertyJSON, PropertyType, State, Zip } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
+import Modal from 'react-bootstrap/Modal';
 import "../../styles/pages/addProperty.css";
 
 
@@ -36,6 +37,16 @@ export function AddPropertyCluster() {
     ) => {
         e.preventDefault();
         setter(e.target.value);
+    };
+
+    const handleShowModal = () => setShowModal(true);
+    const [showModal, setShowModal] = useState(false);
+
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
     };
 
     const fetchData = useCallback(
@@ -165,14 +176,49 @@ export function AddPropertyCluster() {
             })
             .then((responseJson) => {
                 if (responseJson.isSuccess) {
-                    alert("Property successfully added");
-                    navigate("/dashboard");
+                    handleShowModal();
                 } else if (!responseJson.isSuccess) {
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => console.error("Error updating data:", error));
     };
+
+    // JSX for the modal
+    const modalContentSuccess = (
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>You've added a Property!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{`You've added "${address}" to your account.`}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {
+                    setShowModal(false);
+                    navigate("/dashboard"); // Navigate to the dashboard
+                }}>
+                    Return to dashboard
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
+    const errorModalContent = (
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{errorModalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div className="main_addProperty">
@@ -279,6 +325,8 @@ export function AddPropertyCluster() {
                     </Link>
                 </Form>
             </div>
+            {errorModalContent}
+            {modalContentSuccess}
         </div>
     );
 }

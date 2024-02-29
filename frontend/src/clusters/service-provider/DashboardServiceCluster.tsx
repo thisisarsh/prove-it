@@ -280,22 +280,12 @@ export function DashboardServiceCluster() {
                     <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/add-service")}>Add a service</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/services")}>Service Request</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/clients")}>Clients</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/services/complete")}>Completed Request</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link onClick={() => navigate("/add-service")}>Add a service</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/services")}>Service Request</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/clients")}>Clients</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/services/complete")}>Completed Request</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -486,32 +476,26 @@ export function DashboardServiceCluster() {
                                 <>
                                     <tr>
                                         <td>Service Type: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.serviceType.serviceType}</td>
                                     </tr>
                                     <tr>
                                         <td>Property Name: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.property.name}</td>
                                     </tr>
                                     <tr>
                                         <td>Address: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.property.streetAddress}</td>
                                     </tr>
                                     <tr>
                                         <td>Request Date: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.createdAt}</td>
                                     </tr>
                                     <tr>
                                         <td>Request Timeline: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.timeline.title}</td>
                                     </tr>
                                     <tr>
                                         <td>Details: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.serviceRequest.detail}</td>
                                     </tr>
                                 </>

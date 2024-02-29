@@ -11,8 +11,6 @@ import Row from 'react-bootstrap/Row';
 import { TenantBGResult, Agreement } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav';
-
-
 import "../../styles/pages/allTenantTab.css";
 
 interface Tenant {
@@ -287,6 +285,9 @@ export function AllTenantsCluster() {
                     <Nav>
                     <ul className="nav-list">
                         <li>
+                        <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
+                        </li>
+                        <li>
                         <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
                         </li>
                         <li>
@@ -294,9 +295,6 @@ export function AllTenantsCluster() {
                         </li>
                         <li>
                         <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
                         </li>
                         <li>
                         <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>

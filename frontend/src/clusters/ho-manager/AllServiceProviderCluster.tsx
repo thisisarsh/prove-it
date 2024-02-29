@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ServiceProviderDetail } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
-
-import "../../styles/pages/dashboard.css";
+import "../../styles/pages/allServiceTab.css";
 /**
  *
  * @returns Void
@@ -75,7 +74,6 @@ export function AllServiceProviderCluster() {
 
     return (
     <body>
-        <div className="dashboard-container">
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
@@ -91,6 +89,9 @@ export function AllServiceProviderCluster() {
                     <Nav>
                     <ul className="nav-list">
                         <li>
+                        <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
+                        </li>
+                        <li>
                         <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
                         </li>
                         <li>
@@ -98,9 +99,6 @@ export function AllServiceProviderCluster() {
                         </li>
                         <li>
                         <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
                         </li>
                         <li>
                         <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
@@ -113,9 +111,8 @@ export function AllServiceProviderCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
-            </div>
                 {/* Property block */}
-                <div className="properties-container">
+                <div className="all-serviceProvider-container">
                     <h1 className="dashboard-label">Service Providers</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">

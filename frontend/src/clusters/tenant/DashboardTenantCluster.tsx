@@ -177,16 +177,10 @@ export function DashboardTenantCluster() {
                     <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -363,33 +357,27 @@ export function DashboardTenantCluster() {
                                         {ticketDetail.activityStatus &&
                                             <tr>
                                                 <td>Activity Status:</td>
-                                                <td>‎ </td>
                                                 <td>{ticketDetail.activityStatus}</td>
                                             </tr>
                                         }
                                         <tr>
                                             <td>Service Type: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.serviceType.serviceType}</td>
                                         </tr>
                                         <tr>
                                             <td>Property Name: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.property.name}</td>
                                         </tr>
                                         <tr>
                                             <td>Address: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.property.streetAddress}</td>
                                         </tr>
                                         <tr>
                                             <td>Request Date: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.createdAt}</td>
                                         </tr>
                                         <tr>
                                             <td>Request Timeline: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.timeline.title}</td>
                                         </tr>
                                     </>
