@@ -1,4 +1,4 @@
-import { AddPropertyCluster } from "../clusters/AddPropertyCluster";
+import { AddPropertyCluster } from "../clusters/ho-manager/AddPropertyCluster";
 import "../styles/pages/addProperty.css";
 
 export function AddProperty() {
