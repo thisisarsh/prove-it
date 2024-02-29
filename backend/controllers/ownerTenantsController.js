@@ -41,7 +41,7 @@ exports.getTenants = async (req, res) => {
             }
         });
 
-        console.log("Tenant listL");
+        console.log("TENANT LIST:");
         console.log(tenantsWithProperties);
         
         return res.send(tenantsWithProperties);
@@ -56,6 +56,8 @@ exports.getTenantInProperty = (req,res) => {
     getPropertiesHeaders.Authorization =  req.headers.authorization;       
     axios.get(GET_PROPERTY_TENANTS + req.body.id , {'headers': getPropertiesHeaders})
     .then(response => {
+        console.log("HOMEOWNER GET TENANT IN PROPERTY:");
+        console.log(response.data);
         if (response.data?.isSuccess) {
             rawData = response.data.data.tenants ?? [];
             const refinedData = rawData.map(item => ({

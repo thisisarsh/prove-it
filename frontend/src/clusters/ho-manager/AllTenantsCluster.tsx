@@ -5,9 +5,13 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from "../../components/Spinner";
-import { TenantBGResult } from "../../types";
+import Form from "react-bootstrap/Form";
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { TenantBGResult, Agreement } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
-import Nav from 'react-bootstrap/Nav'
+import Nav from 'react-bootstrap/Nav';
+
 
 import "../../styles/pages/allTenantTab.css";
 
@@ -25,6 +29,7 @@ interface TenantPropertyProps {
 export function AllTenantsCluster() {
     const [isLoading, setIsLoading] = useState(false);
     const [tenantsData, setTenantsData] = useState<TenantPropertyProps[]>([]);
+    const [agreement, setAgreement] = useState<Agreement | null>(null);
     const { state } = useAuthContext();
     const { user } = state;
     const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
@@ -73,11 +78,39 @@ export function AllTenantsCluster() {
         setBCModalShow(true);
 
     }
-    const handleAgreementModalClose = () => setAgreementModalShow(false);
+    const handleAgreementModalClose = () => {
+        setAgreementModalShow(false);
+        setAgreement(null);
+    }
     const handleAgreementModalShow = (tenant: Tenant) =>{
         setSelectedTenant(tenant);
+        if (selectedTenant) {
+            setIsLoading(true);
+            fetch(window.config.SERVER_URL + "/agreement/tenant-see", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + user?.token,
+                },
+                body: JSON.stringify({ id: tenant.id }),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                //console.log(response);
+                return response.json();
+            })
+            .then((data) => {
+                setIsLoading(false);
+                setAgreement(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data: " + error);
+            });   
+        }
         setAgreementModalShow(true);
-    }
+    };
 
     const navigate = useNavigate();
 
@@ -138,27 +171,6 @@ export function AllTenantsCluster() {
                 userId: selectedTenant.id
             }).toString();
             fetch(`${window.config.SERVER_URL}/agreement/initiate?${queryParams}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user?.token}`,
-                },
-            })
-                .finally(() => {
-                    setIsLoading(false);
-                    setAgreementModalShow(false);
-                });
-        }
-    }
-
-    const handleApproveAgreement = () => {
-        if (selectedTenant) {
-            setIsLoading(true);
-            const queryParams = new URLSearchParams({
-                userId: selectedTenant.id
-            }).toString();
-
-            fetch(`${window.config.SERVER_URL}/agreement/approve?${queryParams}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -255,7 +267,8 @@ export function AllTenantsCluster() {
             });
     }, [user?.token]);
 
-    console.log(selectedTenant);
+    //console.log(agreement);
+
     return (
         <body>
             <div className="tenant-tab-container">
@@ -408,7 +421,100 @@ export function AllTenantsCluster() {
                 <Modal.Header closeButton>
                     <Modal.Title>Agreement</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+                {isLoading ? <Spinner /> : (
+                <Modal.Body>
+                    {agreement?.status != "not found" ? (
+                            <Form>
+                                <Form.Group as={Row} controlId="rent">
+                                    <Form.Label column sm="5">Rent</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="text"
+                                            value={agreement?.rent}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="securityDeposit">
+                                    <Form.Label column sm="5">Security Deposit</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="text"
+                                            value={agreement?.advancePayment}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="lateFee">
+                                    <Form.Label column sm="5">Late Fee</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="number"
+                                            value={agreement?.lateFee}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="rentDueDate">
+                                    <Form.Label column sm="5">Rent Due Date</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="number"
+                                            value={agreement?.rentDueDate}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="startDate">
+                                    <Form.Label column sm="5">Start Date</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="string"
+                                            value={agreement?.startDate}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="endDate">
+                                    <Form.Label column sm="5">End Date</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="string"
+                                            value={agreement?.endDate}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+
+                                <Form.Group as={Row} controlId="status">
+                                    <Form.Label column sm="5">Status</Form.Label>
+                                    <Col sm="5">
+                                        <Form.Control
+                                            type="string"
+                                            value={agreement?.status}
+                                            plaintext
+                                            readOnly
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            </Form>
+                        ) : (
+                            <h1>Agreement haven't been submitted yet!</h1>
+                        )
+                    }  
+                </Modal.Body>
+                )}
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleAgreementModalClose}>
                         Close
@@ -420,11 +526,9 @@ export function AllTenantsCluster() {
                         { if (selectedTenant !== null) { navigate("/submit-agreement?id=" + selectedTenant.id); } }}>
                         Submit Agreement
                     </Button>
-                    <Button variant="success" onClick={handleApproveAgreement}>
-                        Approve
-                    </Button>
                 </Modal.Footer>
             </Modal>
+           
         </div>
     </body>
     );

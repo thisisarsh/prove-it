@@ -105,8 +105,6 @@ exports.tenantTicket = (req, res) => {
     let tenantTicketHeaders = HEADERS;
     tenantTicketHeaders.Authorization = req.headers.authorization;
 
-    console.log(req.body);
-
     axios.post(INITIATED_TICKET_LINK, req.body, {headers: tenantTicketHeaders})
     .then(response => {
         res.send(response.data);

@@ -51,6 +51,7 @@ export function DashboardOwnerCluster() {
     };
 
     useEffect(() => {
+        if (properties == null){
         setIsLoading(true);
         fetch(window.config.SERVER_URL + "/properties-owner", {
             method: "GET",
@@ -63,20 +64,24 @@ export function DashboardOwnerCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                //console.log(response.json);
                 return response.json();
             })
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
-
+    
                 console.log("PROPERTIES");
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching data: " + error);
+                console.error("Error fetching properties data: " + error);
             });
-
+        }
+    }, [user?.token, properties]); 
+    
+    useEffect(() => {
+        if(tickets == null){
+        setIsLoading(true);
         fetch(window.config.SERVER_URL + "/ticket/manager/tickets", {
             method: "GET",
             headers: {
@@ -88,7 +93,6 @@ export function DashboardOwnerCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                //console.log(response.json);
                 return response.json();
             })
             .then((data) => {
@@ -98,11 +102,11 @@ export function DashboardOwnerCluster() {
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching data: " + error);
+                console.error("Error fetching tickets data: " + error);
             });
-
-        setUpdate(false);
-    }, [user?.token, update]);
+        }
+    }, [user?.token, update, tickets]);
+    
 
     //console.log(properties);
 

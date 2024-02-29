@@ -50,14 +50,18 @@ exports.checkTenant = (req, res) => {
 
     axios.get(GET_PROPERTY_TENANT_LINK + userId, {'headers': checkHeaders})
         .then(response => {
-            if (response.data?.isSuccess) {
+            console.log("TENANT IN PROPERTY RESPONSE:");
+            console.log(response.data.data);
 
+            if (response.data?.isSuccess) {
                 const tenantDetails = response.data.data;
 
                 payload.tenantPropertyRefId = tenantDetails.tenantPropertyRefId;
 
                 return axios.post(BACKGROUND_CHECK_INITIATE_LINK, payload, { 'headers': checkHeaders })
                     .then(bgCheckResponse => {
+                        console.log("HOMEOWNER BACKGROUND CHECK INITIATE RESPONSE:")
+                        console.log(bgCheckResponse.data);
                         if (bgCheckResponse.data?.isSuccess) {
                             res.send({
                                 isSuccess: bgCheckResponse.data.isSuccess,
@@ -103,6 +107,8 @@ exports.approveTenant = (req, res) => {
 
     axios.get(GET_PROPERTY_TENANT_LINK + userId, { "headers": checkHeaders })
         .then(response => {
+            console.log("TENANT IN PROPERTY RESPONSE:");
+            console.log(response.data.data);
 
             if (!response.data?.isSuccess) {
                 throw new Error(response.data.message);
@@ -113,7 +119,8 @@ exports.approveTenant = (req, res) => {
             return axios.get(BACKGROUND_CHECK_STATUS_LINK + userId, { "headers": checkHeaders });
         })
         .then(statusResponse => {
-
+            console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
+            console.log(statusResponse.data);
             if (!statusResponse.data.isSuccess) {
                 throw new Error(statusResponse.data.message);
             }
@@ -123,7 +130,8 @@ exports.approveTenant = (req, res) => {
             return axios.post(BACKGROUND_CHECK_APPROVE_LINK, payload, { "headers": checkHeaders });
         })
         .then(approveResponse => {
-
+            console.log("HOMEOWNER BACKGROUND CHECK APPROVE RESPONSE:");
+            console.log(approveResponse.data);
             if (!approveResponse.data.isSuccess) {
                 throw new Error(approveResponse.data.message);
             }
@@ -142,10 +150,14 @@ exports.applyPublic = (req, res) => {
 
     axios.post(BACKGROUND_CHECK_INITIATE_LINK, req.body.bgCheck, {headers: applyPublicHeaders})
     .then(bgCheckResponse => {
+        console.log("SERVICE PROVIDER BACKGROUND CHECK INITIATE RESPONSE:");
+        console.log(bgCheckResponse.data);
         if (bgCheckResponse.data.isSuccess) {
 
             axios.post(SP_DETAIL_LINK, req.body.spDetail, {headers: applyPublicHeaders})
             .then(spDetailResponse => {
+                console.log("SERVICE PROVIDER APPLY FOR PUBLIC STATUS RESPONSE:");
+                console.log(spDetailResponse.data);
                 if (spDetailResponse.data.isSuccess) {
                     res.send({isSuccess: true, message: "Successfully Applied for public status"})
                 } else {
@@ -179,7 +191,9 @@ exports.rejectTenant = (req, res) => {
 
     axios.get(GET_PROPERTY_TENANT_LINK + userId, { "headers": checkHeaders })
         .then(response => {
-
+            console.log("TENANT IN PROPERTY RESPONSE:");
+            console.log(response.data.data);
+            
             if (!response.data?.isSuccess) {
                 throw new Error(response.data.message);
             }
@@ -189,6 +203,8 @@ exports.rejectTenant = (req, res) => {
             return axios.get(BACKGROUND_CHECK_STATUS_LINK + userId, { "headers": checkHeaders });
         })
         .then(statusResponse => {
+            console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
+            console.log(statusResponse.data);
 
             if (!statusResponse.data.isSuccess) {
                 throw new Error(statusResponse.data.message);
@@ -199,7 +215,8 @@ exports.rejectTenant = (req, res) => {
             return axios.post(BACKGROUND_CHECK_REJECT_LINK, payload, { "headers": checkHeaders });
         })
         .then(rejectResponse => {
-
+            console.log("HOMEOWNER BACKGROUND CHECK REJECT RESPONSE:");
+            console.log(rejectResponse.data);
             if (!rejectResponse.data.isSuccess) {
                 throw new Error(rejectResponse.data.message);
             }
@@ -312,6 +329,8 @@ exports.tenantApplicationStatus = (req, res) => {
     console.log(req.body.id);
     axios.get(BG_CHECK_STATUS_LINK + req.body.id + "?downloadUrl=false", {headers: appStatusHeaders})
     .then(response => {
+        console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
+        console.log(response.data);
         if (response.data?.isSuccess || response.data.message == "Background check status not found") {
             const rawData = response.data.data;
             console.log(response.data);
@@ -343,9 +362,11 @@ exports.tenantApplicationStatusDownload = (req, res) => {
     let appStatusHeaders = HEADERS;
     appStatusHeaders.Authorization = req.headers.authorization;
 
-    console.log(req.body.applicantId);
     axios.get(BG_CHECK_STATUS_LINK + req.body.id + "?downloadUrl=true" + "&applicantId=" + req.body.applicantId, {headers: appStatusHeaders})
     .then(response => {
+        console.log("HOMEOWNER BACKGROUND CHECK STATUS RESPONSE:");
+        console.log(response.data);
+        
         if (response.data?.isSuccess) {
             const refinedData = {
                 reportUrl: response.data.data.reportUrl,

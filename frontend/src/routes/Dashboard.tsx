@@ -19,6 +19,7 @@ export function Dashboard() {
 
     switch (user.role.role) {
         case "owner":
+            return <DashboardOwnerCluster />;
         case "manager":
             return <DashboardOwnerCluster />;
         case "tenant":

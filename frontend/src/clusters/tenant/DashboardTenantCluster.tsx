@@ -182,6 +182,9 @@ export function DashboardTenantCluster() {
                         <li>
                         <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
                         </li>
+                        <li>
+                        <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
+                        </li>
                     </ul>
                     </Nav>
                     <button className="logout-button" onClick={logout}>Log out</button>

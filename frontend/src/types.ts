@@ -277,4 +277,15 @@ export interface TenantBGResult {
     isSuccess: boolean;
 }
 
+export interface Agreement {
+    advancePayment: number;
+    rent: number,
+    lateFee: number,
+    rentDueDate: number,
+    startDate: string,
+    endDate: string,
+    securityDepositStatus: number,
+    status: string
+}
+
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
