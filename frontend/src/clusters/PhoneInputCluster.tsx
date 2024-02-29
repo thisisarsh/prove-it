@@ -2,6 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
 import { useVerifyPhone } from "../hooks/useVerifyPhone";
+import ErrorMessageContainer from "../components/ErrorMessageContainer";
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 
 export function PhoneInputCluster() {
@@ -11,9 +12,6 @@ export function PhoneInputCluster() {
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         await verifyPhone(phone);
-        if (error) {
-            alert(error);
-        }
     };
 
     function handlePhoneChange(e: React.ChangeEvent<FormControlElement>) {
@@ -102,6 +100,8 @@ export function PhoneInputCluster() {
                     </Button>
                 )}
             </Form>
+
+            {error && <ErrorMessageContainer message={error}/>}
         </>
     );
 }
