@@ -73,7 +73,7 @@ export function AllServiceProviderCluster() {
     }
 
     return (
-    <body>
+    <>
             <div className="header">
                 <h1 className="dashboard-title">Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
@@ -97,6 +97,8 @@ export function AllServiceProviderCluster() {
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
+
+
                 {/* Property block */}
                 <div className="all-serviceProvider-container">
                     <h1 className="dashboard-label">Service Providers</h1>
@@ -233,7 +235,7 @@ export function AllServiceProviderCluster() {
                 </button>
                  </Modal.Footer>
             </Modal>
-    </body>
+    </>
     );
 }
 
