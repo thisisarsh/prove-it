@@ -8,6 +8,8 @@ import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
+import { RequestQuoteTable } from "../../components/RequestQuoteTable";
+import { SRDetailTable } from "../../components/SRDetailTable";
 
 
 export function RequestQuoteCluster() {
@@ -143,7 +145,7 @@ export function RequestQuoteCluster() {
         <>
             {error && <ErrorMessageContainer message={error}/>}
 
-            <div className="mb-5">
+            {/* <div className="mb-5">
                 {requestDetails ? (
                     <ServiceRequestCard requestDetails={requestDetails}/>
                 ) : (
@@ -152,26 +154,37 @@ export function RequestQuoteCluster() {
                         <p>Loading Service Request...</p>
                     </>
                 )}         
+            </div> */}
+
+            <div className="mb-5">
+                {requestDetails ? (
+                    <SRDetailTable requestDetails={requestDetails}/>
+                ) : (
+                    <>
+                        <Spinner/>
+                        <p>Loading Service Request...</p>
+                    </>
+                )}
             </div>
-
-            <h2>My private service providers</h2>
             
-            {isLoading && (
-                <>
+            {isLoading ? (
+                <div className="mb-5">
                     <Spinner/>
-                    <p>Submitting service request</p>
-                </>
+                    <p>Submitting request...</p>
+                </div>
+            ) : (
+                <>
+                    <h2>Available service providers</h2>
+                    
+                    <div className="mb-5">
+                        <RequestQuoteTable
+                            serviceProviders={serviceProviders}
+                            handleSubmitRequest={handleSubmitRequest}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                </>                
             )}
-
-             {!isLoading && serviceProviders.length > 0 && (
-                <Row className="g-2">
-                    {serviceProviders.map((serviceProviderObj) => (
-                        <Col className="g-2">
-                            <ServiceProviderCard sp={serviceProviderObj} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
-                        </Col>
-                    ))}
-                </Row>
-            )} 
 
             {!isLoading && serviceProviders.length == 0 && (
                 <p>You don't have any private service providers! Start by inviting a service provider...</p>
