@@ -4,7 +4,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty, ServiceRequest } from "../../types";
+import { TenantProperty, ServiceRequest, ContactInfo } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import Modal from 'react-bootstrap/Modal';
@@ -14,6 +14,8 @@ import Accordion from 'react-bootstrap/Accordion';
 import Homie from "../../components/Homie";
 
 import "../../styles/pages/dashboard.css";
+import { Button } from "react-bootstrap";
+import { OwnerContactModal } from "../../components/OwnerContactModal";
 
 /**
  *
@@ -27,6 +29,8 @@ export function DashboardTenantCluster() {
     const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
     const [update, setUpdate] = useState<boolean>(false);
+    const [showOwnerContact, setShowOwnerContact] = useState<boolean>(false);
+    const [ownerContact, setOwnerContact] = useState<ContactInfo | undefined>(undefined);
 
     const [propertyID, setPropertyID] = useState<string>("");
 
@@ -96,6 +100,7 @@ export function DashboardTenantCluster() {
                 .then((data) => {
                     setIsLoading(false);
                     setProperties(data);
+                    setOwnerContact(data[0].ownerContact);
                     setPropertyID(data[0].id)
                 })
                 .catch((error) => {
@@ -162,6 +167,8 @@ export function DashboardTenantCluster() {
         });
     }
 
+    console.log(ownerContact);
+
     return (
         <div className="dashboard-container">
             <div className="header">
@@ -204,7 +211,18 @@ export function DashboardTenantCluster() {
                                     <tr>
                                         <td>{userProperty.name}</td>
                                         <td>{userProperty.streetAddress}</td>
-                                        <td>{userProperty.owner}</td>
+                                        <td>
+                                            <div className="between-flex">
+                                                {userProperty.owner}
+
+                                                <Button
+                                                    className="standard-button"
+                                                    onClick={() => {setShowOwnerContact(true)}}
+                                                >
+                                                    Contact Information
+                                                </Button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
@@ -218,6 +236,14 @@ export function DashboardTenantCluster() {
                         </tbody>
                     </table>
                 </div>
+
+                {ownerContact &&
+                    <OwnerContactModal
+                        show={showOwnerContact}
+                        ownerContact={ownerContact}
+                        handleClose={() => {setShowOwnerContact(false)}}
+                    />
+                }
 
                 {/* Service Request block */}
                 <div className="service-container">

@@ -39,6 +39,11 @@ exports.getProperties = (req, res) => {
                     console.log("TENANT DETAIL OF HOMEOWNER RESPONSE:");
                     console.log(response.data.data);
                     refinedData.owner = response.data.data.user.firstName + " " + response.data.data.user.lastName;
+                    refinedData.ownerContact = {
+                        name: response.data.data.user.firstName = " " + response.data.data.user.lastName,
+                        phone: response.data.data.user.phone,
+                        email: response.data.data.user.email,
+                    }
                     //change to array to use map in display
                     const refinedDataArray = [refinedData];
                     return res.send(refinedDataArray ?? []);

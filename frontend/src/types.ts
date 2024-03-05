@@ -26,6 +26,7 @@ export interface User {
     refreshToken: string;
     id: string;
     phoneVerified: boolean;
+    phone: string;
     role: Role;
     spDetail: SPDetail | undefined;
     firstName: string;
@@ -287,6 +288,12 @@ export interface Agreement {
     endDate: string,
     securityDepositStatus: number,
     status: string
+}
+
+export interface ContactInfo {
+    name: string;
+    email: string;
+    phone: string;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

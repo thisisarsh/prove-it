@@ -166,3 +166,9 @@ div.error {
 a.navigate-link:hover {
   cursor:pointer;
 }
+
+div.between-flex {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}

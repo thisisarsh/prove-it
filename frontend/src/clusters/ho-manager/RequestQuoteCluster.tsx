@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { RequestDetails, ServiceProvider } from "../../types";
-import { Col, Row } from "react-bootstrap";
-import { ServiceProviderCard } from "../../components/ServiceProviderCard";
-import { ServiceRequestCard } from "../../components/ServiceRequestCard";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
