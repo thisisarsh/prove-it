@@ -291,7 +291,7 @@ export function DashboardOwnerCluster() {
     <body>
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title">Homeowner Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -300,7 +300,7 @@ export function DashboardOwnerCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title className="navHeader">HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title className="navHeader">Homeowner Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                 <div className="nav-container">
@@ -423,21 +423,16 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "requested" &&
-                                                            <Badge pill bg="warning">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "pending" &&
-                                                            <Badge pill bg="secondary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "started" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "initiated" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "active" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
+                                                    {userTicket.job?.activityStatus ? (
+                                                                <Badge pill bg="primary">
+                                                                    {userTicket.job.activityStatus}
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge pill bg="warning">
+                                                                    {userTicket.status}
+                                                                </Badge>
+                                                            )
+                                                    }
                                                     </td>
 
                                                     <td>

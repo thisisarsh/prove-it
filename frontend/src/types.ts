@@ -54,6 +54,7 @@ export interface ServiceRequest {
     id: string;   
     timeline: Timeline;
     serviceType: ServiceType;
+    job: Job | undefined;
 }
 
 export interface PropertyJSON {

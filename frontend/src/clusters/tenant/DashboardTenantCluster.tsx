@@ -165,7 +165,7 @@ export function DashboardTenantCluster() {
     return (
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Tenant</h1>
+                <h1 className="dashboard-title">Tenant Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -174,11 +174,10 @@ export function DashboardTenantCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Tenant Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                 <div className="nav-container">
-                    <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
                     <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
                 </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
@@ -186,7 +185,7 @@ export function DashboardTenantCluster() {
             </Offcanvas>
                 {/* Property block */}
                 <div className="properties-container">
-                    <h1 className="dashboard-label">Properties</h1>
+                    <h1 className="dashboard-label">Property</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
                             <tr>
@@ -232,7 +231,7 @@ export function DashboardTenantCluster() {
                                     <thead className="dashboard-header">
                                         <tr>
                                             <th className="dashboard-header">Service</th>
-                                            <th>Property</th>
+                                            <th>Request Date</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -245,11 +244,20 @@ export function DashboardTenantCluster() {
                                             tickets.filter(t => !['withdrawn', 'rejected', 'completed'].includes(t.status)).map((userTicket) => (
                                                 <tr>
                                                     <td>{userTicket.serviceType.serviceType}</td>
-                                                    <td>{userTicket.property.streetAddress}</td>
+                                                    <td>{userTicket.createdAt.substring(0,10)}</td>
                                                     <td>
-                                                        <Badge pill bg="warning">
-                                                            {userTicket.status}
-                                                        </Badge>
+                                                        
+                                                            { userTicket.job?.activityStatus ? (
+                                                                <Badge pill bg="primary">
+                                                                    {userTicket.job.activityStatus}
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge pill bg="warning">
+                                                                    {userTicket.status}
+                                                                </Badge>
+                                                            )
+                                                            }
+                                                        
                                                     </td>
                                                     <td>
                                                         <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
