@@ -440,7 +440,7 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
+                                                        {(userTicket.status === "requested" || (userTicket.status === "initiated" && submittedProposalCount(userTicket) <= 0)) && (
                                                             <Button className="standard-button" onClick={() => {navigate(
                                                                 "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
                                                                 Request quote
