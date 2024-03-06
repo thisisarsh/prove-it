@@ -29,7 +29,7 @@ variables:
   APP_NAME_STAGING: null
   APP_NAME_PROD: null
 
-  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
 
 .before_script_template:
