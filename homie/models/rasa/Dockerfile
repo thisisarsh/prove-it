@@ -6,6 +6,8 @@ COPY ./ /app
 
 USER root
 
+RUN rasa train --force
+
 EXPOSE 5005
 
 CMD ["run", "-m", "models", "--enable-api", "--cors", "*", "--debug"]

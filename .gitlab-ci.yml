@@ -42,140 +42,140 @@ variables:
 #  tags:
 #    - saas-linux-medium-amd64
 #  script:
-#    - echo "Building ML model - RASA action server"
-#    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
-#    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
-#    - echo "Building ML model - RASA chat server"
-#    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
-#    - docker push $RASA_CONTAINER_TEST_IMAGE
-#  environment: development
-#
-#deploy-test-rasa-actions:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-ml-models
-#  rules:
-#    - if: >-
-#        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-#        $CI_COMMIT_MESSAGE =~ /--deploy-test/
-#  script:
-#    - cd homie
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$ACTIONS_CONTAINER_TEST_IMAGE
-#    - export APP_NAME=ht-bot-actions-server-dev-$CI_COMMIT_REF_SLUG
-#    - export CONFIG_PATH=bot-configs/actions/k8s-dev/deployment.yaml
-#    - export FRONT_URL=$FRONT_URL_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.metadata.name = strenv(APP_NAME)'
-#      bot-configs/actions/k8s-dev/service.yaml
-#    - >-
-#      yq -i '.spec.selector.app = strenv(APP_NAME)'
-#      bot-configs/actions/k8s-dev/service.yaml
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f bot-configs/actions/k8s-dev
-#    - export FRONT_URL=$FRONT_URL_2
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f bot-configs/actions/k8s-dev
-#  environment: development
-#deploy-test-rasa:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-ml-models
-#  rules:
-#    - if: >-
-#        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-#        $CI_COMMIT_MESSAGE =~ /--deploy-test/
-#  script:
-#    - cd homie
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$RASA_CONTAINER_TEST_IMAGE
-#    - export APP_NAME=ht-bot-server-dev-$CI_COMMIT_REF_SLUG
-#    - export CONFIG_PATH=bot-configs/rasa-server/k8s-dev/deployment.yaml
-#    - export FRONT_URL=$FRONT_URL_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.metadata.name = strenv(APP_NAME)'
-#      bot-configs/rasa-server/k8s-dev/service.yaml
-#    - >-
-#      yq -i '.spec.selector.app = strenv(APP_NAME)'
-#      bot-configs/rasa-server/k8s-dev/service.yaml
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f bot-configs/rasa-server/k8s-dev
-#    - export FRONT_URL=$FRONT_URL_2
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f bot-configs/rasa-server/k8s-dev
-#  environment: development
+    - echo "Building ML model - RASA action server"
+    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
+    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
+    - echo "Building ML model - RASA chat server"
+    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
+    - docker push $RASA_CONTAINER_TEST_IMAGE
+  environment: development
+
+deploy-test-rasa-actions:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-ml-models
+  rules:
+    - if: >-
+        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$ACTIONS_CONTAINER_TEST_IMAGE
+    - export APP_NAME=ht-bot-actions-server-dev-$CI_COMMIT_REF_SLUG
+    - export CONFIG_PATH=bot-configs/actions/k8s-dev/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.metadata.name = strenv(APP_NAME)'
+      bot-configs/actions/k8s-dev/service.yaml
+    - >-
+      yq -i '.spec.selector.app = strenv(APP_NAME)'
+      bot-configs/actions/k8s-dev/service.yaml
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s-dev
+    - export FRONT_URL=$FRONT_URL_2
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s-dev
+  environment: development
+deploy-test-rasa:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-ml-models
+  rules:
+    - if: >-
+        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
+        $CI_COMMIT_MESSAGE =~ /--deploy-test/
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$RASA_CONTAINER_TEST_IMAGE
+    - export APP_NAME=ht-bot-server-dev-$CI_COMMIT_REF_SLUG
+    - export CONFIG_PATH=bot-configs/rasa-server/k8s-dev/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.metadata.name = strenv(APP_NAME)'
+      bot-configs/rasa-server/k8s-dev/service.yaml
+    - >-
+      yq -i '.spec.selector.app = strenv(APP_NAME)'
+      bot-configs/rasa-server/k8s-dev/service.yaml
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s-dev
+    - export FRONT_URL=$FRONT_URL_2
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s-dev
+  environment: development
 #lint-job:
 #  stage: lint
 #  image: 'node:18'
