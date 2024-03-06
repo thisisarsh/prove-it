@@ -1,4 +1,4 @@
-FROM rasa/rasa:3.6.16-full
+FROM python:3.9.18
 
 WORKDIR /app
 
@@ -6,8 +6,8 @@ COPY ./ /app
 
 USER root
 
-RUN rasa train --force
+RUN chmod +x startup.sh
 
 EXPOSE 5005
 
-CMD ["run", "-m", "models", "--enable-api", "--cors", "*", "--debug"]
+ENTRYPOINT ["/app/startup.sh"]
