@@ -4,9 +4,9 @@ services:
 stages:
 #  - lint
   - build
+  - deploy
 #  - test
 #  - release
-  - deploy
 #  - vuln-scan
 #  - cleanup
 variables:
