@@ -6,7 +6,7 @@ USER root
 
 COPY ./ /app
 
-RUN pip install rasa
+RUN pip install --no-cache-dir --no-build-isolation rasa
 
 RUN pip install --no-cache-dir -r requirements.txt
 
