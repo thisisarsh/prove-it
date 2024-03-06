@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM rasa/rasa-sdk:3.6.2
 
 WORKDIR /app
 
@@ -6,10 +6,8 @@ USER root
 
 COPY ./ /app
 
-RUN pip install --no-cache-dir --no-build-isolation rasa
-
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5055
 
-CMD ["rasa", "run", "actions"]
+CMD ["start", "--actions", "actions"]

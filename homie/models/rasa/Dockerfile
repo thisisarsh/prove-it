@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM rasa/rasa:3.6.16-full
 
 WORKDIR /app
 
@@ -6,8 +6,8 @@ COPY ./ /app
 
 USER root
 
-RUN pip install rasa
+RUN rasa train --force
 
 EXPOSE 5005
 
-CMD ["rasa", "run", "-m", "models", "--enable-api", "--cors", "*", "--debug"]
+CMD ["run", "-m", "models", "--enable-api", "--cors", "*", "--debug"]
