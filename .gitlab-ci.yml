@@ -29,7 +29,7 @@ variables:
   APP_NAME_STAGING: null
   APP_NAME_PROD: null
 
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
 
 .before_script_template:
@@ -39,8 +39,6 @@ variables:
 build-ml-models:
   extends: .before_script_template
   stage: build
-  tags:
-    - rasa
   script:
     - echo "Building ML model - RASA action server"
     - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
