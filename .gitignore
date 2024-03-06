@@ -65,7 +65,6 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-/homie/models/rasa/models/
 
 *.pyc
 *pyc
