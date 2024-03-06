@@ -1,7 +1,5 @@
 #!/bin/bash
 
-pip install rasa
-#
 echo "Training Rasa model..."
 rasa train --force
 
