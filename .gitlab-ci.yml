@@ -42,15 +42,13 @@ build-ml-models:
   tags:
     - saas-linux-medium-amd64
   script:
-    - echo "Building ML model - RASA action server"
-    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
-    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
+#    - echo "Building ML model - RASA action server"
+#    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
+#    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
     - echo "Building ML model - RASA chat server"
     - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
     - docker push $RASA_CONTAINER_TEST_IMAGE
-
   environment: development
-  allow_failure: true
 
 deploy-test-rasa-actions:
   stage: deploy
