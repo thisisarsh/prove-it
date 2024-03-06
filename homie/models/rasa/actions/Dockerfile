@@ -2,10 +2,12 @@ FROM rasa/rasa-sdk:latest
 
 WORKDIR /app
 
-COPY ./ /app/actions
+USER root
+
+COPY ./ /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5055
 
-CMD ["rasa", "run", "actions"]
+CMD ["start", "--actions", "actions"]
