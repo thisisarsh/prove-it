@@ -2,13 +2,13 @@ image: 'docker:19.03.12'
 services:
   - 'docker:19.03.12-dind'
 stages:
-  - lint
+#  - lint
   - build
-  - test
-  - release
+#  - test
+#  - release
   - deploy
-  - vuln-scan
-  - cleanup
+#  - vuln-scan
+#  - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'

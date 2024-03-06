@@ -2,7 +2,7 @@ FROM rasa/rasa-sdk:latest
 
 WORKDIR /app
 
-COPY ./rasa/actions /app/actions
+COPY ./ /app/actions
 
 RUN pip install --no-cache-dir -r requirements.txt
 
