@@ -39,6 +39,8 @@ variables:
 build-ml-models:
   extends: .before_script_template
   stage: build
+  tags:
+    - rasa
   script:
     - echo "Building ML model - RASA action server"
     - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
