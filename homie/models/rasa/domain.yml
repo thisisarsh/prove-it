@@ -62,9 +62,9 @@ responses:
   utter_goodbye:
   - text: Bye
   utter_iamabot:
-  - text: I am a bot, powered by Rasa.
+  - text: I am your homie, a bot. What can I do for you?
   utter_create_service:
-  - text: I created a service request for you. Does it look right to you?
+  - text: I will create a service request for you. Does the above look right to you?
   utter_ask_help:
   - text: What do you need help with?
   utter_time_options:
