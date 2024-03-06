@@ -6,7 +6,7 @@ USER root
 
 COPY ./ /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt --progress-bar off
 
 EXPOSE 5055
 
