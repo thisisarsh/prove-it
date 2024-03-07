@@ -5,17 +5,14 @@ WORKDIR /app
 RUN python -m venv venv
 ENV PATH="/app/venv/bin:$PATH"
 
-RUN mkdir -p /app/.rasa
+RUN mkdir -p /app/.rasa/cache /app/home && \
+    chown -R nobody:nogroup /app
 
-COPY ./ /app
-
-RUN chown -R nobody:nogroup /app
 USER nobody
 
-ENV HOME=/app/home
+RUN pip install rasa
 
-RUN pip install --no-cache-dir rasa --progress-bar off
-
+COPY --chown=nobody:nogroup ./ /app
 RUN chmod +x startup.sh
 
 EXPOSE 5005
