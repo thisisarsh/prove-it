@@ -13,6 +13,9 @@ USER nobody
 RUN pip install rasa --no-cache-dir --progress-bar off
 
 COPY --chown=nobody:nogroup ./ /app
+
+RUN rasa train --force
+
 RUN chmod +x startup.sh
 
 EXPOSE 5005

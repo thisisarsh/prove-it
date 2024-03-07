@@ -12,7 +12,7 @@ stages:
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
-  RASA_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:RASA-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
+  RASA_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:latest'
   ACTIONS_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
@@ -47,16 +47,16 @@ variables:
 #    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
 #  environment: development
 
-build-rasa-chat:
-  extends: .before_script_template
-  stage: build
-  tags:
-    - saas-linux-medium-amd64
-  script:
-    - echo "Building ML model - RASA chat server"
-    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
-    - docker push $RASA_CONTAINER_TEST_IMAGE
-  environment: development
+#build-rasa-chat:
+#  extends: .before_script_template
+#  stage: build
+#  tags:
+#    - saas-linux-medium-amd64
+#  script:
+#    - echo "Building ML model - RASA chat server"
+#    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
+#    - docker push $RASA_CONTAINER_TEST_IMAGE
+#  environment: development
 
 #deploy-test-rasa-actions:
 #  stage: deploy
