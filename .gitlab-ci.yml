@@ -62,7 +62,7 @@ build-rasa-chat:
 #  stage: deploy
 #  image: quay.io/openshift/origin-cli
 #  dependencies:
-#    - build-ml-models
+#    - build-rasa-actions
 #  rules:
 #    - if: >-
 #        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
@@ -125,7 +125,7 @@ deploy-test-rasa:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
-    - build-ml-models
+    - build-rasa-chat
   rules:
     - if: >-
         $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
