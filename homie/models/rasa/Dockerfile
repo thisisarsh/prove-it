@@ -2,9 +2,15 @@ FROM python:3.9.18
 
 WORKDIR /app
 
+RUN python -m venv venv
+ENV PATH="/app/venv/bin:$PATH"
+
+RUN mkdir -p /app/.rasa
+
 COPY ./ /app
 
-USER root
+RUN chown -R nobody:nogroup /app
+USER nobody
 
 ENV HOME=/app/home
 
