@@ -476,7 +476,7 @@ export function DashboardOwnerCluster() {
                                             <Button
                                                 className="standard-button"
                                                 onClick={() => {
-                                                    navigate("/request-service");
+                                                    navigate("/ho-request-service");
                                                 }}>
                                                     Request a Service
                                             </Button>
@@ -536,17 +536,6 @@ export function DashboardOwnerCluster() {
                                             </tr>
                                         )}
                                     </tbody>
-                                    <tr>
-                                        <td className="dashboard-empty-service" colSpan={3}>
-                                            <Button
-                                                className="standard-button"
-                                                onClick={() => {
-                                                    navigate("/request-service");
-                                                }}>
-                                                    Request a Service
-                                            </Button>
-                                        </td>
-                                    </tr>
                                 </table>
                             </Accordion.Body>
                         </Accordion.Item>
