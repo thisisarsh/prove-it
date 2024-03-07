@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { ServiceRequestSP } from "../../types";
-import { useNavigate } from "react-router-dom";
-import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import { Link, useNavigate } from "react-router-dom";
+//import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
-import { FormControl } from "react-bootstrap";
+import { FormControl, Button, Modal } from "react-bootstrap";
 
 const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/send-proposal";
 
@@ -24,13 +24,20 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     const navigate = useNavigate();
     const ticket = ticketObj.ticket;
 
-    const [error, setError] = useState<string | null>(null);
+    //const [error, setError] = useState<string | null>(null);
 
     const [quotePrice, setQuotePrice] = useState<string>('0');
     const [quoteType, setQuoteType] = useState<string>('hourly');
     const [estimatedHours, setEstimatedHours] = useState<string>('0');
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
+
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
 
     const postData = useCallback(
         async (url: string, body: Proposal) => {
@@ -54,13 +61,13 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 return response.json();
             } catch (error) {
                 console.error("Error:", error);
-                setError("An error occured");
+                handleShowErrorModal("An error occured");
                 throw error;
             }
         },
         [user],
     );
-
+    
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         setter: React.Dispatch<React.SetStateAction<string>>,
@@ -70,6 +77,10 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     };
 
     const handleSubmit = () => {
+        try{
+        if (ticket == null || quotePrice == null || quoteType == null || estimatedHours == null || startDate == null || endDate == null){
+            throw new Error ("Empty fields");
+        }
         const body: Proposal = {
             id: ticket.id.toString(),
             detail: ticket.serviceRequest.detail.toString(),
@@ -79,7 +90,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString()
         }
-        console.log(body);
+        console.log("RUN");
 
         postData(INVITED_SIGNUP_LINK, body)
             .then((response) => {
@@ -88,14 +99,17 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                     console.log(response.data);
                     navigate("/dashboard");
                 } else {
-                    setError(response.message);
+                    handleShowErrorModal(response.message);
                 }
             });
+        } catch (error){
+            handleShowErrorModal("Please fill all fields");
+        }
     }
 
     return (
         <>
-            {error && <ErrorMessageContainer message={error}/>}
+            {/*error && <ErrorMessageContainer message={error}/>*/}
             <Form.Group> 
                 <Form.Label>Quote Price</Form.Label>
                 <FormControl
@@ -145,6 +159,29 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
             <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} />
             <br></br>
             <button className="delete-button" onClick={() => handleSubmit()}>Submit Quote</button>
-        </>
+            <Link to="/dashboard" className="goBackLink">
+                <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="goBackButton"
+                >
+                    <span>Go Back</span>
+                </Button>
+            </Link>
+
+            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{errorModalMessage}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            </>
     )
 }

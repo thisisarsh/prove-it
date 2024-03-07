@@ -1,15 +1,16 @@
 import { Form, Button } from "react-bootstrap";
 import Spinner from "../../components/Spinner";
-import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+//import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 import "../../styles/pages/inviteUser.css";
-import { useNavigate } from "react-router-dom";
+import { Link ,useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import { FormGroup } from "../../components/Forms";
+import Modal from 'react-bootstrap/Modal';
 
 interface InviteUserProps {
     roleName: string;
@@ -22,7 +23,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    //const [error, setError] = useState("");
 
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<
@@ -33,6 +34,13 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [invitedLastName, setInvitedLastName] = useState("");
     const [invitedEmail, setInvitedEmail] = useState("");
     const [invitedPhone, setInvitedPhone] = useState("");
+
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
 
     //fetch properties if we are inviting a tenant.
 
@@ -68,7 +76,12 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const handleSubmit = () => {
         console.log("Handling submit...");
         setIsLoading(true);
-        setError("");
+        //setError("");
+        try{
+        if(invitedFirstName == null || invitedLastName == null || invitedEmail == null 
+            || invitedPhone == null || selectedProperty == null){
+                throw new Error ("Empty fields");
+            }
         const inviteUserObject = {
             user: {
                 firstName: invitedFirstName,
@@ -81,7 +94,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
             propertyName: selectedProperty?.streetAddress,
             invite: true,
         };
-        console.log(inviteUserObject);
+        //console.log(inviteUserObject);
 
         fetch(window.config.SERVER_URL + "/send-invite", {
             method: "POST",
@@ -93,7 +106,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
         })
             .then(response => {
                 if (!response.ok) {
-                    setError("Server response was not ok when inviting user");
+                    handleShowErrorModal("Server response was not ok when inviting user");
                     return response.json().then(json => Promise.reject(json));
                 }
                 return response.json();
@@ -103,16 +116,19 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     alert("User has been invited successfully");
                     navigate("/dashboard");
                 } else {
-                    setError(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
                 setIsLoading(false);
             })
             .catch(err => {
                 console.error('Error:', err);
-                setError(err.message || "An error occurred");
+                handleShowErrorModal(err.message || "An error occurred");
                 setIsLoading(false);
             });
-
+        } catch (error) {
+            handleShowErrorModal("Please fill all fields");
+            setIsLoading(false);
+        }
     };
 
     //change handler for all text inputs
@@ -173,15 +189,37 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     ) : (
                         <Button
                             id="invite-submit-button"
-                            type="submit"
+                            type="button"
                             onClick={() => handleSubmit()}
                         >
                             Send Invite
                         </Button>
                     )}
+                    <Link to="/dashboard" className="goBackLink">
+                        <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="goBackButton"
+                        >
+                            <span>Go Back</span>
+                        </Button>
+                    </Link>
                 </Form>
             </div>
-            {error && <ErrorMessageContainer message={error} />}
+            {/*error && <ErrorMessageContainer message={error} />*/}
+            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{errorModalMessage}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }

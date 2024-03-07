@@ -3,9 +3,10 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import {useState, useEffect, useCallback} from "react";
 import { GeneralServiceType, Property, SpecificServiceType, Timeline, ServiceProvider } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
-import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+//import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import Modal from 'react-bootstrap/Modal';
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "../../styles/components/createServiceRequest.css"
 
@@ -14,7 +15,7 @@ export function RequestHOServiceCluster() {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    //const [error, setError] = useState<string | null>(null);
 
     const [properties, setProperties] = useState<Property[]>([]);
     const [property, setProperty] = useState<Property | null>(null);
@@ -33,6 +34,12 @@ export function RequestHOServiceCluster() {
 
     const [issueDetail, setIssueDetail] = useState<string>("");
 
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
 
 
     const OWNER_PROPERTY_LINK = window.config.SERVER_URL + '/properties-owner';
@@ -75,7 +82,8 @@ export function RequestHOServiceCluster() {
                 if (!response.error) {
                     setProperties(response);
                 } else {
-                    setError("ERROR GETTING PROPERTY");
+                    //setError("ERROR GETTING PROPERTY");
+                    handleShowErrorModal(response.message);
                 }
             });
 
@@ -84,7 +92,7 @@ export function RequestHOServiceCluster() {
                 if (response.isSuccess) {
                     setGeneralServiceTypes(response.data);
                 } else {
-                    setError(response.message);
+                    handleShowErrorModal(response.message);
                 }
             });
 
@@ -93,7 +101,7 @@ export function RequestHOServiceCluster() {
                 if (response.isSuccess) {
                     setTimelines(response.data);
                 } else {
-                    setError(response.message);
+                    handleShowErrorModal(response.message);
                 }
             });
     }, [fetchData, GENERAL_SERVICE_TYPE_LINK, OWNER_PROPERTY_LINK, TIMELINES_LINK, user?.id])
@@ -111,12 +119,12 @@ export function RequestHOServiceCluster() {
                 if (response.isSuccess) {
                     setSpecificServices(response.data);
                 } else {
-                    setError(response.message);
+                    handleShowErrorModal(response.message);
                 }
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
-                setError(error.error);
+                handleShowErrorModal(error.error);
             })
     }
 
@@ -136,7 +144,7 @@ export function RequestHOServiceCluster() {
             })
                 .then(response => {
                     if (!response.ok) {
-                        setError("Error: Network response was not ok");
+                        handleShowErrorModal("Error: Network response was not ok");
                     }
                     return response.json();
                 })
@@ -145,7 +153,7 @@ export function RequestHOServiceCluster() {
                         console.log(responseJson.data);
                         setServiceProviders(responseJson.data);
                     } else {
-                        setError("Error: " + responseJson.message);
+                        handleShowErrorModal("Error: " + responseJson.message);
                     }
                 });
         }
@@ -161,9 +169,12 @@ export function RequestHOServiceCluster() {
 
     const handleSubmit = () => {
         setIsLoading(true);
-        setError(null);
+        //setError(null);
         console.log('Handling submit...');
-
+        try{
+        if (property == null || selectedTimeline == null || selectedSpecService == null || selectedSP == null) {
+            throw new Error ("Empty fields");
+        }
         const createRequestBody = {
             propertyId: property?.id,
             timelineId: selectedTimeline?.id,
@@ -174,7 +185,7 @@ export function RequestHOServiceCluster() {
             proposals:[{serviceProviderId: selectedSP?.id,
                 serviceTypeId: selectedSpecService?.id,
                 timelineId: selectedTimeline?.id}]
-        }
+        };
 
         // TODO: Change to fetchData
 
@@ -198,12 +209,15 @@ export function RequestHOServiceCluster() {
                     alert(responseJson.message ?? "Request successfully created");
                     navigate("/dashboard");
                 } else {
-                    setError(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
-            .catch((error) => setError(error));
+            .catch((error) => handleShowErrorModal(error));
+    } catch (error) {
+        handleShowErrorModal("Please select options");
+        setIsLoading(false);
     }
-
+    };
     return (
         <div id="request-form-container">
             <Form className="create-request">
@@ -295,15 +309,38 @@ export function RequestHOServiceCluster() {
                     ) : (
                         <Button variant="primary" size="lg" className="submit-button" onClick={handleSubmit}>
                             Submit
-                        </Button>
+                        </Button>       
                     )}
+                    <Link to="/dashboard" className="goBackLink">
+                        <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="goBackButton"
+                        >
+                            <span>Go Back</span>
+                        </Button>
+                    </Link>
                 </div>
 
             </Form>
 
 
 
-            {error && <ErrorMessageContainer message={error}/>}
+            {/*{error && <ErrorMessageContainer message={error}/>}*/}
+
+            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{errorModalMessage}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
