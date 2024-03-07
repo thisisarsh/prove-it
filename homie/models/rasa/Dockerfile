@@ -10,7 +10,7 @@ RUN mkdir -p /app/.rasa/cache /app/home && \
 
 USER nobody
 
-RUN pip install rasa
+RUN pip install rasa --no-cache-dir --progress-bar off
 
 COPY --chown=nobody:nogroup ./ /app
 RUN chmod +x startup.sh
