@@ -8,8 +8,8 @@ const Tab = createBottomTabNavigator();
 const HomeownerTabNavigator = () => {
     return (
         <Tab.Navigator>
-            <Tab.Screen name="Properties" component={PropertyListScreen} />
-            <Tab.Screen name="Profile" component={HomeownerProfileScreen} />
+            <Tab.Screen name="HOProperties" component={PropertyListScreen} />
+            <Tab.Screen name="HOProfile" component={HomeownerProfileScreen} />
         </Tab.Navigator>
     );
 };

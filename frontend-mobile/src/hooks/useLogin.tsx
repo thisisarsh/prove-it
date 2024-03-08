@@ -60,7 +60,7 @@ export function useLogin() {
                         screenName = "TenantDashboard";
                         break;
                     case "service_provider":
-                        screenName = "DashboardService";
+                        screenName = "SPDashboard";
                         break;
                     default:
                         throw new Error(`No dashboard route for user's role of ${user.role?.role}`);

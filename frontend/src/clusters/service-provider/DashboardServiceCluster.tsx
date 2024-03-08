@@ -506,7 +506,7 @@ export function DashboardServiceCluster() {
             {/* Show more detail about property Popup */}
             <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Property Details</Modal.Title>
+                    <Modal.Title>Ticket Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <table className="property-detail-table">
