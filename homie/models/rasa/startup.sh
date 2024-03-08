@@ -1,11 +1,11 @@
 #!/bin/bash
 
-chmod -R 775 .rasa/cache
+source activate homie
 
-#echo "Training Rasa model..."
-#rasa train --force
+conda list
 
-echo "Starting Rasa server..."
-rasa run -m models --enable-api --cors "*" --debug
+rasa --version
 
+rasa train
 
+rasa run -m models --enable-api --cors '*' --debug

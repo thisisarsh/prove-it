@@ -1,23 +1,20 @@
-FROM python:3.9.18
+FROM continuumio/miniconda3
+
+RUN conda create -n homie python=3.9 -y
 
 WORKDIR /app
 
-RUN python -m venv venv
-ENV PATH="/app/venv/bin:$PATH"
-
-RUN mkdir -p /app/.rasa/cache /app/home && \
-    chown -R nobody:nogroup /app
-
-USER nobody
-
-RUN pip install rasa --no-cache-dir --progress-bar off
-
-COPY --chown=nobody:nogroup ./ /app
-
-RUN rasa train --force
+COPY ./ /app
 
 RUN chmod +x startup.sh
 
+RUN conda run -n homie pip install rasa --progress-bar off
+
+RUN chmod g+rwX -R /app
+RUN chgrp -R 0 /app
+
+USER 1001
+
 EXPOSE 5005
 
-ENTRYPOINT ["/app/startup.sh"]
+CMD /bin/bash -c "source activate homie && /app/startup.sh"

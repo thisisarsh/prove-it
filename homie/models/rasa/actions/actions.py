@@ -153,7 +153,7 @@ class ActionCreateService(Action):
         # Maybe use .env file to store the URL
         ########################################
         try:
-            response = requests.post("http://localhost:8080/ticket/initiated", json=create_request_body,
+            response = requests.post("http://ht-webserver-dev-feature-homie:5000/ticket/initiated", json=create_request_body,
                                      headers=headers)
             response.raise_for_status()
             response_data = response.json()

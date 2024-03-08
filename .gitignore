@@ -72,3 +72,5 @@ yarn-error.*
 *.rasa
 *__pycache__/
 __pycache__
+
+/homie/models/rasa/models/
