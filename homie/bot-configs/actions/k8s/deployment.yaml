@@ -33,6 +33,8 @@ spec:
         - env:
             - name: name
               value: ht-bot-actions-server
+            - name: TRANSFORMERS_CACHE
+              value: /app/.cache/huggingface/transformers
             - name: SERVER_URL
               value: <PATCH_ME>
           image: <PATCH_ME>
