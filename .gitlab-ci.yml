@@ -187,9 +187,10 @@ npm-audit:
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
       when: never
-    - when: always
-    - if: $CI_COMMIT_REF_NAME == "develop"
+    - if: '$CI_COMMIT_REF_NAME == "develop"'
+      when: always
       allow_failure: true
+    - when: always
   cache:
     key: '${CI_COMMIT_REF_SLUG}'
     paths:
