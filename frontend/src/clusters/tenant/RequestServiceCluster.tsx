@@ -1,13 +1,14 @@
 import { Button, Form } from "react-bootstrap";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import {useState, useEffect, useCallback} from "react";
-import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../types";
-import SearchableDropdown from "../components/DropDownList";
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
-import Spinner from "../components/Spinner";
+import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../../types";
+import SearchableDropdown from "../../components/DropDownList";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
 
-import "../styles/components/createServiceRequest.css"
+import "../../styles/components/createServiceRequest.css"
 
 export function RequestServiceCluster() {
     const user = useAuthContext().state.user;
@@ -28,6 +29,13 @@ export function RequestServiceCluster() {
     const [issueDetail, setIssueDetail] = useState<string>("");
 
     const [property, setProperty] = useState<Property | null>(null);
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const GENERAL_SERVICE_TYPE_LINK = window.config.SERVER_URL + "/general-service-types";
     const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
@@ -147,14 +155,29 @@ export function RequestServiceCluster() {
         .then((responseJson) => {
             setIsLoading(false);
             if (responseJson.isSuccess) {
-                alert(responseJson.message ?? "Request successfully created");
-                navigate("/dashboard");
+                handleShowMessageModal(responseJson.message ?? "Request successfully created");
             } else {
                 setError(responseJson.message);
             }
         })
         .catch((error) => setError(error));
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div id="request-form-container">
@@ -230,7 +253,7 @@ export function RequestServiceCluster() {
             </Form>
             
             
-
+            {ModalContent}
             {error && <ErrorMessageContainer message={error}/>}
         </div>
     )

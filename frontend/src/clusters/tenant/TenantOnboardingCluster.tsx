@@ -1,12 +1,13 @@
 import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { FormControlElement } from "../types";
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
-import Spinner from "../components/Spinner";
+import { FormControlElement } from "../../types";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import Spinner from "../../components/Spinner";
 
-import "../styles/components/onboardTenant.css";
+
+import "../../styles/components/onboardTenant.css";
 
 export default function TenantOnboardingCluster() {
     const [monthlyIncome, setMonthlyIncome] = useState("");

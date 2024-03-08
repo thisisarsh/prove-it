@@ -12,6 +12,7 @@ export function SignUp() {
                 className="main-logo"
             />
             <h1>Homeowner / Manager Signup</h1>
+            <p></p>
             <SignUpCluster signupType="manager" />
         </div>
     );

@@ -19,8 +19,8 @@ exports.getProperties = (req, res) => {
     axios.get(OWNED_PROPERTIES_LINK, {'headers': getPropertiesHeaders})
     .then(response => {
         if (response.data?.isSuccess) {
-            console.log("Property list");
-            console.log(response.data.data ?? []);
+            console.log("HOMEOWNER PROPERTY LIST RESPONSE:");
+            console.log(response.data.data);
             
             return res.send(response.data.data ?? []);
         } else {
@@ -35,10 +35,11 @@ exports.getProperties = (req, res) => {
 
 exports.deleteProperties = (req, res) => {
     let getPropertiesHeaders = HEADERS;
-    getPropertiesHeaders.Authorization = req.headers.authorization;
-    console.log(req.body);        
+    getPropertiesHeaders.Authorization = req.headers.authorization;      
     axios.delete(DELETE_PROPERTY_LINK + req.body.id, {'headers': getPropertiesHeaders})
     .then(response => {
+        console.log("HOMEOWNER DELETE PROPERTY RESPONSE:");
+        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {
@@ -50,14 +51,12 @@ exports.deleteProperties = (req, res) => {
 exports.getPropertyDetails = (req, res) => {
     let getPropertiesHeaders = HEADERS;
     getPropertiesHeaders.Authorization = req.headers.authorization;
-    //console.log(req.body);
-    //console.log(req.body.stateId);
 
     axios.get(GET_PROPERTY_DETAIL_LINK + req.body.id, {'headers': HEADERS})
         .then(response => {
             if (response.data?.isSuccess) {
-                //console.log("RESPONSE");
-                //console.log(response.data.data);
+                console.log("HOMEOWNER PROPERTY DETAIL RESPONSE:");
+                console.log(response.data.data);
                 const propertyData = response.data.data;
                 refinedData = {
                     name: propertyData.name,
@@ -72,9 +71,7 @@ exports.getPropertyDetails = (req, res) => {
                     zipcode: propertyData.zipcode.code,
                     rent: propertyData.rent,
                     isSuccess: true
-                }
-                //const refinedDataArray = [refinedData];
-                //return res.send(refinedDataArray ?? []);
+                };
                 return res.send(refinedData ?? {});
 
             } else {

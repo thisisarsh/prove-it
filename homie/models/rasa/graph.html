@@ -78,7 +78,7 @@
 </svg>
 <script>
 
-  function serveGraph() {
+function serveGraph() {
     let oldInputGraphValue;
 
     const url = 'visualization.dot';
@@ -87,17 +87,19 @@
     // trigger a refresh by fetching an updated graph
     setInterval(function () {
       fetch(url).then(r => r.text()).then(dot => {
-        document.getElementById('errormsg').innerHTML = '';
+        const errorMsgElement = document.getElementById('errormsg');
+        errorMsgElement.textContent = ''; // Clear the error message
         if (oldInputGraphValue === dot) return;
 
         oldInputGraphValue = dot;
         drawGraph(dot);
       }).catch(err => {
-        document.getElementById('errormsg').innerHTML =
-          'Failed to update plot. (' + err.message + ')';
+        const errorMsgElement = document.getElementById('errormsg');
+        errorMsgElement.textContent = 'Failed to update plot. (' + err.message + ')';
       });
     }, refreshInterval);
-  }
+}
+
 
   function drawGraph(graph) {
     let g = graphlibDot.read(graph);

@@ -7,7 +7,8 @@ import { ServiceRequestCard } from "../../components/ServiceRequestCard";
 import Spinner from "../../components/Spinner";
 import { ServiceProposalCard } from "../../components/ServiceProposalCard";
 import { useNavigate } from "react-router-dom";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
+import Modal from 'react-bootstrap/Modal';
 
 export function ProposalsCluster() {
 
@@ -21,6 +22,13 @@ export function ProposalsCluster() {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const REQUEST_DETAILS_LINK = window.config.SERVER_URL + "/request-details";
     const APPROVE_PROPOSAL_LINK = window.config.SERVER_URL + "/approve-proposal";
@@ -91,8 +99,7 @@ export function ProposalsCluster() {
         })
         .then(responseJson => {
             if (responseJson.isSuccess) {
-                alert(responseJson.message);
-                navigate('/dashboard');
+                handleShowMessageModal(responseJson.message);
             } else {
                 setError(responseJson.message);
             }
@@ -143,6 +150,22 @@ export function ProposalsCluster() {
         })
     }
 
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
@@ -179,8 +202,9 @@ export function ProposalsCluster() {
                     </Row>
                 )}
                 
-
+                {ModalContent}
             </div>
+            
         </>
     )
 }

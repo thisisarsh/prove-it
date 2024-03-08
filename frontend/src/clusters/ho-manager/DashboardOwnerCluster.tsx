@@ -50,7 +50,20 @@ export function DashboardOwnerCluster() {
         setIsOffcanvasOpen(!isOffcanvasOpen);
     };
 
+    const handleShowSuccessDeleteModal = () => setshowSuccessDeleteModal(true);
+    const [showSuccessDeleteModal, setshowSuccessDeleteModal] = useState(false);
+
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
+
+    
+
     useEffect(() => {
+        if (properties == null){
         setIsLoading(true);
         fetch(window.config.SERVER_URL + "/properties-owner", {
             method: "GET",
@@ -63,20 +76,24 @@ export function DashboardOwnerCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                //console.log(response.json);
                 return response.json();
             })
             .then((data) => {
                 setIsLoading(false);
                 setProperties(data);
-
+    
                 console.log("PROPERTIES");
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching data: " + error);
+                console.error("Error fetching properties data: " + error);
             });
-
+        }
+    }, [user?.token, properties]); 
+    
+    useEffect(() => {
+        if(tickets == null){
+        setIsLoading(true);
         fetch(window.config.SERVER_URL + "/ticket/manager/tickets", {
             method: "GET",
             headers: {
@@ -88,7 +105,6 @@ export function DashboardOwnerCluster() {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
-                //console.log(response.json);
                 return response.json();
             })
             .then((data) => {
@@ -98,11 +114,11 @@ export function DashboardOwnerCluster() {
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching data: " + error);
+                console.error("Error fetching tickets data: " + error);
             });
-
-        setUpdate(false);
-    }, [user?.token, update]);
+        }
+    }, [user?.token, update, tickets]);
+    
 
     //console.log(properties);
 
@@ -148,12 +164,12 @@ export function DashboardOwnerCluster() {
             .then((responseJson) => {
                 //console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
-                    alert("Successfully Deleted Property");
+                    handleShowSuccessDeleteModal();
                     // reload page to show update -> call API again
                     setUpdate(true);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -197,7 +213,7 @@ export function DashboardOwnerCluster() {
                     //console.log(propertyDetail);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -237,7 +253,7 @@ export function DashboardOwnerCluster() {
                     //console.log(tenantinPropertyDetail);
                 } else if (!responseJson.isSuccess) {
                     //console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -275,7 +291,7 @@ export function DashboardOwnerCluster() {
                     setTenantinPropertyDetail(responseJson.tenants);
                     setUpdate(true);
                 } else if (!responseJson.isSuccess) {
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -283,11 +299,42 @@ export function DashboardOwnerCluster() {
             });
     };
 
+    const successDeleteModalContent = (
+        <Modal show={showSuccessDeleteModal} onHide={() => setshowSuccessDeleteModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{"Property Successfully Deleted."}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setshowSuccessDeleteModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+    const errorModalContent = (
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{errorModalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
     return (
     <body>
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title">Homeowner Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -296,31 +343,16 @@ export function DashboardOwnerCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title className="navHeader">Homeowner Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link className="nav-link" onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
+                    <Nav.Link className="nav-link" onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -434,21 +466,16 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "requested" &&
-                                                            <Badge pill bg="warning">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "pending" &&
-                                                            <Badge pill bg="secondary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "started" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "initiated" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
-                                                        {(userTicket.status === "active" &&
-                                                            <Badge pill bg="primary">{userTicket.status}</Badge>
-                                                        )}
+                                                    {userTicket.job?.activityStatus ? (
+                                                                <Badge pill bg="primary">
+                                                                    {userTicket.job.activityStatus}
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge pill bg="warning">
+                                                                    {userTicket.status}
+                                                                </Badge>
+                                                            )
+                                                    }
                                                     </td>
 
                                                     <td>
@@ -456,7 +483,7 @@ export function DashboardOwnerCluster() {
                                                     </td>
 
                                                     <td>
-                                                        {(userTicket.status === "requested" || (userTicket.status === "active" && submittedProposalCount(userTicket) <= 0)) && (
+                                                        {(userTicket.status === "requested" || (userTicket.status === "initiated" && submittedProposalCount(userTicket) <= 0)) && (
                                                             <Button className="standard-button" onClick={() => {navigate(
                                                                 "/request-quote?id=" + userTicket.id + "&proId=" + userTicket.property.id + "&serId=" + userTicket.serviceType.id)}}>
                                                                 Request quote
@@ -580,18 +607,22 @@ export function DashboardOwnerCluster() {
                 </div>
             </footer>
 
-            {/* Delete Confirmation Popup */}
-            {showDeleteConfirmation && (
-                <div className="delete-confirmation-popup">
-                    <p>
-                        Are you sure to delete "{selectedProperty?.name}"
+            {/* Delete Confirmation Popup  */}
+                <Modal show={showDeleteConfirmation} onHide={handleCancelDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Delete Property?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>
+                        Are you sure to delete the "{selectedProperty?.name}"
                         property?
-                    </p>
-                    <button onClick={handleConfirmDelete}>Yes</button>
-                    <button onClick={handleCancelDelete}>No</button>
-                </div>
-            )}
-
+                        </p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button onClick={handleConfirmDelete} className="delete-button">Yes</button> 
+                        <button onClick={handleCancelDelete} className="delete-button">No</button>
+                    </Modal.Footer>
+                </Modal>
             {/* Show more detail about property Popup */}
             <Modal show={showDetail} onHide={handleCloseDetail}>
                 <Modal.Header closeButton>
@@ -604,52 +635,42 @@ export function DashboardOwnerCluster() {
                                 <>
                                     <tr>
                                         <td>Property Name: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.name}</td>
                                     </tr>
                                     <tr>
                                         <td>Street Adress: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.streetAddress}</td>
                                     </tr>
                                     <tr>
                                         <td>City: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.cityName}</td>
                                     </tr>
                                     <tr>
                                         <td>County: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.countyName}</td>
                                     </tr>
                                     <tr>
                                         <td>State: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.stateName}</td>
                                     </tr>
                                     <tr>
                                         <td>Zip Code: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.zipcode}</td>
                                     </tr>
                                     <tr>
                                         <td>Property Type: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.propertyType}</td>
                                     </tr>
                                     <tr>
                                         <td>Rent: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.rent}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Primary: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.isPrimary}</td>
                                     </tr>
                                     <tr>
                                         <td>Is Tenant Active: </td>
-                                        <td>‎ </td>
                                         <td>{propertyDetail.isTenantActive}</td>
                                     </tr>
                                 </>
@@ -662,37 +683,45 @@ export function DashboardOwnerCluster() {
                     </table>
                 </Modal.Body>
                 <Modal.Footer>
-                <button onClick={handleCloseDetail}>
+                <button onClick={handleCloseDetail} className="delete-button">
                     Close
                 </button>
                 </Modal.Footer>
             </Modal>
 
             {/* Show tenant in property Popup */}
-            <Modal show={showTenant} onHide={handleCloseTenant}>
+            <Modal show={showTenant} onHide={handleCloseTenant} className="DashboardModal">
                 <Modal.Header closeButton>
-                    <Modal.Title>Tenant in Property</Modal.Title>
+                    <Modal.Title>Tenant at {selectedProperty?.name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {Array.isArray(tenantinPropertyDetail) &&
                     tenantinPropertyDetail != null &&
                     tenantinPropertyDetail.length > 0 ? (
                         <table className="property-detail-table">
-                            <thead className="dashboard-header">
-                                <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Phone</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 {tenantinPropertyDetail.map((tenant) => (
                                     <tr>
+                                        <td>First Name: </td>
                                         <td>{tenant.firstName}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Last Name: </td>
                                         <td>{tenant.lastName}</td>
-                                        <td>{tenant.phone}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Email: </td>
                                         <td>{tenant.email}</td>
+                                    </tr>
+                                ))}
+                                {tenantinPropertyDetail.map((tenant) => (
+                                    <tr>
+                                        <td>Phone Number: </td>
+                                        <td>{tenant.phone}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -700,19 +729,21 @@ export function DashboardOwnerCluster() {
                     ) : (
                         <>
                         <p>No tenant assigned to property. You can invite tenant by click the button below</p>
-                        <button onClick={() => navigate("/invite/tenant")}>
+                        <button onClick={() => navigate("/invite/tenant")} className="delete-button">
                             Invite Tenant
                         </button>
                         </>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                <button onClick={handleCloseTenant}>
+                <button onClick={handleCloseTenant} className="delete-button">
                     Close
                 </button>
                 </Modal.Footer>
             </Modal>
         </div>
+        {successDeleteModalContent}
+        {errorModalContent}
     </body>
     );
 }

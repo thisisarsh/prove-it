@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const SEND_CONTACT_API = window.config.SERVER_URL + "/contactsend";
 
 export function useVerifyPhone() {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { state } = useAuthContext();
     const { user } = state;
@@ -14,6 +14,13 @@ export function useVerifyPhone() {
     const verifyPhone = async (phone: string) => {
         setIsLoading(true);
         setError(null);
+
+        //basic input validation
+        if (phone.length < 17) {
+            setError("Please enter a valid phone number");
+            setIsLoading(false);
+            return;
+        }
 
         console.log(user);
         // API call

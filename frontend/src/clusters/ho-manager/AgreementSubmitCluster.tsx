@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { City, PropertyJSON, PropertyType, State, Zip } from "../types";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import Modal from 'react-bootstrap/Modal';
 import "react-datepicker/dist/react-datepicker.css";
-import "../styles/pages/addProperty.css";
+import "../../styles/pages/addProperty.css";
 
 
 export function AgreementSubmitCluster() {
@@ -27,6 +27,20 @@ export function AgreementSubmitCluster() {
     const [lateFee, setLateFee] = useState<string>("");
 
     const TENANT_ID = searchParams.get('id');
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [SuccessModalMessage, setSuccessModalMessage] = useState("");
+    const handleShowSuccessModal = (errorMessage : string) => {
+        setSuccessModalMessage(errorMessage);
+        setShowSuccessModal(true);
+    };
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
+
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
@@ -83,14 +97,45 @@ export function AgreementSubmitCluster() {
         })
         .then((responseJson) => {
             if (responseJson.isSuccess) {
-                alert(responseJson.message);
-                navigate("/ho/tenants");
+                handleShowSuccessModal(responseJson.message);
             } else if (!responseJson.isSuccess) {
-                alert(responseJson.message);
+                handleShowErrorModal(responseJson.message);
             }
         })
         .catch((error) => console.error("Error updating data:", error));
     };
+
+    const SuccessModalContent = (
+        <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{SuccessModalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowSuccessModal(false); navigate("/ho/tenants");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
+    const errorModalContent = (
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{errorModalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div className=" main_addProperty">
@@ -221,6 +266,8 @@ export function AgreementSubmitCluster() {
                     </Link>
                 </Form>
             </div>
+            {errorModalContent}
+            {SuccessModalContent}
         </div>
     );
 }

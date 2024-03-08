@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { RequestDetails, ServiceProvider } from "../../types";
-import { Col, Row } from "react-bootstrap";
-import { ServiceProviderCard } from "../../components/ServiceProviderCard";
-import { ServiceRequestCard } from "../../components/ServiceRequestCard";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
+import { RequestQuoteTable } from "../../components/RequestQuoteTable";
+import { SRDetailTable } from "../../components/SRDetailTable";
+import { Button } from "react-bootstrap";
+import Modal from 'react-bootstrap/Modal';
 
 
 export function RequestQuoteCluster() {
@@ -30,6 +31,13 @@ export function RequestQuoteCluster() {
 
     const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -118,16 +126,15 @@ export function RequestQuoteCluster() {
             body: JSON.stringify(requestBody)
         })
         .then(response => {
-           if (!response.ok) {
+            if (!response.ok) {
                 setError("Error: Network response was not ok");
-           }
-           return response.json();
+            }
+            return response.json();
         })
         .then(responseJson => {
             if (responseJson.isSuccess) {
                 console.log(responseJson);
-                alert(responseJson.message);
-                navigate('/dashboard');
+                handleShowMessageModal(responseJson.message);
             } else {
                 setError(responseJson.message);
             }
@@ -139,11 +146,27 @@ export function RequestQuoteCluster() {
 
     }
 
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
     return (
         <>
             {error && <ErrorMessageContainer message={error}/>}
 
-            <div className="mb-5">
+            {/* <div className="mb-5">
                 {requestDetails ? (
                     <ServiceRequestCard requestDetails={requestDetails}/>
                 ) : (
@@ -152,30 +175,42 @@ export function RequestQuoteCluster() {
                         <p>Loading Service Request...</p>
                     </>
                 )}         
+            </div> */}
+
+            <div className="mb-5">
+                {requestDetails ? (
+                    <SRDetailTable requestDetails={requestDetails}/>
+                ) : (
+                    <>
+                        <Spinner/>
+                        <p>Loading Service Request...</p>
+                    </>
+                )}
             </div>
-
-            <h2>My private service providers</h2>
             
-            {isLoading && (
-                <>
+            {isLoading ? (
+                <div className="mb-5">
                     <Spinner/>
-                    <p>Submitting service request</p>
-                </>
+                    <p>Submitting request...</p>
+                </div>
+            ) : (
+                <>
+                    <h2>Available service providers</h2>
+                    
+                    <div className="mb-5">
+                        <RequestQuoteTable
+                            serviceProviders={serviceProviders}
+                            handleSubmitRequest={handleSubmitRequest}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                </>                
             )}
-
-             {!isLoading && serviceProviders.length > 0 && (
-                <Row className="g-2">
-                    {serviceProviders.map((serviceProviderObj) => (
-                        <Col className="g-2">
-                            <ServiceProviderCard sp={serviceProviderObj} buttonHandler={handleSubmitRequest} isLoading={isLoading}/>
-                        </Col>
-                    ))}
-                </Row>
-            )} 
 
             {!isLoading && serviceProviders.length == 0 && (
                 <p>You don't have any private service providers! Start by inviting a service provider...</p>
             )}
+            {ModalContent}
         </>
     )
 }

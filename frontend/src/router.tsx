@@ -31,6 +31,7 @@ import { SendQuote } from "./routes/SendQuote";
 import { ApplyPublic } from "./routes/ApplyPublic";
 import { SubmitAgreement } from "./routes/SubmitAgreement";
 import { HORequestService } from "./routes/HORequestService";
+import { SeeAgreement } from "./routes/SeeAgreement";
 
 export const Router = createBrowserRouter([
     {
@@ -204,6 +205,14 @@ export const Router = createBrowserRouter([
         element:
             <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
                 <HORequestService/>
+            </ProtectedRoute>,
+        errorElement: <ErrorPage />
+    },
+    {
+        path:"/tenant/see-agreement",
+        element:
+            <ProtectedRoute redirect="/dashboard" validRoles={["tenant"]}>
+                <SeeAgreement/>
             </ProtectedRoute>,
         errorElement: <ErrorPage />
     }

@@ -23,6 +23,7 @@ import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
 import Accordion from 'react-bootstrap/Accordion';
 import Badge from 'react-bootstrap/Badge';
+import {Button} from 'react-bootstrap';
 
 /**
  *
@@ -42,15 +43,25 @@ export function DashboardServiceCluster() {
     const [activeJobs, setActiveJobs] = useState<Job[]>([]);
     const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
 
-    //const [properties, setProperties] = useState<Property[] | null>(null);
-    //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
-    //const [currentRequests, setCurrentRequests] = useState<ServiceRequest[]>([]);
-    //const [completedRequests, setCompletedRequests] = useState<ServiceRequest[]>([]);
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
     const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
     const toggleOffcanvas = () => {
         setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
+
+    const [showBCMessageModal, setShowBCMessageModal] = useState(false);
+    const [BCmodalMessage, setBCModalMessage] = useState("");
+    const handleShowBCMessageModal = (message : string) => {
+        setBCModalMessage(message);
+        setShowBCMessageModal(true);
     };
 
     const fetchData = useCallback(
@@ -215,10 +226,10 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
-                alert(response.message);
+                handleShowMessageModal(response.message);
                 setUpdate(true);
             } else {
-                alert("Error: " + response.message);
+                handleShowMessageModal("Error: " + response.message);
             }
         })
     }
@@ -230,10 +241,10 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
-                alert(response.message);
+                handleShowMessageModal(response.message);
                 setUpdate(true);
             } else {
-                alert("Error: " + response.message);
+                handleShowMessageModal("Error: " + response.message);
             }
         })
     }
@@ -248,27 +259,58 @@ export function DashboardServiceCluster() {
             setIsLoading(false);
             
             if (!user?.spDetail) {
-                alert("Could not retrieve SpDetail from AuthContext. Please log in again");
+                handleShowBCMessageModal("Could not retrieve SpDetail from AuthContext. Please log in again");
                 logout();
             }
             else if (response.isSuccess && response.status == "accepted") {
-                alert(response.message ?? "Background check approved");
+                handleShowBCMessageModal(response.message ?? "Background check approved");
                 logout();
 
             } else if (response.isSuccess && response.status == "rejected") {
                 setApplicationStatusError(response.message ?? "Sorry, but your background check was rejected. You are not approved for public provider status");
             } else if (response.isSuccess && response.status == "pending") {
-               setApplicationStatusError(response.message ?? "Your application is pending. Please check back later");
+                setApplicationStatusError(response.message ?? "Your application is pending. Please check back later");
             } else {
                 setApplicationStatusError(response.message ?? "An error occured while checking your application status")
             }
         })
     }
 
+    const BCModalContent = (
+        <Modal show={showBCMessageModal} onHide={() => setShowBCMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{BCmodalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowBCMessageModal(false); logout;}}>
+                    Logout
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
-                <h1 className="dashboard-title">Dashboard Service Provider</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Service Provider Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -277,25 +319,12 @@ export function DashboardServiceCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Service Provider Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/add-service")}>Add a service</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/services")}>Service Request</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/clients")}>Clients</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/services/complete")}>Completed Request</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link onClick={() => navigate("/add-service")}>Add a service</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -486,32 +515,26 @@ export function DashboardServiceCluster() {
                                 <>
                                     <tr>
                                         <td>Service Type: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.serviceType.serviceType}</td>
                                     </tr>
                                     <tr>
                                         <td>Property Name: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.property.name}</td>
                                     </tr>
                                     <tr>
                                         <td>Address: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.property.streetAddress}</td>
                                     </tr>
                                     <tr>
                                         <td>Request Date: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.createdAt}</td>
                                     </tr>
                                     <tr>
                                         <td>Request Timeline: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.timeline.title}</td>
                                     </tr>
                                     <tr>
                                         <td>Details: </td>
-                                        <td>‎ </td>
                                         <td>{ticketDetail.serviceRequest.detail}</td>
                                     </tr>
                                 </>
@@ -541,6 +564,8 @@ export function DashboardServiceCluster() {
                 </div>
             </div>
             </footer>
+            {ModalContent}
+            {BCModalContent}
         </div>
     );
 }

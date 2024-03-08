@@ -21,21 +21,29 @@ exports.getProperties = (req, res) => {
     .then(response => {
         if (response.data?.isSuccess) {
             //select only some field for display
+            console.log("TENANT PROPERTY RESPONSE:");
+            console.log(response.data.data);
             const propertyData = response.data.data.property;
             refinedData = {
                 name: propertyData.name,
                 streetAddress: propertyData.streetAddress,
                 owner: propertyData.ownerId,
                 id: propertyData.id
-            }
-            console.log(refinedData);
+            };
 
             //get owner first and last name
             axios.get(OWNER_LINK + refinedData.owner , {'headers': getTenantInfoHeaders})
             .then(response => {
                 //console.log(response.data);
                 if (response.data?.isSuccess) {
+                    console.log("TENANT DETAIL OF HOMEOWNER RESPONSE:");
+                    console.log(response.data.data);
                     refinedData.owner = response.data.data.user.firstName + " " + response.data.data.user.lastName;
+                    refinedData.ownerContact = {
+                        name: response.data.data.user.firstName = " " + response.data.data.user.lastName,
+                        phone: response.data.data.user.phone,
+                        email: response.data.data.user.email,
+                    }
                     //change to array to use map in display
                     const refinedDataArray = [refinedData];
                     return res.send(refinedDataArray ?? []);
@@ -65,7 +73,8 @@ exports.getTenantRequests = (req, res) => {
 
     axios.get(TENANT_REQUESTS_LINK, {headers: tenantRequestHeaders})
     .then(response => {
-        console.log('Fetched tenant service requests', response.data);
+        console.log('TENANT SERVICE REQUESTS:');
+        console.log(response.data);
         res.send(response.data);
     })
     .catch(error => {

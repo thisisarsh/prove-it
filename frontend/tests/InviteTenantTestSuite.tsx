@@ -13,7 +13,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import InviteUserCluster from '../src/clusters/InviteUserCluster';
+import InviteUserCluster from '../src/clusters/ho-manager/InviteUserCluster';
 import { useAuthContext } from '../src/hooks/useAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { mocked } from 'jest-mock';

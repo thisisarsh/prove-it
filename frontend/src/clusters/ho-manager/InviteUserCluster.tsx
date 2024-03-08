@@ -1,15 +1,16 @@
 import { Form, Button } from "react-bootstrap";
-import Spinner from "../components/Spinner";
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
+import Spinner from "../../components/Spinner";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 
 import React, { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
-import "../styles/pages/inviteUser.css";
+import "../../styles/pages/inviteUser.css";
 import { useNavigate } from "react-router-dom";
-import { Property } from "../types";
-import SearchableDropdown from "../components/DropDownList";
-import { FormGroup } from "../components/Forms";
+import { Property } from "../../types";
+import SearchableDropdown from "../../components/DropDownList";
+import { FormGroup } from "../../components/Forms";
+import Modal from 'react-bootstrap/Modal';
 
 interface InviteUserProps {
     roleName: string;
@@ -33,6 +34,13 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [invitedLastName, setInvitedLastName] = useState("");
     const [invitedEmail, setInvitedEmail] = useState("");
     const [invitedPhone, setInvitedPhone] = useState("");
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     //fetch properties if we are inviting a tenant.
 
@@ -100,8 +108,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
             })
             .then(responseJson => {
                 if (responseJson.isSuccess) {
-                    alert("User has been invited successfully");
-                    navigate("/dashboard");
+                    handleShowMessageModal("User has been invited successfully");
                 } else {
                     setError(responseJson.message);
                 }
@@ -123,6 +130,22 @@ export default function InviteUserCluster(props: InviteUserProps) {
         e.preventDefault();
         setter(e.target.value as unknown as T);
     };
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <>
@@ -181,6 +204,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     )}
                 </Form>
             </div>
+            {ModalContent}
             {error && <ErrorMessageContainer message={error} />}
         </>
     );

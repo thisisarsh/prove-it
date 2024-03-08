@@ -4,7 +4,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { TenantProperty, ServiceRequest } from "../../types";
+import { TenantProperty, ServiceRequest, ContactInfo } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
 import Modal from 'react-bootstrap/Modal';
@@ -14,6 +14,8 @@ import Accordion from 'react-bootstrap/Accordion';
 import Homie from "../../components/Homie";
 
 import "../../styles/pages/dashboard.css";
+import { Button } from "react-bootstrap";
+import { OwnerContactModal } from "../../components/OwnerContactModal";
 
 /**
  *
@@ -27,6 +29,8 @@ export function DashboardTenantCluster() {
     const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
     const [update, setUpdate] = useState<boolean>(false);
+    const [showOwnerContact, setShowOwnerContact] = useState<boolean>(false);
+    const [ownerContact, setOwnerContact] = useState<ContactInfo | undefined>(undefined);
 
     const [propertyID, setPropertyID] = useState<string>("");
 
@@ -96,6 +100,7 @@ export function DashboardTenantCluster() {
                 .then((data) => {
                     setIsLoading(false);
                     setProperties(data);
+                    setOwnerContact(data[0].ownerContact);
                     setPropertyID(data[0].id)
                 })
                 .catch((error) => {
@@ -162,10 +167,12 @@ export function DashboardTenantCluster() {
         });
     }
 
+    console.log(ownerContact);
+
     return (
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Tenant</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Tenant Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -174,22 +181,18 @@ export function DashboardTenantCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Tenant Dashboard</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
                 {/* Property block */}
                 <div className="properties-container">
-                    <h1 className="dashboard-label">Properties</h1>
+                    <h1 className="dashboard-label">Property</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
                             <tr>
@@ -208,7 +211,18 @@ export function DashboardTenantCluster() {
                                     <tr>
                                         <td>{userProperty.name}</td>
                                         <td>{userProperty.streetAddress}</td>
-                                        <td>{userProperty.owner}</td>
+                                        <td>
+                                            <div className="between-flex">
+                                                {userProperty.owner}
+
+                                                <Button
+                                                    className="standard-button"
+                                                    onClick={() => {setShowOwnerContact(true)}}
+                                                >
+                                                    Contact Information
+                                                </Button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
@@ -223,6 +237,14 @@ export function DashboardTenantCluster() {
                     </table>
                 </div>
 
+                {ownerContact &&
+                    <OwnerContactModal
+                        show={showOwnerContact}
+                        ownerContact={ownerContact}
+                        handleClose={() => {setShowOwnerContact(false)}}
+                    />
+                }
+
                 {/* Service Request block */}
                 <div className="service-container">
                     <h1 className="dashboard-label">Service Requests</h1>
@@ -235,7 +257,7 @@ export function DashboardTenantCluster() {
                                     <thead className="dashboard-header">
                                         <tr>
                                             <th className="dashboard-header">Service</th>
-                                            <th>Property</th>
+                                            <th>Request Date</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -248,11 +270,20 @@ export function DashboardTenantCluster() {
                                             tickets.filter(t => !['withdrawn', 'rejected', 'completed'].includes(t.status)).map((userTicket) => (
                                                 <tr>
                                                     <td>{userTicket.serviceType.serviceType}</td>
-                                                    <td>{userTicket.property.streetAddress}</td>
+                                                    <td>{userTicket.createdAt.substring(0,10)}</td>
                                                     <td>
-                                                        <Badge pill bg="warning">
-                                                            {userTicket.status}
-                                                        </Badge>
+                                                        
+                                                            { userTicket.job?.activityStatus ? (
+                                                                <Badge pill bg="primary">
+                                                                    {userTicket.job.activityStatus}
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge pill bg="warning">
+                                                                    {userTicket.status}
+                                                                </Badge>
+                                                            )
+                                                            }
+                                                        
                                                     </td>
                                                     <td>
                                                         <button className="delete-button" onClick={() => handleTicketDetailClick(userTicket.id)}>
@@ -360,33 +391,27 @@ export function DashboardTenantCluster() {
                                         {ticketDetail.activityStatus &&
                                             <tr>
                                                 <td>Activity Status:</td>
-                                                <td>‎ </td>
                                                 <td>{ticketDetail.activityStatus}</td>
                                             </tr>
                                         }
                                         <tr>
                                             <td>Service Type: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.serviceType.serviceType}</td>
                                         </tr>
                                         <tr>
                                             <td>Property Name: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.property.name}</td>
                                         </tr>
                                         <tr>
                                             <td>Address: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.property.streetAddress}</td>
                                         </tr>
                                         <tr>
                                             <td>Request Date: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.createdAt}</td>
                                         </tr>
                                         <tr>
                                             <td>Request Timeline: </td>
-                                            <td>‎ </td>
                                             <td>{ticketDetail.timeline.title}</td>
                                         </tr>
                                     </>

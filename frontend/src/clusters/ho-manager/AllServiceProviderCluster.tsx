@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ServiceProviderDetail } from "../../types";
 import  Offcanvas  from 'react-bootstrap/Offcanvas';
 import Nav from 'react-bootstrap/Nav'
-
-import "../../styles/pages/dashboard.css";
+import "../../styles/pages/allServiceTab.css";
 /**
  *
  * @returns Void
@@ -74,10 +73,9 @@ export function AllServiceProviderCluster() {
     }
 
     return (
-    <body>
-        <div className="dashboard-container">
+    <>
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -85,37 +83,24 @@ export function AllServiceProviderCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Service Providers</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
+                    <div className="nav-container">
+                        <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
                         <Nav.Link onClick={() => navigate("/addproperty")}>Add Property</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/invite/tenant")}>Invite Tenant</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/property")}>Property</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/ho/tenants")}>Tenants</Nav.Link>
-                        </li>
-                        <li>
                         <Nav.Link onClick={() => navigate("/ho/service-providers")}>Service Provider</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                    </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>
-            </div>
+
+
                 {/* Property block */}
-                <div className="properties-container">
+                <div className="all-serviceProvider-container">
                     <h1 className="dashboard-label">Service Providers</h1>
                     <table className="dashboard-table">
                         <thead className="dashboard-header">
@@ -250,7 +235,7 @@ export function AllServiceProviderCluster() {
                 </button>
                  </Modal.Footer>
             </Modal>
-    </body>
+    </>
     );
 }
 

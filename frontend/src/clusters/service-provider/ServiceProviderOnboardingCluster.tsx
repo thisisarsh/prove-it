@@ -1,13 +1,13 @@
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCallback, useState, useEffect } from "react";
-import { City, State, Zip } from "../types";
+import { City, State, Zip } from "../../types";
 import { Button, Form } from "react-bootstrap";
-import SearchableDropdown from "../components/DropDownList";
+import SearchableDropdown from "../../components/DropDownList";
 import { useNavigate } from "react-router-dom";
-
-import "../styles/components/onboardServiceProvider.css";
-import Spinner from "../components/Spinner";
-import ErrorMessageContainer from "../components/ErrorMessageContainer";
+import Modal from 'react-bootstrap/Modal';
+import "../../styles/components/onboardServiceProvider.css";
+import Spinner from "../../components/Spinner";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 
 export function ServiceProviderOnboardingCluster() {
 
@@ -29,6 +29,13 @@ export function ServiceProviderOnboardingCluster() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
     
     const navigate = useNavigate();
 
@@ -175,12 +182,28 @@ export function ServiceProviderOnboardingCluster() {
 
         const responseJson = await response.json();
         if (responseJson.isSuccess) {
-            alert('Your account creation is complete. You may now log in.');
+            handleShowMessageModal('Your account creation is complete. You may now log in.');
             navigate('/login');
         } else {
             setError(responseJson.message);
         }
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
 
     return (
@@ -293,7 +316,7 @@ export function ServiceProviderOnboardingCluster() {
                 </div>
 
                 {error && <ErrorMessageContainer message={error}/>}
-
+                {ModalContent}
             </Form>
         </div>
     )
