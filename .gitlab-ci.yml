@@ -507,7 +507,7 @@ deploy-rasa-actions-staging:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$ACTIONS_CONTAINER_TEST_IMAGE
-    - export APP_NAME=ht-bot-actions-server-staged
+    - export APP_NAME=ht-bot-actions-server
     - export CONFIG_PATH=bot-configs/actions/k8s/deployment.yaml
     - export SERVER_URL=$SERVER_URL
     - >-
@@ -566,7 +566,7 @@ deploy-rasa-chat-staging:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$RASA_CONTAINER_TEST_IMAGE
-    - export APP_NAME=ht-bot-server-staged
+    - export APP_NAME=ht-bot-server
     - export ACTIONS_URL=$ACTIONS_URL
     - export CONFIG_PATH=bot-configs/rasa-server/k8s/deployment.yaml
     - >-
@@ -590,7 +590,7 @@ deploy-rasa-chat-staging:
     - oc project $PROJECT_STAGING_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-staged
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
@@ -743,7 +743,7 @@ deploy-rasa-actions-production:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$ACTIONS_CONTAINER_RELEASE_IMAGE
-    - export APP_NAME=ht-bot-actions-server-live
+    - export APP_NAME=ht-bot-actions-server
     - export CONFIG_PATH=bot-configs/actions/k8s/deployment.yaml
     - export SERVER_URL=$SERVER_URL
     - >-
@@ -780,7 +780,7 @@ deploy-rasa-actions-production:
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-live
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
@@ -802,7 +802,7 @@ deploy-rasa-chat-production:
       https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
       -O /usr/bin/yq && chmod +x /usr/bin/yq
     - export IMAGE=$RASA_CONTAINER_RELEASE_IMAGE
-    - export APP_NAME=ht-bot-server-live
+    - export APP_NAME=ht-bot-server
     - export CONFIG_PATH=bot-configs/rasa-server/k8s/deployment.yaml
     - export ACTIONS_URL=$ACTIONS_URL
     - >-
@@ -826,7 +826,7 @@ deploy-rasa-chat-production:
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-live
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
@@ -839,7 +839,7 @@ deploy-rasa-chat-production:
     - oc project $PROJECT_PRODUCTION_ENV
     - RESULT=0
     - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-live
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server
       --replicas=0 2> /dev/null || RESULT=$?
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
