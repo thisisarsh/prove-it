@@ -12,11 +12,6 @@ const Login = () => {
         if (username && password) {
             await login(username, password);
             console.log("Error" + error);
-            // if (remember && !error) {
-            //     localStorage.setItem("user-email", email);
-            // } else {
-            //     localStorage.removeItem("user-email");
-            // }
         }
     };
     return (
