@@ -50,6 +50,18 @@ export function DashboardOwnerCluster() {
         setIsOffcanvasOpen(!isOffcanvasOpen);
     };
 
+    const handleShowSuccessDeleteModal = () => setshowSuccessDeleteModal(true);
+    const [showSuccessDeleteModal, setshowSuccessDeleteModal] = useState(false);
+
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorModalMessage, setErrorModalMessage] = useState("");
+    const handleShowErrorModal = (errorMessage : string) => {
+        setErrorModalMessage(errorMessage);
+        setShowErrorModal(true);
+    };
+
+    
+
     useEffect(() => {
         if (properties == null){
         setIsLoading(true);
@@ -152,12 +164,12 @@ export function DashboardOwnerCluster() {
             .then((responseJson) => {
                 //console.log('Backend response:', responseJson);
                 if (responseJson.isSuccess) {
-                    alert("Successfully Deleted Property");
+                    handleShowSuccessDeleteModal();
                     // reload page to show update -> call API again
                     setUpdate(true);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -201,7 +213,7 @@ export function DashboardOwnerCluster() {
                     //console.log(propertyDetail);
                 } else if (!responseJson.isSuccess) {
                     console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -241,7 +253,7 @@ export function DashboardOwnerCluster() {
                     //console.log(tenantinPropertyDetail);
                 } else if (!responseJson.isSuccess) {
                     //console.log(responseJson);
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
@@ -279,13 +291,44 @@ export function DashboardOwnerCluster() {
                     setTenantinPropertyDetail(responseJson.tenants);
                     setUpdate(true);
                 } else if (!responseJson.isSuccess) {
-                    alert(responseJson.message);
+                    handleShowErrorModal(responseJson.message);
                 }
             })
             .catch((error) => {
                 console.error("Error fetching data: " + error);
             });
     };
+
+    const successDeleteModalContent = (
+        <Modal show={showSuccessDeleteModal} onHide={() => setshowSuccessDeleteModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{"Property Successfully Deleted."}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setshowSuccessDeleteModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+    const errorModalContent = (
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{errorModalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
     <body>
@@ -476,7 +519,7 @@ export function DashboardOwnerCluster() {
                                             <Button
                                                 className="standard-button"
                                                 onClick={() => {
-                                                    navigate("/ho-request-service");
+                                                    navigate("/request-service");
                                                 }}>
                                                     Request a Service
                                             </Button>
@@ -536,6 +579,17 @@ export function DashboardOwnerCluster() {
                                             </tr>
                                         )}
                                     </tbody>
+                                    <tr>
+                                        <td className="dashboard-empty-service" colSpan={3}>
+                                            <Button
+                                                className="standard-button"
+                                                onClick={() => {
+                                                    navigate("/request-service");
+                                                }}>
+                                                    Request a Service
+                                            </Button>
+                                        </td>
+                                    </tr>
                                 </table>
                             </Accordion.Body>
                         </Accordion.Item>
@@ -688,6 +742,8 @@ export function DashboardOwnerCluster() {
                 </Modal.Footer>
             </Modal>
         </div>
+        {successDeleteModalContent}
+        {errorModalContent}
     </body>
     );
 }

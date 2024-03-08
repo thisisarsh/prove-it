@@ -23,6 +23,7 @@ import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
 import Accordion from 'react-bootstrap/Accordion';
 import Badge from 'react-bootstrap/Badge';
+import {Button} from 'react-bootstrap';
 
 /**
  *
@@ -42,15 +43,25 @@ export function DashboardServiceCluster() {
     const [activeJobs, setActiveJobs] = useState<Job[]>([]);
     const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
 
-    //const [properties, setProperties] = useState<Property[] | null>(null);
-    //const [newRequests, setNewRequests] = useState<ServiceRequest[] | null>([]);
-    //const [currentRequests, setCurrentRequests] = useState<ServiceRequest[]>([]);
-    //const [completedRequests, setCompletedRequests] = useState<ServiceRequest[]>([]);
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
     const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
     const toggleOffcanvas = () => {
         setIsOffcanvasOpen(!isOffcanvasOpen);
+    };
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
+
+    const [showBCMessageModal, setShowBCMessageModal] = useState(false);
+    const [BCmodalMessage, setBCModalMessage] = useState("");
+    const handleShowBCMessageModal = (message : string) => {
+        setBCModalMessage(message);
+        setShowBCMessageModal(true);
     };
 
     const fetchData = useCallback(
@@ -215,10 +226,10 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
-                alert(response.message);
+                handleShowMessageModal(response.message);
                 setUpdate(true);
             } else {
-                alert("Error: " + response.message);
+                handleShowMessageModal("Error: " + response.message);
             }
         })
     }
@@ -230,10 +241,10 @@ export function DashboardServiceCluster() {
         .then(response => {
             setIsLoading(false);
             if (response.isSuccess) {
-                alert(response.message);
+                handleShowMessageModal(response.message);
                 setUpdate(true);
             } else {
-                alert("Error: " + response.message);
+                handleShowMessageModal("Error: " + response.message);
             }
         })
     }
@@ -248,27 +259,58 @@ export function DashboardServiceCluster() {
             setIsLoading(false);
             
             if (!user?.spDetail) {
-                alert("Could not retrieve SpDetail from AuthContext. Please log in again");
+                handleShowBCMessageModal("Could not retrieve SpDetail from AuthContext. Please log in again");
                 logout();
             }
             else if (response.isSuccess && response.status == "accepted") {
-                alert(response.message ?? "Background check approved");
+                handleShowBCMessageModal(response.message ?? "Background check approved");
                 logout();
 
             } else if (response.isSuccess && response.status == "rejected") {
                 setApplicationStatusError(response.message ?? "Sorry, but your background check was rejected. You are not approved for public provider status");
             } else if (response.isSuccess && response.status == "pending") {
-               setApplicationStatusError(response.message ?? "Your application is pending. Please check back later");
+                setApplicationStatusError(response.message ?? "Your application is pending. Please check back later");
             } else {
                 setApplicationStatusError(response.message ?? "An error occured while checking your application status")
             }
         })
     }
 
+    const BCModalContent = (
+        <Modal show={showBCMessageModal} onHide={() => setShowBCMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{BCmodalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowBCMessageModal(false); logout;}}>
+                    Logout
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+
     return (
         <div className="dashboard-container">
             <div className="header mb-5">
-                <h1 className="dashboard-title">Service Provider Dashboard</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Service Provider Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -522,6 +564,8 @@ export function DashboardServiceCluster() {
                 </div>
             </div>
             </footer>
+            {ModalContent}
+            {BCModalContent}
         </div>
     );
 }

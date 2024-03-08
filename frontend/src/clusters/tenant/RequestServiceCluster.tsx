@@ -1,11 +1,12 @@
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import {useState, useEffect, useCallback} from "react";
 import { GeneralServiceType, Property, SpecificServiceType, Timeline } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
-//import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
 
 import "../../styles/components/createServiceRequest.css"
 
@@ -14,7 +15,7 @@ export function RequestServiceCluster() {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    //const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const [generalServiceTypes, setGeneralServiceTypes] = useState<GeneralServiceType[]>([]);
     const [selectedGenType, setSelectedGenType] = useState<GeneralServiceType | null>(null);
@@ -29,17 +30,17 @@ export function RequestServiceCluster() {
 
     const [property, setProperty] = useState<Property | null>(null);
 
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
+
     const GENERAL_SERVICE_TYPE_LINK = window.config.SERVER_URL + "/general-service-types";
     const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
     const TENANT_PROPERTY_LINK = window.config.SERVER_URL + '/properties-tenant';
     const TIMELINES_LINK = window.config.SERVER_URL + "/request-timelines";
-
-    const [showErrorModal, setShowErrorModal] = useState(false);
-    const [errorModalMessage, setErrorModalMessage] = useState("");
-    const handleShowErrorModal = (errorMessage : string) => {
-        setErrorModalMessage(errorMessage);
-        setShowErrorModal(true);
-    };
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -74,7 +75,7 @@ export function RequestServiceCluster() {
             if (response.isSuccess) {
                 setGeneralServiceTypes(response.data);
             } else {
-                handleShowErrorModal(response.message);
+                setError(response.message);
             }
         });
 
@@ -83,7 +84,7 @@ export function RequestServiceCluster() {
             if (!response.error) {
                 setProperty(response[0]);
             } else {
-                handleShowErrorModal("ERROR GETTING PROPERTY");
+                setError("ERROR GETTING PROPERTY");
             }
         });
 
@@ -92,7 +93,7 @@ export function RequestServiceCluster() {
             if (response.isSuccess) {
                 setTimelines(response.data);
             } else {
-                handleShowErrorModal(response.message);
+                setError(response.message);
             }
         });
     }, [fetchData, GENERAL_SERVICE_TYPE_LINK, TENANT_PROPERTY_LINK, TIMELINES_LINK, user?.id])
@@ -108,12 +109,12 @@ export function RequestServiceCluster() {
             if (response.isSuccess) {
                 setSpecificServices(response.data);
             } else {
-                handleShowErrorModal(response.message);
+                setError(response.message);
             }
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
-            handleShowErrorModal(error.error);
+            setError(error.error);
         })
     }
 
@@ -127,13 +128,9 @@ export function RequestServiceCluster() {
 
     const handleSubmit = () => {
         setIsLoading(true);
-        //handleShowErrorModal(null);
-        //console.log('Handling submit...');
+        setError(null);
+        console.log('Handling submit...');
 
-        try{
-        if (property == null || selectedTimeline == null || selectedSpecService == null){
-            throw new Error ("Empty field");
-        }
         const createRequestBody = {
             propertyId: property?.id,
             timelineId: selectedTimeline?.id,
@@ -158,18 +155,29 @@ export function RequestServiceCluster() {
         .then((responseJson) => {
             setIsLoading(false);
             if (responseJson.isSuccess) {
-                alert(responseJson.message ?? "Request successfully created");
-                navigate("/dashboard");
+                handleShowMessageModal(responseJson.message ?? "Request successfully created");
             } else {
-                handleShowErrorModal(responseJson.message);
+                setError(responseJson.message);
             }
         })
-        .catch((error) => handleShowErrorModal(error));
-        } catch (error){
-            handleShowErrorModal("Please select options");
-            setIsLoading(false);
-        }
+        .catch((error) => setError(error));
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div id="request-form-container">
@@ -240,36 +248,13 @@ export function RequestServiceCluster() {
                             Submit
                         </Button>
                     )}
-                    <Link to="/dashboard" className="goBackLink">
-                        <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="goBackButton"
-                        >
-                            <span>Go Back</span>
-                        </Button>
-                    </Link>
                 </div>
 
             </Form>
             
             
-
-            {/*error && <ErrorMessageContainer message={error}/>*/}
-
-            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Error</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>{errorModalMessage}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {ModalContent}
+            {error && <ErrorMessageContainer message={error}/>}
         </div>
     )
 }

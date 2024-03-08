@@ -83,7 +83,7 @@ export function SeeAgreementCluster() {
     return (
         <div className="container">
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Tenant</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Dashboard Tenant</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -92,19 +92,12 @@ export function SeeAgreementCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>View Agreement</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <Nav>
-                    <ul className="nav-list">
-                        <li>
-                        <Nav.Link onClick={() => navigate("/invite/serviceprovider")}>Invite Service Provider</Nav.Link>
-                        </li>
-                        <li>
-                        <Nav.Link onClick={() => navigate("/tenant/see-agreement")}>See Agreement</Nav.Link>
-                        </li>
-                    </ul>
-                    </Nav>
+                <div className="nav-container">
+                    <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
+                </div>
                     <button className="logout-button" onClick={logout}>Log out</button>
                 </Offcanvas.Body>
             </Offcanvas>

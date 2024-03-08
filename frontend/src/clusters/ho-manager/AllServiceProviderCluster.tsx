@@ -75,7 +75,7 @@ export function AllServiceProviderCluster() {
     return (
     <>
             <div className="header">
-                <h1 className="dashboard-title">Dashboard Homeowner</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Dashboard Homeowner</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>
@@ -83,7 +83,7 @@ export function AllServiceProviderCluster() {
             {/* Nav Panel */}
             <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>HomeOwner Dashboard</Offcanvas.Title>
+                    <Offcanvas.Title>Service Providers</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <div className="nav-container">

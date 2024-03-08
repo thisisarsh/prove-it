@@ -5,6 +5,7 @@ import { useState } from "react";
 import Spinner from "../components/Spinner";
 import ErrorMessageContainer from "../components/ErrorMessageContainer";
 import { useNavigate } from "react-router";
+import Modal from 'react-bootstrap/Modal';
 
 export function ApplyPublic() {
     const user = useAuthContext().state.user;
@@ -15,6 +16,13 @@ export function ApplyPublic() {
     const [consent, setConsent] = useState<boolean>(false);
 
     const APPLY_PUBLIC_LINK = window.config.SERVER_URL + "/apply-public"
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const handleApplyForPublic = () => {
         if (!consent) {
@@ -56,8 +64,7 @@ export function ApplyPublic() {
             })
             .then(responseJson => {
                 if (responseJson.isSuccess) {
-                    alert(responseJson.message ?? "Successfully applied for public status");
-                    navigate('/dashboard');
+                    handleShowMessageModal(responseJson.message ?? "Successfully applied for public status");
                 } else {
                     setError(responseJson.message ?? "An error occured");
                 }
@@ -68,6 +75,22 @@ export function ApplyPublic() {
     const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConsent(e.target.checked);
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate('/dashboard')}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
     
 
     return (
@@ -118,6 +141,7 @@ export function ApplyPublic() {
                     
                 </Stack>
             </div>
+            {ModalContent}
         </div>
     )
 }

@@ -7,6 +7,7 @@ import SearchableDropdown from "../../components/DropDownList";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import Modal from 'react-bootstrap/Modal';
 
 export function AddServiceCluster() {
     const [generalServiceTypes, setGeneralServiceTypes] = useState<GeneralServiceType[]>([]);
@@ -24,6 +25,13 @@ export function AddServiceCluster() {
     const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
     const TIMELINES_LINK = window.config.SERVER_URL + "/request-timelines";
     const ADD_SERVICE_LINK = window.config.SERVER_URL + "/service"
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
@@ -159,13 +167,29 @@ export function AddServiceCluster() {
         .then((responseJson) => {
 
             if (responseJson.isSuccess) {
-                alert(responseJson.message ?? "Successfully added service");
+                handleShowMessageModal(responseJson.message ?? "Successfully added service");
                 navigate('/dashboard');
             } else {
                 setError(responseJson.message ?? "An error occured");
             }
         });
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
     
     return (
         <div id="service-form-container">
@@ -240,7 +264,7 @@ export function AddServiceCluster() {
             </Form>
 
             {error && <ErrorMessageContainer message={error}/>}
-
+            {ModalContent}
         </div>
     )
 }

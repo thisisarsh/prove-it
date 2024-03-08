@@ -11,6 +11,7 @@ export function ServiceProviderOnboarding() {
             <h1>Service Provider Onboarding</h1>
 
             <p>Let's get started! We have just a few questions.</p>
+            <p></p>
             <ServiceProviderOnboardingCluster />
         </div>
     );

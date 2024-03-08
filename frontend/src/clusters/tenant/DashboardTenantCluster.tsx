@@ -172,7 +172,7 @@ export function DashboardTenantCluster() {
     return (
         <div className="dashboard-container">
             <div className="header">
-                <h1 className="dashboard-title">Tenant Dashboard</h1>
+                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Tenant Dashboard</h1>
                 <button className="menu-toggle-button" onClick={toggleOffcanvas}>
                         ☰
                 </button>

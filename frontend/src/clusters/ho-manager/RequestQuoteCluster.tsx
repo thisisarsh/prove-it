@@ -2,12 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { RequestDetails, ServiceProvider } from "../../types";
 import Spinner from "../../components/Spinner";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
 import { RequestQuoteTable } from "../../components/RequestQuoteTable";
 import { SRDetailTable } from "../../components/SRDetailTable";
 import { Button } from "react-bootstrap";
+import Modal from 'react-bootstrap/Modal';
 
 
 export function RequestQuoteCluster() {
@@ -30,6 +31,13 @@ export function RequestQuoteCluster() {
 
     const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
     const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const fetchData = useCallback(
         async (url: string, method = "GET") => {
@@ -118,16 +126,15 @@ export function RequestQuoteCluster() {
             body: JSON.stringify(requestBody)
         })
         .then(response => {
-           if (!response.ok) {
+            if (!response.ok) {
                 setError("Error: Network response was not ok");
-           }
-           return response.json();
+            }
+            return response.json();
         })
         .then(responseJson => {
             if (responseJson.isSuccess) {
                 console.log(responseJson);
-                alert(responseJson.message);
-                navigate('/dashboard');
+                handleShowMessageModal(responseJson.message);
             } else {
                 setError(responseJson.message);
             }
@@ -138,6 +145,22 @@ export function RequestQuoteCluster() {
 
 
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <>
@@ -187,16 +210,7 @@ export function RequestQuoteCluster() {
             {!isLoading && serviceProviders.length == 0 && (
                 <p>You don't have any private service providers! Start by inviting a service provider...</p>
             )}
-
-            <Link to="/dashboard" className="goBackLink">
-                <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="goBackButton"
-                >
-                    <span>Go Back</span>
-                </Button>
-            </Link>
+            {ModalContent}
         </>
     )
 }

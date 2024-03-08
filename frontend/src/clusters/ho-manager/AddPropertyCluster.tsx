@@ -142,26 +142,21 @@ export function AddPropertyCluster() {
 
     const handleSubmit = (e: React.MouseEvent) => {
         e.preventDefault();
-        try {
-
-        if (selectedCity == null || selectedState == null || selectedZip == null || selectedPropertyType == null){
-            throw new Error ("Empty field");
-        }
         const createPropertyJSON: PropertyJSON = {
-                countyId: selectedCity?.countyId,
-                cityId: selectedCity?.cityId,
-                stateId: selectedState!.id,
-                zipcodeId: selectedZip?.zipId,
-                userId: user?.id,
-                propertyTypeId: selectedPropertyType!.propertyTypeId,
-                ownerId: user?.id,
-                name: propertyName,
-                streetAddress: address,
-                rent: rentAmount,
-                isPrimary: true,
-                canTenantInitiate: true,
-                status: "active",
-                registrationFee: 0,
+            countyId: selectedCity?.countyId,
+            cityId: selectedCity?.cityId,
+            stateId: selectedState!.id,
+            zipcodeId: selectedZip?.zipId,
+            userId: user?.id,
+            propertyTypeId: selectedPropertyType!.propertyTypeId,
+            ownerId: user?.id,
+            name: propertyName,
+            streetAddress: address,
+            rent: rentAmount,
+            isPrimary: true,
+            canTenantInitiate: true,
+            status: "active",
+            registrationFee: 0,
         };
 
         //Post the property object to the server.
@@ -187,10 +182,6 @@ export function AddPropertyCluster() {
                 }
             })
             .catch((error) => console.error("Error updating data:", error));
-
-        } catch (error){
-            handleShowErrorModal("Please fill all field");
-        }
     };
 
     // JSX for the modal
@@ -203,10 +194,7 @@ export function AddPropertyCluster() {
                 <p>{`You've added "${address}" to your account.`}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {
-                    setShowModal(false);
-                    navigate("/dashboard"); // Navigate to the dashboard
-                }}>
+                <Button variant="secondary" onClick={() => {setShowModal(false); navigate("/dashboard"); }}>
                     Return to dashboard
                 </Button>
             </Modal.Footer>

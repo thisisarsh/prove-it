@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ErrorMessageContainer from "../components/ErrorMessageContainer";
 import Spinner from "../components/Spinner";
+import Modal from 'react-bootstrap/Modal';
 
 export function ForgotPassword() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -12,6 +13,13 @@ export function ForgotPassword() {
     const [email, setEmail] = useState<string | null>(null);
 
     const navigate = useNavigate();
+
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
 
     const handleSubmit = async () => {
         setIsLoading(true);
@@ -32,7 +40,7 @@ export function ForgotPassword() {
 
         const responseJson = await response.json();
         if (responseJson.isSuccess) {
-            alert(responseJson.message);
+            handleShowMessageModal(responseJson.message);
             setIsLoading(false);
             navigate('/login');
         } else {
@@ -40,6 +48,22 @@ export function ForgotPassword() {
             setError(responseJson.message);
         }
     }
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div className="login-container">
@@ -69,6 +93,7 @@ export function ForgotPassword() {
             </Form>
 
             {error && <ErrorMessageContainer message={error}/>}
+            {ModalContent}
         </div>
     )
 }

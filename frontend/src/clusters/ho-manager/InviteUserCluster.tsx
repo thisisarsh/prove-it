@@ -1,12 +1,12 @@
 import { Form, Button } from "react-bootstrap";
 import Spinner from "../../components/Spinner";
-//import ErrorMessageContainer from "../../components/ErrorMessageContainer";
+import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 import "../../styles/pages/inviteUser.css";
-import { Link ,useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import { FormGroup } from "../../components/Forms";
@@ -23,7 +23,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
-    //const [error, setError] = useState("");
+    const [error, setError] = useState("");
 
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<
@@ -35,11 +35,11 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const [invitedEmail, setInvitedEmail] = useState("");
     const [invitedPhone, setInvitedPhone] = useState("");
 
-    const [showErrorModal, setShowErrorModal] = useState(false);
-    const [errorModalMessage, setErrorModalMessage] = useState("");
-    const handleShowErrorModal = (errorMessage : string) => {
-        setErrorModalMessage(errorMessage);
-        setShowErrorModal(true);
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message : string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
     };
 
     //fetch properties if we are inviting a tenant.
@@ -76,12 +76,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
     const handleSubmit = () => {
         console.log("Handling submit...");
         setIsLoading(true);
-        //setError("");
-        try{
-        if(invitedFirstName == null || invitedLastName == null || invitedEmail == null 
-            || invitedPhone == null || selectedProperty == null){
-                throw new Error ("Empty fields");
-            }
+        setError("");
         const inviteUserObject = {
             user: {
                 firstName: invitedFirstName,
@@ -94,7 +89,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
             propertyName: selectedProperty?.streetAddress,
             invite: true,
         };
-        //console.log(inviteUserObject);
+        console.log(inviteUserObject);
 
         fetch(window.config.SERVER_URL + "/send-invite", {
             method: "POST",
@@ -106,29 +101,25 @@ export default function InviteUserCluster(props: InviteUserProps) {
         })
             .then(response => {
                 if (!response.ok) {
-                    handleShowErrorModal("Server response was not ok when inviting user");
+                    setError("Server response was not ok when inviting user");
                     return response.json().then(json => Promise.reject(json));
                 }
                 return response.json();
             })
             .then(responseJson => {
                 if (responseJson.isSuccess) {
-                    alert("User has been invited successfully");
-                    navigate("/dashboard");
+                    handleShowMessageModal("User has been invited successfully");
                 } else {
-                    handleShowErrorModal(responseJson.message);
+                    setError(responseJson.message);
                 }
                 setIsLoading(false);
             })
             .catch(err => {
                 console.error('Error:', err);
-                handleShowErrorModal(err.message || "An error occurred");
+                setError(err.message || "An error occurred");
                 setIsLoading(false);
             });
-        } catch (error) {
-            handleShowErrorModal("Please fill all fields");
-            setIsLoading(false);
-        }
+
     };
 
     //change handler for all text inputs
@@ -139,6 +130,22 @@ export default function InviteUserCluster(props: InviteUserProps) {
         e.preventDefault();
         setter(e.target.value as unknown as T);
     };
+
+    const ModalContent = (
+        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <>
@@ -189,37 +196,16 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     ) : (
                         <Button
                             id="invite-submit-button"
-                            type="button"
+                            type="submit"
                             onClick={() => handleSubmit()}
                         >
                             Send Invite
                         </Button>
                     )}
-                    <Link to="/dashboard" className="goBackLink">
-                        <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="goBackButton"
-                        >
-                            <span>Go Back</span>
-                        </Button>
-                    </Link>
                 </Form>
             </div>
-            {/*error && <ErrorMessageContainer message={error} />*/}
-            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Error</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>{errorModalMessage}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {ModalContent}
+            {error && <ErrorMessageContainer message={error} />}
         </>
     );
 }

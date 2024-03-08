@@ -1,10 +1,11 @@
 import htLogo from "../assets/ht-logo.svg";
 import { SendQuoteCluster } from "../clusters/service-provider/SendQuoteCluster";
 import { ServiceRequestSP } from "../types";
-
+import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 export function SendQuote() {
+    const navigate = useNavigate();
     const {state} = useLocation();
     const { ticket }: { ticket: ServiceRequestSP } = state; // Read values passed on state
     console.log(ticket);
@@ -14,6 +15,7 @@ export function SendQuote() {
             <img
                 src={htLogo}
                 className="main-logo"
+                onClick={() => navigate("/dashboard")}
             />
 
             <h1>{ticket.serviceType.serviceType}</h1>
