@@ -84,36 +84,6 @@ build-client:
        fi
     - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
-build-rasa-actions:
-  extends: .before_script_template
-  stage: build
-  rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - when: never
-  tags:
-    - saas-linux-medium-amd64
-  script:
-    - echo "Building ML model - RASA action server"
-    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
-    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
-  environment: development
-build-rasa-chat:
-  extends: .before_script_template
-  stage: build
-  rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - when: never
-  tags:
-    - saas-linux-medium-amd64
-  script:
-    - echo "Building ML model - RASA chat server"
-    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
-    - docker push $RASA_CONTAINER_TEST_IMAGE
-  environment: development
 build-server-staging:
   extends: .before_script_template
   stage: build
@@ -139,8 +109,9 @@ build-rasa-actions-staging:
   extends: .before_script_template
   stage: build
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'develop'
       when: on_success
     - when: never
   tags:
@@ -148,15 +119,14 @@ build-rasa-actions-staging:
   script:
     - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
     - docker push $ACTIONS_CONTAINER_TEST_IMAGE
-  only:
-    - develop
   environment: staging
 build-rasa-chat-staging:
   extends: .before_script_template
   stage: build
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'develop'
       when: on_success
     - when: never
   tags:
@@ -164,8 +134,6 @@ build-rasa-chat-staging:
   script:
     - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
     - docker push $RASA_CONTAINER_TEST_IMAGE
-  only:
-    - develop
   environment: staging
 build-server-production:
   extends: .before_script_template
@@ -192,8 +160,9 @@ build-rasa-actions-production:
   extends: .before_script_template
   stage: build
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'main'
       when: on_success
     - when: never
   tags:
@@ -201,15 +170,14 @@ build-rasa-actions-production:
   script:
     - docker build --pull -t $ACTIONS_CONTAINER_PROD_IMAGE ./homie/models/rasa/actions
     - docker push $ACTIONS_CONTAINER_PROD_IMAGE
-  only:
-    - main
   environment: production
 build-rasa-chat-production:
   extends: .before_script_template
   stage: build
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'main'
       when: on_success
     - when: never
   tags:
@@ -217,8 +185,6 @@ build-rasa-chat-production:
   script:
     - docker build --pull -t $RASA_CONTAINER_PROD_IMAGE ./homie/models/rasa
     - docker push $RASA_CONTAINER_PROD_IMAGE
-  only:
-    - main
   environment: production
 npm-audit:
   stage: test
@@ -415,7 +381,6 @@ deploy-client-test:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s-dev
   environment: development
-
 deploy-staging-server:
   stage: deploy
   image: quay.io/openshift/origin-cli
@@ -539,8 +504,9 @@ deploy-rasa-actions-staging:
   dependencies:
     - build-rasa-actions-staging
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'develop'
       when: on_success
     - when: never
   script:
@@ -592,8 +558,6 @@ deploy-rasa-actions-staging:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f bot-configs/actions/k8s
-  only:
-    - develop
   environment: staging
 deploy-rasa-chat-staging:
   stage: deploy
@@ -601,8 +565,9 @@ deploy-rasa-chat-staging:
   dependencies:
     - build-rasa-chat-staging
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'develop'
       when: on_success
     - when: never
   script:
@@ -654,8 +619,6 @@ deploy-rasa-chat-staging:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f bot-configs/rasa-server/k8s
-  only:
-    - develop
   environment: staging
 deploy-prod-server:
   stage: deploy
@@ -781,8 +744,9 @@ deploy-rasa-actions-production:
   dependencies:
     - build-rasa-actions-production
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'main'
       when: on_success
     - when: never
   script:
@@ -834,8 +798,6 @@ deploy-rasa-actions-production:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f bot-configs/actions/k8s
-  only:
-    - main
   environment: production
 deploy-rasa-chat-production:
   stage: deploy
@@ -843,8 +805,9 @@ deploy-rasa-chat-production:
   dependencies:
     - build-rasa-chat-production
   rules:
-    - if: >-
-        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == 'main'
       when: on_success
     - when: never
   script:
