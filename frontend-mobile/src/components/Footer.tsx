@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     footer: {
         width: '100%',
         maxHeight: 60,
+        minHeight: 60,
         backgroundColor: '#194185',
         flex: 1,
         justifyContent: 'center',

@@ -1,6 +1,11 @@
 import React, {useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, StatusBar, Image, ScrollView } from 'react-native';
 import { useLogin } from "../hooks/useLogin";
+import proveitLogo from '../../assets/prove-it-logo-200.png';
+import Footer from '../components/Footer';
+import CustomButton from "../components/CustomButton";
+import { COLOURS, SIZES, FONTWEIGHT } from '../components/Theme';
+import Text from '../components/Text';
 
 const Login = () => {
 
@@ -14,35 +19,52 @@ const Login = () => {
             console.log("Error" + error);
         }
     };
+
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="dark-content" />
-            <Text style={styles.title}>Welcome Back!</Text>
-            <TextInput
-                autoCapitalize={"none"}
-                style={styles.input}
-                placeholder="Username"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                secureTextEntry
-                onChangeText={setPassword}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <View style={styles.footer}>
-                <TouchableOpacity>
-                    <Text style={styles.footerText}>Sign Up</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.footerText}>Forgot Password?</Text>
-                </TouchableOpacity>
-            </View>
+            <ScrollView style={{padding: 20}}>
+                <StatusBar barStyle="dark-content" />
+
+                <View style={styles.logoContainer}>
+                    <Image source={proveitLogo} style={styles.logo} />
+                    <Text style={styles.title}>Welcome Back!</Text>                
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        autoCapitalize={"none"}
+                        style={styles.input}
+                        placeholder="Email"
+                        value={username}
+                        onChangeText={setUsername}
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={password}
+                        secureTextEntry
+                        onChangeText={setPassword}
+                    />
+                </View>
+
+                <CustomButton title='Log in' onPress={handleLogin}></CustomButton>
+                
+                <View style={{flex: 1, alignItems: 'center', marginVertical: '5%'}}>
+                    <TouchableOpacity style={{marginTop: '5%'}}>
+                        <Text style={styles.footerText}>Forgot Password?</Text>
+                    </TouchableOpacity>
+
+                    <Text style={{color: 'black', marginTop: '10%'}}>Don't have an account?</Text>
+                    <TouchableOpacity style={{}}>
+                        <Text style={styles.footerText}>Register</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+
+            <Footer>
+                <Text style={{color:'white'}}>HomeTrumpeter LLC</Text>
+            </Footer>
         </View>
     );
 };
@@ -50,14 +72,22 @@ const Login = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        padding: 20,
         backgroundColor: '#f5f5f5',
     },
+    logoContainer: {
+        flexDirection:'column',
+        alignItems:'center',
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+        marginTop: '10%'
+    },
     title: {
-        fontSize: 24,
+        fontSize: SIZES.h1,
         fontFamily: 'Montserrat-Regular',
-        marginBottom: 20,
+        marginTop: '10%',
         textAlign: 'center',
     },
     input: {
@@ -65,8 +95,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 5,
-        marginBottom: 10,
+        marginBottom: 20,
         fontFamily: 'Montserrat-Regular',
+    },
+    inputContainer: {
+        marginVertical: '10%'
     },
     button: {
         backgroundColor: '#007bff',
