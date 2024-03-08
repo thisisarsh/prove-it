@@ -29,8 +29,8 @@ variables:
   APP_NAME_STAGING: null
   APP_NAME_PROD: null
 
-#   DOCKER_HOST: tcp://docker:2375/
-#   DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
 
 .before_script_template:
   before_script:
@@ -109,9 +109,7 @@ build-rasa-actions-staging:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'develop'
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   tags:
@@ -124,9 +122,7 @@ build-rasa-chat-staging:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'develop'
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   tags:
@@ -160,9 +156,7 @@ build-rasa-actions-production:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'main'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   tags:
@@ -175,9 +169,7 @@ build-rasa-chat-production:
   extends: .before_script_template
   stage: build
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'main'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   tags:
@@ -504,9 +496,7 @@ deploy-rasa-actions-staging:
   dependencies:
     - build-rasa-actions-staging
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'develop'
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   script:
@@ -565,9 +555,7 @@ deploy-rasa-chat-staging:
   dependencies:
     - build-rasa-chat-staging
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'develop'
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   script:
@@ -744,9 +732,7 @@ deploy-rasa-actions-production:
   dependencies:
     - build-rasa-actions-production
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'main'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   script:
@@ -805,9 +791,7 @@ deploy-rasa-chat-production:
   dependencies:
     - build-rasa-chat-production
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME == 'main'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_COMMIT_MESSAGE =~ /--deploy-rasa/'
       when: on_success
     - when: never
   script:
