@@ -43,7 +43,7 @@ const Homie = ( {propertyId}: HomieProps ) => {
         setMessages((messages: IMessage[]) => [...messages, userMessage]);
 
         try {
-            const response = await fetch('http://localhost:5005/webhooks/rest/webhook', {
+            const response = await fetch(window.config.SERVER_URL + "/chat-response", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

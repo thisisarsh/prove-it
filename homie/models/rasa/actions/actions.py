@@ -17,7 +17,10 @@ import torch
 import json
 import os
 import requests
+from dotenv import load_dotenv
 
+load_dotenv()
+SERVER_URL = os.getenv("SERVER_URL")
 
 def load_nested_services():
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +38,7 @@ def load_timelines():
     return data
 
 
+# Initialize the data
 nested_services_data = load_nested_services()
 timelines_data = load_timelines()
 
@@ -43,21 +47,23 @@ def get_parent_services():
     return [service["pName"] for service in nested_services_data["data"]]
 
 
-def get_child_services(parent_service):
+def get_parent_domains():
+    return [' '.join(service["pDomain"]) for service in nested_services_data["data"]]
 
+
+def get_child_services(parent_service):
     for service in nested_services_data["data"]:
         if service["pName"] == parent_service:
             return [child["cName"] for child in service["childServices"]]
 
-def get_child_id(parent_service, child_service):
 
+def get_child_id(parent_service, child_service):
     for service in nested_services_data["data"]:
         if service["pName"] == parent_service:
             for child in service["childServices"]:
                 if child["cName"] == child_service:
                     return child["id"]
     return None
-
 
 
 def get_timelines():
@@ -72,8 +78,11 @@ def get_timeline_id(timeline):
 
 
 class ModelSingleton:
+
     _instance = None
+    all_services = {}
     parent_services_embeddings = None
+    parent_domains_embeddings = None
     child_services_embeddings = {}
     timeline_embeddings = None
 
@@ -82,12 +91,24 @@ class ModelSingleton:
         """Returns the singleton instance, loading the model and embeddings if not already done."""
         if cls._instance is None:
             cls._instance = SentenceTransformer('all-MiniLM-L6-v2')
+            cls._load_and_cache_data()
             cls._load_and_cache_embeddings()
         return cls._instance
 
     @classmethod
+    def _load_and_cache_data(cls):
+        """Loads and caches all services."""
+        cls.all_services = load_nested_services()
+
+    @classmethod
     def _load_and_cache_embeddings(cls):
         """Loads and caches embeddings for parent and child services."""
+        parent_domains = get_parent_domains()
+        cls.parent_domains_embeddings = cls._instance.encode(parent_domains, convert_to_tensor=True)
+
+        ############################################################
+        # TO-DO: Can remove this part as it's not being used anywhere
+        ############################################################
         parent_services = get_parent_services()
         cls.parent_services_embeddings = cls._instance.encode(parent_services, convert_to_tensor=True)
 
@@ -103,8 +124,6 @@ class ModelSingleton:
     def initialize(cls):
         """Initializes the model and caches embeddings, ensuring they're loaded on server startup."""
         cls.get_instance()
-
-
 
 
 class ActionCreateService(Action):
@@ -132,21 +151,28 @@ class ActionCreateService(Action):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {user_token}"
         }
+        ########################################
+        # TO-DO: Replace with dynamic URL
+        # Maybe use .env file to store the URL
+        ########################################
+        if SERVER_URL is not None:
+            try:
+                response = requests.post(f"{SERVER_URL}/ticket/initiated", json=create_request_body,
+                                         headers=headers)
+                response.raise_for_status()
+                response_data = response.json()
 
-        try:
-            response = requests.post("http://localhost:8080/ticket/initiated", json=create_request_body,
-                                     headers=headers)
-            response.raise_for_status()
-            response_data = response.json()
+                if response_data.get("isSuccess"):
+                    dispatcher.utter_message(text="This service request is created successfully.")
+                    dispatcher.utter_message(text="Is there anything else I can help with?.")
 
-            if response_data.get("isSuccess"):
-                dispatcher.utter_message(text=response_data.get("message", "Request successfully created"))
-            else:
-                dispatcher.utter_message(text=response_data.get("message", "Failed to create request"))
-        except requests.exceptions.RequestException as e:
-            dispatcher.utter_message(text="Failed to create service request due to an error.")
-            print(e)
-
+                else:
+                    dispatcher.utter_message(text=response_data.get("message", "Failed to create request"))
+            except requests.exceptions.RequestException as e:
+                dispatcher.utter_message(text="Failed to create service request due to an error.")
+                print(e)
+        else:
+            print("SERVER_URL is not set")
         return []
 
 
@@ -158,17 +184,23 @@ class ActionFindBestService(Action):
         user_description = tracker.latest_message['text']
         model = ModelSingleton.get_instance()
 
-        parent_services_embeddings = ModelSingleton.parent_services_embeddings
+        parent_domains_embeddings = ModelSingleton.parent_domains_embeddings
+
         parent_services = get_parent_services()
+
+        parent_domains = get_parent_domains()
 
         user_description_embedding = model.encode(user_description, convert_to_tensor=True)
 
-        cosine_scores = util.pytorch_cos_sim(user_description_embedding, parent_services_embeddings)
+        cosine_scores = util.pytorch_cos_sim(user_description_embedding, parent_domains_embeddings)
 
         highest_score_index = cosine_scores.argmax()
         best_parent = parent_services[highest_score_index]
 
+        print("parent: ", best_parent, "domain:", parent_domains[highest_score_index])
+
         child_services_embeddings = ModelSingleton.child_services_embeddings.get(best_parent, torch.Tensor())
+
         if child_services_embeddings.numel() > 0:
             cosine_scores = util.pytorch_cos_sim(user_description_embedding, child_services_embeddings)
             highest_score_index = cosine_scores.argmax()

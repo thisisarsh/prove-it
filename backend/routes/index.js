@@ -10,6 +10,7 @@ const agreementController = require("../controllers/agreementController");
 const serviceRequestController = require("../controllers/serviceRequestController.js");
 const dashboardServiceController = require("../controllers/dashboardServiceController.js");
 const ownerServiceProviderController = require("../controllers/ownerServiceProviderController.js");
+const homieController = require("../controllers/homieController.js");
 
 const router = express.Router();
 
@@ -81,4 +82,6 @@ router.get('/sp-application-status', backgroundCheckController.spApplicationStat
 router.post('/ho-service-request', serviceRequestController.hoServiceRequest);
 
 router.get('/tenant/service-requests', dashboardTenantController.getTenantRequests);
+
+router.post('/chat-response', homieController.sendMessage)
 module.exports = router;
