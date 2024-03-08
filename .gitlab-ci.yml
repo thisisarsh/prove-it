@@ -859,8 +859,6 @@ deploy-rasa-chat-production:
     - echo $RESULT
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f bot-configs/rasa-server/k8s
-  only:
-    - main
   environment: production
 zap_baseline_scan:
   stage: vuln-scan
