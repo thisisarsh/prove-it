@@ -4,10 +4,10 @@ metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
   labels:
-    app: ht-bot-server
-    app.kubernetes.io/component: ht-bot-server
-    app.kubernetes.io/instance: ht-bot-server
-  name: ht-bot-server
+    app: ht-bot-actions-server
+    app.kubernetes.io/component: ht-bot-actions-server
+    app.kubernetes.io/instance: ht-bot-actions-server
+  name: ht-bot-actions-server
 spec:
   ports:
     - name: 5055-tcp
@@ -15,6 +15,6 @@ spec:
       protocol: TCP
       targetPort: 5055
   selector:
-    app: ht-bot-server
+    app: ht-bot-actions-server
   sessionAffinity: None
   type: ClusterIP

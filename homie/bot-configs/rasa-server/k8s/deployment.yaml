@@ -33,7 +33,7 @@ spec:
         - env:
             - name: name
               value: ht-bot-server
-            - name: FRONT_URL
+            - name: ACTIONS_URL
               value: <PATCH_ME>
           image: <PATCH_ME>
           imagePullPolicy: Always

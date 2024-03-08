@@ -1,6 +1,7 @@
 const axios = require('axios');
+require('dotenv').config();
 
-const HOMIE_CHAT_API = 'http://ht-bot-server-dev-feature-homie:5005/webhooks/rest/webhook';
+const HOMIE_CHAT_API = process.env.HOMIE_URL + '/webhooks/rest/webhook';
 
 const HEADERS = {
     'Content-Type': 'application/json',

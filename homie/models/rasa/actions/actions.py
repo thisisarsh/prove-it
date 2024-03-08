@@ -17,7 +17,10 @@ import torch
 import json
 import os
 import requests
+from dotenv import load_dotenv
 
+load_dotenv()
+SERVER_URL = os.getenv("SERVER_URL")
 
 def load_nested_services():
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -152,22 +155,24 @@ class ActionCreateService(Action):
         # TO-DO: Replace with dynamic URL
         # Maybe use .env file to store the URL
         ########################################
-        try:
-            response = requests.post("http://ht-webserver-dev-feature-homie:5000/ticket/initiated", json=create_request_body,
-                                     headers=headers)
-            response.raise_for_status()
-            response_data = response.json()
+        if SERVER_URL is not None:
+            try:
+                response = requests.post(f"{SERVER_URL}/ticket/initiated", json=create_request_body,
+                                         headers=headers)
+                response.raise_for_status()
+                response_data = response.json()
 
-            if response_data.get("isSuccess"):
-                dispatcher.utter_message(text="This service request is created successfully.")
-                dispatcher.utter_message(text="Is there anything else I can help with?.")
+                if response_data.get("isSuccess"):
+                    dispatcher.utter_message(text="This service request is created successfully.")
+                    dispatcher.utter_message(text="Is there anything else I can help with?.")
 
-            else:
-                dispatcher.utter_message(text=response_data.get("message", "Failed to create request"))
-        except requests.exceptions.RequestException as e:
-            dispatcher.utter_message(text="Failed to create service request due to an error.")
-            print(e)
-
+                else:
+                    dispatcher.utter_message(text=response_data.get("message", "Failed to create request"))
+            except requests.exceptions.RequestException as e:
+                dispatcher.utter_message(text="Failed to create service request due to an error.")
+                print(e)
+        else:
+            print("SERVER_URL is not set")
         return []
 
 

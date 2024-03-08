@@ -2,26 +2,26 @@ image: 'docker:19.03.12'
 services:
   - 'docker:19.03.12-dind'
 stages:
-#  - lint
+  - lint
   - build
-#  - test
-#  - release
+  - test
+  - release
   - deploy
-#  - vuln-scan
-#  - cleanup
+  - vuln-scan
+  - cleanup
 variables:
   SERVER_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
-  RASA_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:RASA-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
-  ACTIONS_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA'
+  RASA_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:RASA-test'
+  ACTIONS_CONTAINER_TEST_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-test'
   SERVER_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-rel-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-rel-$CI_COMMIT_SHORT_SHA'
-  RASA_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:RASA-rel-$CI_COMMIT_SHORT_SHA'
-  ACTIONS_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-rel-$CI_COMMIT_SHORT_SHA'
+  RASA_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:RASA-rel'
+  ACTIONS_CONTAINER_RELEASE_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-rel'
   SERVER_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:SERVER-prod-$CI_COMMIT_SHORT_SHA'
   CLIENT_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:CLIENT-prod-$CI_COMMIT_SHORT_SHA'
-  RASA_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:RASA-prod-$CI_COMMIT_SHORT_SHA'
-  ACTIONS_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-prod-$CI_COMMIT_SHORT_SHA'
+  RASA_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:RASA-prod'
+  ACTIONS_CONTAINER_PROD_IMAGE: '$CI_REGISTRY_IMAGE:ACTIONS-prod'
   PROJECT_TEST_ENV: ht-coop
   PROJECT_STAGING_ENV: ht-uat-coop
   PROJECT_PRODUCTION_ENV: ht-prod-coop
@@ -35,174 +35,25 @@ variables:
 .before_script_template:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
-build-rasa-actions:
-  extends: .before_script_template
-  stage: build
-  tags:
-    - saas-linux-medium-amd64
-  script:
-    - echo "Building ML model - RASA action server"
-    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
-    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
-  environment: development
-
-build-rasa-chat:
-  extends: .before_script_template
-  stage: build
-  tags:
-    - saas-linux-medium-amd64
-  script:
-    - echo "Building ML model - RASA chat server"
-    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
-    - docker push $RASA_CONTAINER_TEST_IMAGE
-  environment: development
-
-deploy-test-rasa-actions:
-  stage: deploy
-  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-rasa-actions
+lint-job:
+  stage: lint
+  image: 'node:18'
   rules:
-    - if: >-
-        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /--deploy-test/
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
+      when: never
+    - when: always
   script:
-    - cd homie
-    - >-
-      wget
-      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-      -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$ACTIONS_CONTAINER_TEST_IMAGE
-    - export APP_NAME=ht-bot-actions-server-dev-$CI_COMMIT_REF_SLUG
-    - export CONFIG_PATH=bot-configs/actions/k8s-dev/deployment.yaml
-    - export FRONT_URL=$FRONT_URL_1
-    - >-
-      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-      $CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.metadata.name = strenv(APP_NAME)'
-      bot-configs/actions/k8s-dev/service.yaml
-    - >-
-      yq -i '.spec.selector.app = strenv(APP_NAME)'
-      bot-configs/actions/k8s-dev/service.yaml
-    - >-
-      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_TEST_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f bot-configs/actions/k8s-dev
-    - export FRONT_URL=$FRONT_URL_2
-    - >-
-      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_TEST_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-dev
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f bot-configs/actions/k8s-dev
-  environment: development
-deploy-test-rasa:
-  stage: deploy
-  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-rasa-chat
-  rules:
-    - if: >-
-        $CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "develop" &&
-        $CI_COMMIT_MESSAGE =~ /--deploy-test/
-  script:
-    - cd homie
-    - >-
-      wget
-      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-      -O /usr/bin/yq && chmod +x /usr/bin/yq
-    - export IMAGE=$RASA_CONTAINER_TEST_IMAGE
-    - export APP_NAME=ht-bot-server-dev-$CI_COMMIT_REF_SLUG
-    - export CONFIG_PATH=bot-configs/rasa-server/k8s-dev/deployment.yaml
-    - export FRONT_URL=$FRONT_URL_1
-    - >-
-      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-      $CONFIG_PATH
-    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
-    - >-
-      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-      $CONFIG_PATH
-    - >-
-      yq -i '.metadata.name = strenv(APP_NAME)'
-      bot-configs/rasa-server/k8s-dev/service.yaml
-    - >-
-      yq -i '.spec.selector.app = strenv(APP_NAME)'
-      bot-configs/rasa-server/k8s-dev/service.yaml
-    - >-
-      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_TEST_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f bot-configs/rasa-server/k8s-dev
-    - export FRONT_URL=$FRONT_URL_2
-    - >-
-      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-      --insecure-skip-tls-verify
-    - oc project $PROJECT_TEST_ENV
-    - RESULT=0
-    - >-
-      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-dev
-      --replicas=0 2> /dev/null || RESULT=$?
-    - echo $RESULT
-    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-    - oc apply -f bot-configs/rasa-server/k8s-dev
-  environment: development
-#lint-job:
-#  stage: lint
-#  image: 'node:18'
-#  rules:
-#    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
-#      when: never
-#    - when: always
-#  script:
-#    - cd frontend && mkdir -p lint-results
-#    - npm install
-#    - npm run lint
-#  cache:
-#    key: '${CI_COMMIT_REF_SLUG}'
-#    paths:
-#      - frontend/node_modules/
-#  artifacts:
-#    paths:
-#      - frontend/node_modules/
-#  allow_failure: true
+    - cd frontend && mkdir -p lint-results
+    - npm install
+    - npm run lint
+  cache:
+    key: '${CI_COMMIT_REF_SLUG}'
+    paths:
+      - frontend/node_modules/
+  artifacts:
+    paths:
+      - frontend/node_modules/
+  allow_failure: true
 build-server:
   extends: .before_script_template
   stage: build
@@ -233,97 +84,195 @@ build-client:
        fi
     - docker push $CLIENT_CONTAINER_TEST_IMAGE
   environment: development
-#build-server-staging:
-#  extends: .before_script_template
-#  stage: build
-#  script:
-#    - >-
-#      docker build --build-arg BUILD_ENV=prod
-#      --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
-#    - docker push $SERVER_CONTAINER_PROD_IMAGE
-#  only:
-#    - develop
-#  environment: staging
-#build-client-staging:
-#  extends: .before_script_template
-#  stage: build
-#  script:
-#    - echo $VITE_SERVER
-#    - >-
-#      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
-#      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-#    - docker push $CLIENT_CONTAINER_PROD_IMAGE
-#  only:
-#    - develop
-#  environment: staging
-#build-server-production:
-#  extends: .before_script_template
-#  stage: build
-#  script:
-#    - >-
-#      docker build --build-arg BUILD_ENV=prod --pull -t
-#      $SERVER_CONTAINER_PROD_IMAGE ./backend
-#    - docker push $SERVER_CONTAINER_PROD_IMAGE
-#  only:
-#    - main
-#  environment: production
-#build-client-production:
-#  extends: .before_script_template
-#  stage: build
-#  script:
-#    - >-
-#      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
-#      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
-#    - docker push $CLIENT_CONTAINER_PROD_IMAGE
-#  only:
-#    - main
-#  environment: production
-#npm-audit:
-#  stage: test
-#  image: 'node:18'
-#  script:
-#    - cd frontend
-#    - npm audit
-#  rules:
-#    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
-#      when: never
-#    - when: always
-#    - if: $CI_COMMIT_REF_NAME == "develop"
-#      allow_failure: true
-#  cache:
-#    key: '${CI_COMMIT_REF_SLUG}'
-#    paths:
-#      - frontend/node_modules/
-#jest-unit-tests:
-#  stage: test
-#  image: 'node:18'
-#  script:
-#    - cd frontend
-#    - npm run test
-#  rules:
-#    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
-#      when: never
-#    - when: always
-#    - if: $CI_COMMIT_REF_NAME == "develop"
-#      allow_failure: true
-#  cache:
-#    key: '${CI_COMMIT_REF_SLUG}'
-#    paths:
-#      - frontend/node_modules/
-#release-images:
-#  extends: .before_script_template
-#  stage: release
-#  only:
-#    - main
-#  script:
-#    - docker pull $SERVER_CONTAINER_PROD_IMAGE
-#    - docker tag $SERVER_CONTAINER_PROD_IMAGE $SERVER_CONTAINER_RELEASE_IMAGE
-#    - docker push $SERVER_CONTAINER_RELEASE_IMAGE
-#    - docker pull $CLIENT_CONTAINER_PROD_IMAGE
-#    - docker tag $CLIENT_CONTAINER_PROD_IMAGE $CLIENT_CONTAINER_RELEASE_IMAGE
-#    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE
-#  environment: production
-deploy-test-server:
+build-rasa-actions:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - echo "Building ML model - RASA action server"
+    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
+    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
+  environment: development
+build-rasa-chat:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - echo "Building ML model - RASA chat server"
+    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
+    - docker push $RASA_CONTAINER_TEST_IMAGE
+  environment: development
+build-server-staging:
+  extends: .before_script_template
+  stage: build
+  script:
+    - docker build --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
+    - docker push $SERVER_CONTAINER_PROD_IMAGE
+  only:
+    - develop
+  environment: staging
+build-client-staging:
+  extends: .before_script_template
+  stage: build
+  script:
+    - echo $VITE_SERVER
+    - >-
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
+  only:
+    - develop
+  environment: staging
+build-rasa-actions-staging:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - docker build --pull -t $ACTIONS_CONTAINER_TEST_IMAGE ./homie/models/rasa/actions
+    - docker push $ACTIONS_CONTAINER_TEST_IMAGE
+  only:
+    - develop
+  environment: staging
+build-rasa-chat-staging:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - docker build --pull -t $RASA_CONTAINER_TEST_IMAGE ./homie/models/rasa
+    - docker push $RASA_CONTAINER_TEST_IMAGE
+  only:
+    - develop
+  environment: staging
+build-server-production:
+  extends: .before_script_template
+  stage: build
+  script:
+    - >-
+      docker build --pull -t $SERVER_CONTAINER_PROD_IMAGE ./backend
+    - docker push $SERVER_CONTAINER_PROD_IMAGE
+  only:
+    - main
+  environment: production
+build-client-production:
+  extends: .before_script_template
+  stage: build
+  script:
+    - >-
+      docker build --build-arg VITE_SERVER=$VITE_SERVER --pull -t
+      $CLIENT_CONTAINER_PROD_IMAGE ./frontend
+    - docker push $CLIENT_CONTAINER_PROD_IMAGE
+  only:
+    - main
+  environment: production
+build-rasa-actions-production:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - docker build --pull -t $ACTIONS_CONTAINER_PROD_IMAGE ./homie/models/rasa/actions
+    - docker push $ACTIONS_CONTAINER_PROD_IMAGE
+  only:
+    - main
+  environment: production
+build-rasa-chat-production:
+  extends: .before_script_template
+  stage: build
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  tags:
+    - saas-linux-medium-amd64
+  script:
+    - docker build --pull -t $RASA_CONTAINER_PROD_IMAGE ./homie/models/rasa
+    - docker push $RASA_CONTAINER_PROD_IMAGE
+  only:
+    - main
+  environment: production
+npm-audit:
+  stage: test
+  image: 'node:18'
+  script:
+    - cd frontend
+    - npm audit
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
+      when: never
+    - when: always
+    - if: $CI_COMMIT_REF_NAME == "develop"
+      allow_failure: true
+  cache:
+    key: '${CI_COMMIT_REF_SLUG}'
+    paths:
+      - frontend/node_modules/
+jest-unit-tests:
+  stage: test
+  image: 'node:18'
+  script:
+    - cd frontend
+    - npm run test
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
+      when: never
+    - when: always
+    - if: $CI_COMMIT_REF_NAME == "develop"
+      allow_failure: true
+  cache:
+    key: '${CI_COMMIT_REF_SLUG}'
+    paths:
+      - frontend/node_modules/
+release-images:
+  extends: .before_script_template
+  stage: release
+  only:
+    - main
+  script:
+    - docker pull $SERVER_CONTAINER_PROD_IMAGE
+    - docker tag $SERVER_CONTAINER_PROD_IMAGE $SERVER_CONTAINER_RELEASE_IMAGE
+    - docker push $SERVER_CONTAINER_RELEASE_IMAGE
+    - docker pull $CLIENT_CONTAINER_PROD_IMAGE
+    - docker tag $CLIENT_CONTAINER_PROD_IMAGE $CLIENT_CONTAINER_RELEASE_IMAGE
+    - docker push $CLIENT_CONTAINER_RELEASE_IMAGE
+    - docker pull $ACTIONS_CONTAINER_PROD_IMAGE
+    - docker tag $ACTIONS_CONTAINER_PROD_IMAGE $ACTIONS_CONTAINER_RELEASE_IMAGE
+    - docker push $ACTIONS_CONTAINER_RELEASE_IMAGE
+    - docker pull $RASA_CONTAINER_PROD_IMAGE
+    - docker tag $RASA_CONTAINER_PROD_IMAGE $RASA_CONTAINER_RELEASE_IMAGE
+    - docker push $RASA_CONTAINER_RELEASE_IMAGE
+  environment: production
+
+deploy-server-test:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -342,6 +291,7 @@ deploy-test-server:
     - export APP_NAME=ht-webserver-dev-$CI_COMMIT_REF_SLUG
     - export CONFIG_PATH=server-configs/k8s-dev/deployment.yaml
     - export FRONT_URL=$FRONT_URL_1
+    - export HOMIE_URL=$HOMIE_URL
     - >-
       yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
       $CONFIG_PATH
@@ -367,6 +317,7 @@ deploy-test-server:
       server-configs/k8s-dev/route.yaml
     - yq -i '.spec.to.name = strenv(APP_NAME)' server-configs/k8s-dev/route.yaml
     - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
 
     - >-
       oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
@@ -380,7 +331,9 @@ deploy-test-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
     - export FRONT_URL=$FRONT_URL_2
+    - export HOMIE_URL=$HOMIE_URL
     - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
     - >-
       oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
       --insecure-skip-tls-verify
@@ -393,7 +346,7 @@ deploy-test-server:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f server-configs/k8s-dev
   environment: development
-deploy-test-client:
+deploy-client-test:
   stage: deploy
   image: quay.io/openshift/origin-cli
   dependencies:
@@ -462,272 +415,527 @@ deploy-test-client:
     - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
     - oc apply -f client-configs/k8s-dev
   environment: development
-#deploy-staging-server:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-server-staging
-#  only:
-#    - develop
-#  script:
-#    - cd backend
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
-#    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
-#    - export APP_NAME=ht-server-staged
-#    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
-#    - export FRONT_URL=$FRONT_URL_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_STAGING_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f server-configs/k8s
-#    - export FRONT_URL=$FRONT_URL_2
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_STAGING_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f server-configs/k8s
-#  environment: staging
-#deploy-staging-client:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-client-staging
-#  only:
-#    - develop
-#  script:
-#    - cd frontend
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
-#    - export APP_NAME=ht-website-staged
-#    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
-#    - export VITE_SERVER=$VITE_SERVER_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_STAGING_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f client-configs/k8s
-#    - export VITE_SERVER=$VITE_SERVER_2
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_STAGING_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f client-configs/k8s
-#  environment: staging
-#deploy-prod-server:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-server-production
-#    - release-images
-#  only:
-#    - main
-#  script:
-#    - cd backend
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
-#    - export APP_NAME=ht-server-live
-#    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
-#    - export FRONT_URL=$FRONT_URL_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_PRODUCTION_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f server-configs/k8s
-#    - export FRONT_URL=$FRONT_URL_2
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_PRODUCTION_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f server-configs/k8s
-#  environment: production
-#deploy-prod-client:
-#  stage: deploy
-#  image: quay.io/openshift/origin-cli
-#  dependencies:
-#    - build-client-production
-#    - release-images
-#  only:
-#    - main
-#  script:
-#    - cd frontend
-#    - >-
-#      wget
-#      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
-#      -O /usr/bin/yq && chmod +x /usr/bin/yq
-#    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
-#    - export APP_NAME=ht-website-live
-#    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
-#    - export VITE_SERVER=$VITE_SERVER_1
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
-#      $CONFIG_PATH
-#    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - >-
-#      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
-#      $CONFIG_PATH
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_PRODUCTION_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f client-configs/k8s
-#    - export VITE_SERVER=$VITE_SERVER_2
-#    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_PRODUCTION_ENV
-#    - RESULT=0
-#    - >-
-#      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
-#      --replicas=0 2> /dev/null || RESULT=$?
-#    - echo $RESULT
-#    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
-#    - oc apply -f client-configs/k8s
-#  environment: production
-#
-#zap_baseline_scan:
-#  stage: vuln-scan
-#  image: docker:19.03.12
-#  only:
-#    - develop
-#  script:
-#    - |
-#      set +e  # Disable 'exit on error'
-#      docker run --rm -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-#      -t http://ht-website-ht-uat-coop.apps.prod.htuslab2.com/ -g gen.conf -r /zap/wrk/test-report.html
-#      ZAP_EXIT_CODE=$?
-#      set -e  # Re-enable 'exit on error'
-#      if [ $ZAP_EXIT_CODE -ne 0 ]; then
-#        echo "ZAP scan exited with code $ZAP_EXIT_CODE"
-#      fi
-#  artifacts:
-#    paths:
-#      - test-report.html
-#
-#clear-test-env:
-#  stage: cleanup
-#  image: quay.io/openshift/origin-cli
-#  rules:
-#    - if: '$CI_COMMIT_MESSAGE =~ /--cleanup-test/'
-#      when: on_success
-#    - when: never
-#  script:
-#    - >-
-#      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - oc delete deployment --all
-#    - oc delete svc --all
-#    - oc delete route --all
-#    - >-
-#      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
-#      --insecure-skip-tls-verify
-#    - oc project $PROJECT_TEST_ENV
-#    - oc delete deployment --all
-#    - oc delete svc --all
-#    - oc delete route --all
+
+deploy-staging-server:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-server-staging
+  only:
+    - develop
+  script:
+    - cd backend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
+    - export COMMIT_ID=$CI_COMMIT_SHORT_SHA
+    - export APP_NAME=ht-server-staged
+    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
+    - export HOMIE_URL=$HOMIE_URL
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - export HOMIE_URL=$HOMIE_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+  environment: staging
+deploy-staging-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-staging
+  only:
+    - develop
+  script:
+    - cd frontend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export APP_NAME=ht-website-staged
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-client-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+  environment: staging
+deploy-rasa-actions-staging:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-rasa-actions-staging
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$ACTIONS_CONTAINER_TEST_IMAGE
+    - export APP_NAME=ht-bot-actions-server-staged
+    - export CONFIG_PATH=bot-configs/actions/k8s/deployment.yaml
+    - export SERVER_URL=$SERVER_URL
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "SERVER_URL").value) = strenv(SERVER_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s
+    - export SERVER_URL=$SERVER_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "SERVER_URL").value) = strenv(SERVER_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s
+  only:
+    - develop
+  environment: staging
+deploy-rasa-chat-staging:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-rasa-chat-staging
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$RASA_CONTAINER_TEST_IMAGE
+    - export APP_NAME=ht-bot-server-staged
+    - export ACTIONS_URL=$ACTIONS_URL
+    - export CONFIG_PATH=bot-configs/rasa-server/k8s/deployment.yaml
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "ACTIONS_URL").value) = strenv(ACTIONS_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-staged
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s
+    - export ACTIONS_URL=$ACTIONS_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "ACTIONS_URL").value) = strenv(ACTIONS_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_STAGING_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s
+  only:
+    - develop
+  environment: staging
+deploy-prod-server:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-server-production
+    - release-images
+  only:
+    - main
+  script:
+    - cd backend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$SERVER_CONTAINER_PROD_IMAGE
+    - export APP_NAME=ht-server-live
+    - export CONFIG_PATH=server-configs/k8s/deployment.yaml
+    - export FRONT_URL=$FRONT_URL_1
+    - export HOMIE_URL=$HOMIE_URL
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+    - export FRONT_URL=$FRONT_URL_2
+    - export HOMIE_URL=$HOMIE_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "FRONT_URL").value) = strenv(FRONT_URL)' $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "HOMIE_URL").value) = strenv(HOMIE_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f server-configs/k8s
+  environment: production
+deploy-prod-client:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-client-production
+    - release-images
+  only:
+    - main
+  script:
+    - cd frontend
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$CLIENT_CONTAINER_PROD_IMAGE
+    - export APP_NAME=ht-website-live
+    - export CONFIG_PATH=client-configs/k8s/deployment.yaml
+    - export VITE_SERVER=$VITE_SERVER_1
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+    - export VITE_SERVER=$VITE_SERVER_2
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "VITE_SERVER").value) = strenv(VITE_SERVER)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-website-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f client-configs/k8s
+  environment: production
+deploy-rasa-actions-production:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-rasa-actions-production
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$ACTIONS_CONTAINER_RELEASE_IMAGE
+    - export APP_NAME=ht-bot-actions-server-live
+    - export CONFIG_PATH=bot-configs/actions/k8s/deployment.yaml
+    - export SERVER_URL=$SERVER_URL
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "SERVER_URL").value) = strenv(SERVER_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s
+    - export SERVER_URL=$SERVER_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "SERVER_URL").value) = strenv(SERVER_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-actions-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/actions/k8s
+  only:
+    - main
+  environment: production
+deploy-rasa-chat-production:
+  stage: deploy
+  image: quay.io/openshift/origin-cli
+  dependencies:
+    - build-rasa-chat-production
+  rules:
+    - if: >-
+        $CI_COMMIT_MESSAGE =~ /--deploy-rasa/
+      when: on_success
+    - when: never
+  script:
+    - cd homie
+    - >-
+      wget
+      https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64
+      -O /usr/bin/yq && chmod +x /usr/bin/yq
+    - export IMAGE=$RASA_CONTAINER_RELEASE_IMAGE
+    - export APP_NAME=ht-bot-server-live
+    - export CONFIG_PATH=bot-configs/rasa-server/k8s/deployment.yaml
+    - export ACTIONS_URL=$ACTIONS_URL
+    - >-
+      yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)'
+      $CONFIG_PATH
+    - yq -i '.metadata.name = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.selector.matchLabels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.metadata.labels.deployment = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '.spec.template.metadata.labels.app = strenv(APP_NAME)' $CONFIG_PATH
+    - >-
+      yq -i '.spec.template.spec.containers[0].name = strenv(APP_NAME)'
+      $CONFIG_PATH
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "ACTIONS_URL").value) = strenv(ACTIONS_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s
+    - export ACTIONS_URL=$ACTIONS_URL
+    - yq -i '(.spec.template.spec.containers[] | select(.name == strenv(APP_NAME)).env[] | select(.name == "ACTIONS_URL").value) = strenv(ACTIONS_URL)' $CONFIG_PATH
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_PRODUCTION_ENV
+    - RESULT=0
+    - >-
+      oc scale deployment -l app.kubernetes.io/instance=ht-bot-server-live
+      --replicas=0 2> /dev/null || RESULT=$?
+    - echo $RESULT
+    - '(if [ "$RESULT" == 1 ]; then exit 0; fi);'
+    - oc apply -f bot-configs/rasa-server/k8s
+  only:
+    - main
+  environment: production
+zap_baseline_scan:
+  stage: vuln-scan
+  image: docker:19.03.12
+  only:
+    - develop
+  script:
+    - |
+      set +e  # Disable 'exit on error'
+      docker run --rm -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+      -t http://ht-website-ht-uat-coop.apps.prod.htuslab2.com/ -g gen.conf -r /zap/wrk/test-report.html
+      ZAP_EXIT_CODE=$?
+      set -e  # Re-enable 'exit on error'
+      if [ $ZAP_EXIT_CODE -ne 0 ]; then
+        echo "ZAP scan exited with code $ZAP_EXIT_CODE"
+      fi
+  artifacts:
+    paths:
+      - test-report.html
+clear-test-env:
+  stage: cleanup
+  image: quay.io/openshift/origin-cli
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /--cleanup-test/'
+      when: on_success
+    - when: never
+  script:
+    - >-
+      oc login --token=$OCP_TOKEN_1 --server=$OCP_API_SERVER_1
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - oc delete deployment --all
+    - oc delete svc --all
+    - oc delete route --all
+    - >-
+      oc login --token=$OCP_TOKEN_2 --server=$OCP_API_SERVER_2
+      --insecure-skip-tls-verify
+    - oc project $PROJECT_TEST_ENV
+    - oc delete deployment --all
+    - oc delete svc --all
+    - oc delete route --all
