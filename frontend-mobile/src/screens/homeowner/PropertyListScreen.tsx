@@ -3,11 +3,10 @@ import { View, StyleSheet, Modal, FlatList, SectionList, ScrollView } from 'reac
 import Text from '../../components/Text';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '../../hooks/useAuthContext';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 import { Property, PropertyDetail, ServiceRequest } from '../../../types';
-
 import {config} from "../../../config";
-
 import { SIZES } from '../../components/Theme';
 import ButtonPrimary from '../../components/ButtonPrimary';
 import ButtonSecondary from '../../components/ButtonSecondary';
@@ -140,6 +139,7 @@ const PropertiesTable = () => {
 
     const PropertyItem:React.FC<PropertyItemProps> = ({ item }) => (
         <View style={styles.row}>
+            <FontAwesome6 name='house' size={24} color='black' />
             <Text style={styles.cell}>{item.streetAddress}</Text>
             <View style={styles.actions}>
                 <ButtonPrimary title='Details' onPress={() => handleDetailsProperty(item)} />
@@ -165,11 +165,11 @@ const PropertiesTable = () => {
                     {isLoading ? (
                         <Text>Loading Properties...</Text>
                     ) : (
-                        <FlatList
-                            data={properties}
-                            renderItem={({ item }) => <PropertyItem item={item} />}
-                            keyExtractor={(item) => item.id.toString()}
-                        />
+                        properties?.map((item: Property) => (
+                            <View key={item.id}>
+                                <PropertyItem item={item} />
+                            </View>
+                        ))
                     )}
                 </View>
 
@@ -178,11 +178,11 @@ const PropertiesTable = () => {
                     {isLoading ? (
                         <Text>Loading Active Service Requests...</Text>
                     ) : (
-                        <FlatList
-                            data={activeServiceRequests}
-                            renderItem={({ item }) => <TicketItem item={item} />}
-                            keyExtractor={(item) => item.id.toString()}
-                        />
+                        activeServiceRequests?.map((item: ServiceRequest) => (
+                            <View key={item.id}>
+                                <TicketItem item={item} />
+                            </View>
+                        ))
                     )}
                 </View>
 
@@ -191,11 +191,11 @@ const PropertiesTable = () => {
                     {isLoading ? (
                         <Text>Loading Completed Service Requests...</Text>
                     ) : (
-                        <FlatList
-                            data={completedServiceRequests}
-                            renderItem={({ item }) => <TicketItem item={item} />}
-                            keyExtractor={(item) => item.id.toString()}
-                        />
+                        completedServiceRequests?.map((item: ServiceRequest) => (
+                            <View key={item.id}>
+                                <TicketItem item={item} />
+                            </View>
+                        ))
                     )}
                 </View>
 
@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     cell: {
         flex: 1,
         fontSize: SIZES.p,
+        marginLeft: 10,
     },
     actions: {
         flexDirection: 'row',

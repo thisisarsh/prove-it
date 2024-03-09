@@ -24,7 +24,7 @@ const HomeownerTabNavigator = () => {
                         let iconName;
             
                         if (route.name === 'Properties') {
-                            iconName = 'house';
+                            iconName = 'building';
                         } else if (route.name === 'Profile') {
                             iconName = 'user';
                         }
