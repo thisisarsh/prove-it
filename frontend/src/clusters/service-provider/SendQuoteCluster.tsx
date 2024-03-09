@@ -3,7 +3,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { ServiceRequestSP } from "../../types";
 import { Link, useNavigate } from "react-router-dom";
 //import ErrorMessageContainer from "../../components/ErrorMessageContainer";
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import { FormControl, Button, Modal } from "react-bootstrap";
 
@@ -17,24 +17,24 @@ export type Proposal = {
     estimatedHours: string;
     startDate: string;
     endDate: string;
-}
+};
 
-export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
+export function SendQuoteCluster(ticketObj: { ticket: ServiceRequestSP }) {
     const user = useAuthContext().state.user;
     const navigate = useNavigate();
     const ticket = ticketObj.ticket;
 
     //const [error, setError] = useState<string | null>(null);
 
-    const [quotePrice, setQuotePrice] = useState<string>('0');
-    const [quoteType, setQuoteType] = useState<string>('hourly');
-    const [estimatedHours, setEstimatedHours] = useState<string>('0');
+    const [quotePrice, setQuotePrice] = useState<string>("0");
+    const [quoteType, setQuoteType] = useState<string>("hourly");
+    const [estimatedHours, setEstimatedHours] = useState<string>("0");
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
 
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorModalMessage, setErrorModalMessage] = useState("");
-    const handleShowErrorModal = (errorMessage : string) => {
+    const handleShowErrorModal = (errorMessage: string) => {
         setErrorModalMessage(errorMessage);
         setShowErrorModal(true);
     };
@@ -50,7 +50,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
             const requestOptions = {
                 method: "POST",
                 headers: headers,
-                body: JSON.stringify(body)
+                body: JSON.stringify(body),
             };
 
             try {
@@ -67,7 +67,7 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
         },
         [user],
     );
-    
+
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         setter: React.Dispatch<React.SetStateAction<string>>,
@@ -77,59 +77,67 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
     };
 
     const handleSubmit = () => {
-        try{
-        if (ticket == null || quotePrice == null || quoteType == null || estimatedHours == null || startDate == null || endDate == null){
-            throw new Error ("Empty fields");
-        }
-        const body: Proposal = {
-            id: ticket.id.toString(),
-            detail: ticket.serviceRequest.detail.toString(),
-            quotePrice: quotePrice.toString(),
-            quoteType: quoteType.toString(),
-            estimatedHours: estimatedHours.toString(),
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString()
-        }
-        console.log("RUN");
+        try {
+            if (
+                ticket == null ||
+                quotePrice == null ||
+                quoteType == null ||
+                estimatedHours == null ||
+                startDate == null ||
+                endDate == null
+            ) {
+                throw new Error("Empty fields");
+            }
+            const body: Proposal = {
+                id: ticket.id.toString(),
+                detail: ticket.serviceRequest.detail.toString(),
+                quotePrice: quotePrice.toString(),
+                quoteType: quoteType.toString(),
+                estimatedHours: estimatedHours.toString(),
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
+            };
+            console.log("RUN");
 
-        postData(INVITED_SIGNUP_LINK, body)
-            .then((response) => {
+            postData(INVITED_SIGNUP_LINK, body).then((response) => {
                 if (response.isSuccess) {
-                    console.log('SUCCESS POST SP QUOTE');
+                    console.log("SUCCESS POST SP QUOTE");
                     console.log(response.data);
                     navigate("/dashboard");
                 } else {
                     handleShowErrorModal(response.message);
                 }
             });
-        } catch (error){
+        } catch (error) {
             handleShowErrorModal("Please fill all fields");
         }
-    }
+    };
 
     return (
         <>
             {/*error && <ErrorMessageContainer message={error}/>*/}
-            <Form.Group> 
+            <Form.Group>
                 <Form.Label>Quote Price</Form.Label>
                 <FormControl
                     type="number"
                     placeholder="Enter quote price"
-                    value={quotePrice} 
-                    onChange={(
-                        e: React.ChangeEvent<HTMLInputElement>,
-                        ) => handleInputChange(e, setQuotePrice)}
+                    value={quotePrice}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleInputChange(e, setQuotePrice)
+                    }
                 />
             </Form.Group>
-            <p style={{textAlign: "left"}}>Quote Type</p>
-            <Form style={{textAlign: "center"}}>
+            <p style={{ textAlign: "left" }}>Quote Type</p>
+            <Form style={{ textAlign: "center" }}>
                 <Form.Check
                     inline
                     type="radio"
                     id="hourly-radio-button"
                     name="group1"
                     label="Hourly"
-                    onChange={() => {setQuoteType("hourly")}}
+                    onChange={() => {
+                        setQuoteType("hourly");
+                    }}
                     defaultChecked
                 />
                 <Form.Check
@@ -138,27 +146,37 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                     id="fixed-radio-button"
                     name="group1"
                     label="Fixed"
-                    onChange={() => {setQuoteType("fixed")}}
+                    onChange={() => {
+                        setQuoteType("fixed");
+                    }}
                 />
             </Form>
             <br></br>
             <Form.Group>
                 <Form.Label>Estimated Hours</Form.Label>
                 <Form.Control
-                type="number"
-                placeholder="Enter estimated hours"
-                value={estimatedHours} 
-                onChange={(
-                    e: React.ChangeEvent<HTMLInputElement>,
-                    ) => handleInputChange(e, setEstimatedHours)}
-                /> 
+                    type="number"
+                    placeholder="Enter estimated hours"
+                    value={estimatedHours}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleInputChange(e, setEstimatedHours)
+                    }
+                />
             </Form.Group>
             <p>Start Date</p>
-            <DatePicker selected={startDate} onChange={(date: Date) => setStartDate(date)} />
+            <DatePicker
+                selected={startDate}
+                onChange={(date: Date) => setStartDate(date)}
+            />
             <p>End Date</p>
-            <DatePicker selected={endDate} onChange={(date: Date) => setEndDate(date)} />
+            <DatePicker
+                selected={endDate}
+                onChange={(date: Date) => setEndDate(date)}
+            />
             <br></br>
-            <button className="delete-button" onClick={() => handleSubmit()}>Submit Quote</button>
+            <button className="delete-button" onClick={() => handleSubmit()}>
+                Submit Quote
+            </button>
             <Link to="/dashboard" className="goBackLink">
                 <Button
                     variant="outline-primary"
@@ -169,7 +187,10 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                 </Button>
             </Link>
 
-            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            <Modal
+                show={showErrorModal}
+                onHide={() => setShowErrorModal(false)}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Error</Modal.Title>
                 </Modal.Header>
@@ -177,11 +198,14 @@ export function SendQuoteCluster( ticketObj: {ticket: ServiceRequestSP} ) {
                     <p>{errorModalMessage}</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowErrorModal(false)}
+                    >
                         Close
                     </Button>
                 </Modal.Footer>
             </Modal>
-            </>
-    )
+        </>
+    );
 }

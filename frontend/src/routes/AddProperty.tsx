@@ -14,7 +14,10 @@ export function AddProperty() {
 
             <h1>Add a Property</h1>
 
-            <p>Please complete all the following prompts to add a property to your account.</p>
+            <p>
+                Please complete all the following prompts to add a property to
+                your account.
+            </p>
             <p>Ensure all information is entered correctly.</p>
 
             <AddPropertyCluster />

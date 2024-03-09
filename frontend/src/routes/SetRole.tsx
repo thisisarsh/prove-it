@@ -1,6 +1,6 @@
 import { useSetRole } from "../hooks/useSetRole";
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 
 export function SetRole() {
@@ -8,11 +8,10 @@ export function SetRole() {
 
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const handleShowMessageModal = (message : string) => {
+    const handleShowMessageModal = (message: string) => {
         setModalMessage(message);
         setShowMessageModal(true);
     };
-
 
     const handleOptionClick = async (roleSelection: string) => {
         await setRole(roleSelection);
@@ -22,7 +21,10 @@ export function SetRole() {
     };
 
     const ModalContent = (
-        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -30,7 +32,10 @@ export function SetRole() {
                 <p>{modalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                <Button
+                    variant="secondary"
+                    onClick={() => setShowMessageModal(false)}
+                >
                     Close
                 </Button>
             </Modal.Footer>

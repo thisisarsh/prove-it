@@ -60,7 +60,7 @@ export function OTPVerifyCluster() {
                 )}
             </Form>
 
-            {error && <ErrorMessageContainer message={error}/>}
+            {error && <ErrorMessageContainer message={error} />}
         </>
     );
 }

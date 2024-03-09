@@ -9,44 +9,28 @@ interface OwnerContactModalProps {
 
 export function OwnerContactModal(props: OwnerContactModalProps) {
     return (
-        <Modal
-            show={props.show}
-        >
-            <Modal.Header>
-                Homeowner Contact Info
-            </Modal.Header>
+        <Modal show={props.show}>
+            <Modal.Header>Homeowner Contact Info</Modal.Header>
 
             <Modal.Body>
                 <table className="property-detail-table">
                     <tbody>
                         <tr>
-                            <td>
-                                Name:
-                            </td>
+                            <td>Name:</td>
 
-                            <td>
-                                {props.ownerContact.name}
-                            </td>
+                            <td>{props.ownerContact.name}</td>
                         </tr>
 
                         <tr>
-                            <td>
-                                Email:
-                            </td>
+                            <td>Email:</td>
 
-                            <td>
-                                {props.ownerContact.email}
-                            </td>
+                            <td>{props.ownerContact.email}</td>
                         </tr>
 
                         <tr>
-                            <td>
-                                Phone:
-                            </td>
+                            <td>Phone:</td>
 
-                            <td>
-                                {props.ownerContact.phone}
-                            </td>
+                            <td>{props.ownerContact.phone}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -58,5 +42,5 @@ export function OwnerContactModal(props: OwnerContactModalProps) {
                 </Button>
             </Modal.Footer>
         </Modal>
-    )
+    );
 }

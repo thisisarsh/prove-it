@@ -13,7 +13,7 @@ export const ProtectedRoute = ({
     const { state } = useAuthContext();
     const user = state.user;
 
-    if (!user || ((validRoles) && (!validRoles.includes(user?.role?.role)))) {
+    if (!user || (validRoles && !validRoles.includes(user?.role?.role))) {
         return <Navigate to={redirect} />;
     }
     return children;

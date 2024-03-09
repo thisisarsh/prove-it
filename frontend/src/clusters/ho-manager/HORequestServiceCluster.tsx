@@ -1,14 +1,20 @@
 import { Button, Form } from "react-bootstrap";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import {useState, useEffect, useCallback} from "react";
-import { GeneralServiceType, Property, SpecificServiceType, Timeline, ServiceProvider } from "../../types";
+import { useState, useEffect, useCallback } from "react";
+import {
+    GeneralServiceType,
+    Property,
+    SpecificServiceType,
+    Timeline,
+    ServiceProvider,
+} from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 
-import "../../styles/components/createServiceRequest.css"
+import "../../styles/components/createServiceRequest.css";
 
 export function RequestHOServiceCluster() {
     const user = useAuthContext().state.user;
@@ -20,32 +26,42 @@ export function RequestHOServiceCluster() {
     const [properties, setProperties] = useState<Property[]>([]);
     const [property, setProperty] = useState<Property | null>(null);
 
-    const [generalServiceTypes, setGeneralServiceTypes] = useState<GeneralServiceType[]>([]);
-    const [selectedGenType, setSelectedGenType] = useState<GeneralServiceType | null>(null);
+    const [generalServiceTypes, setGeneralServiceTypes] = useState<
+        GeneralServiceType[]
+    >([]);
+    const [selectedGenType, setSelectedGenType] =
+        useState<GeneralServiceType | null>(null);
 
-    const [specificServices, setSpecificServices] = useState<SpecificServiceType[]>([]);
-    const [selectedSpecService, setSelectedSpecService] = useState<SpecificServiceType | null>(null);
+    const [specificServices, setSpecificServices] = useState<
+        SpecificServiceType[]
+    >([]);
+    const [selectedSpecService, setSelectedSpecService] =
+        useState<SpecificServiceType | null>(null);
 
     const [timelines, setTimelines] = useState<Timeline[]>([]);
-    const [selectedTimeline, setSelectedTimeline] = useState<Timeline | null>(null);
+    const [selectedTimeline, setSelectedTimeline] = useState<Timeline | null>(
+        null,
+    );
 
-    const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
+    const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>(
+        [],
+    );
     const [selectedSP, setSelectedSP] = useState<ServiceProvider | null>(null);
 
     const [issueDetail, setIssueDetail] = useState<string>("");
 
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const handleShowMessageModal = (message : string) => {
+    const handleShowMessageModal = (message: string) => {
         setModalMessage(message);
         setShowMessageModal(true);
     };
 
-
-
-    const OWNER_PROPERTY_LINK = window.config.SERVER_URL + '/properties-owner';
-    const GENERAL_SERVICE_TYPE_LINK = window.config.SERVER_URL + "/general-service-types";
-    const SPECIFIC_SERVICES_LINK = window.config.SERVER_URL + "/specific-service-types";
+    const OWNER_PROPERTY_LINK = window.config.SERVER_URL + "/properties-owner";
+    const GENERAL_SERVICE_TYPE_LINK =
+        window.config.SERVER_URL + "/general-service-types";
+    const SPECIFIC_SERVICES_LINK =
+        window.config.SERVER_URL + "/specific-service-types";
     const TIMELINES_LINK = window.config.SERVER_URL + "/request-timelines";
     const PROVIDERS_LINK = window.config.SERVER_URL + "/find-sp";
 
@@ -77,43 +93,49 @@ export function RequestHOServiceCluster() {
     );
 
     useEffect(() => {
+        fetchData(OWNER_PROPERTY_LINK).then((response) => {
+            if (!response.error) {
+                setProperties(response);
+            } else {
+                setError("ERROR GETTING PROPERTY");
+            }
+        });
 
-        fetchData(OWNER_PROPERTY_LINK)
-            .then((response) => {
-                if (!response.error) {
-                    setProperties(response);
-                } else {
-                    setError("ERROR GETTING PROPERTY");
-                }
-            });
+        fetchData(GENERAL_SERVICE_TYPE_LINK).then((response) => {
+            if (response.isSuccess) {
+                setGeneralServiceTypes(response.data);
+            } else {
+                setError(response.message);
+            }
+        });
 
-        fetchData(GENERAL_SERVICE_TYPE_LINK)
-            .then((response) => {
-                if (response.isSuccess) {
-                    setGeneralServiceTypes(response.data);
-                } else {
-                    setError(response.message);
-                }
-            });
+        fetchData(TIMELINES_LINK).then((response) => {
+            if (response.isSuccess) {
+                setTimelines(response.data);
+            } else {
+                setError(response.message);
+            }
+        });
+    }, [
+        fetchData,
+        GENERAL_SERVICE_TYPE_LINK,
+        OWNER_PROPERTY_LINK,
+        TIMELINES_LINK,
+        user?.id,
+    ]);
 
-        fetchData(TIMELINES_LINK)
-            .then((response) => {
-                if (response.isSuccess) {
-                    setTimelines(response.data);
-                } else {
-                    setError(response.message);
-                }
-            });
-    }, [fetchData, GENERAL_SERVICE_TYPE_LINK, OWNER_PROPERTY_LINK, TIMELINES_LINK, user?.id])
-
-    const handlePropertySelect = (selectedProperty : Property) => {
+    const handlePropertySelect = (selectedProperty: Property) => {
         setProperty(selectedProperty);
-    }
-    const handleGeneralTypeSelect = (selectedGeneralType: GeneralServiceType) => {
+    };
+    const handleGeneralTypeSelect = (
+        selectedGeneralType: GeneralServiceType,
+    ) => {
         setSelectedGenType(selectedGeneralType);
         setSelectedSpecService(null);
 
-        const params = new URLSearchParams({parentId: selectedGeneralType.id});
+        const params = new URLSearchParams({
+            parentId: selectedGeneralType.id,
+        });
         fetchData(SPECIFIC_SERVICES_LINK + "?" + params.toString())
             .then((response) => {
                 if (response.isSuccess) {
@@ -125,10 +147,12 @@ export function RequestHOServiceCluster() {
             .catch((error) => {
                 console.error("Error fetching data:", error);
                 setError(error.error);
-            })
-    }
+            });
+    };
 
-    const handleSpecServiceSelect = (selectedSpecService : SpecificServiceType) => {
+    const handleSpecServiceSelect = (
+        selectedSpecService: SpecificServiceType,
+    ) => {
         setSelectedSpecService(selectedSpecService);
         // TODO: Change to fetchData
         if (serviceProviders.length == 0) {
@@ -137,18 +161,21 @@ export function RequestHOServiceCluster() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + user?.token
+                    Authorization: "Bearer " + user?.token,
                 },
 
-                body: JSON.stringify({childId: selectedSpecService.id, propertyId: property?.id})
+                body: JSON.stringify({
+                    childId: selectedSpecService.id,
+                    propertyId: property?.id,
+                }),
             })
-                .then(response => {
+                .then((response) => {
                     if (!response.ok) {
                         setError("Error: Network response was not ok");
                     }
                     return response.json();
                 })
-                .then(responseJson => {
+                .then((responseJson) => {
                     if (responseJson.isSuccess) {
                         console.log(responseJson.data);
                         setServiceProviders(responseJson.data);
@@ -157,20 +184,19 @@ export function RequestHOServiceCluster() {
                     }
                 });
         }
-    }
+    };
 
-    const handleServiceProviderSelect = (selectedProvider : ServiceProvider) => {
+    const handleServiceProviderSelect = (selectedProvider: ServiceProvider) => {
         setSelectedSP(selectedProvider);
-
-    }
-    const handleTimelineSelect = (selectedTimeline : Timeline) => {
+    };
+    const handleTimelineSelect = (selectedTimeline: Timeline) => {
         setSelectedTimeline(selectedTimeline);
-    }
+    };
 
     const handleSubmit = () => {
         setIsLoading(true);
         setError(null);
-        console.log('Handling submit...');
+        console.log("Handling submit...");
 
         const createRequestBody = {
             propertyId: property?.id,
@@ -179,10 +205,14 @@ export function RequestHOServiceCluster() {
             managerId: user?.id,
             detail: issueDetail,
             serviceRequestId: "",
-            proposals:[{serviceProviderId: selectedSP?.id,
-                serviceTypeId: selectedSpecService?.id,
-                timelineId: selectedTimeline?.id}]
-        }
+            proposals: [
+                {
+                    serviceProviderId: selectedSP?.id,
+                    serviceTypeId: selectedSpecService?.id,
+                    timelineId: selectedTimeline?.id,
+                },
+            ],
+        };
 
         // TODO: Change to fetchData
 
@@ -194,7 +224,7 @@ export function RequestHOServiceCluster() {
             },
             body: JSON.stringify(createRequestBody),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
@@ -209,10 +239,13 @@ export function RequestHOServiceCluster() {
                 }
             })
             .catch((error) => setError(error));
-    }
+    };
 
     const ModalContent = (
-        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -220,7 +253,13 @@ export function RequestHOServiceCluster() {
                 <p>{modalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        setShowMessageModal(false);
+                        navigate("/dashboard");
+                    }}
+                >
                     Close
                 </Button>
             </Modal.Footer>
@@ -239,9 +278,7 @@ export function RequestHOServiceCluster() {
                         }
                         labelKey="name"
                     />
-                    <Form.Label
-                        className="mb-2"
-                    >
+                    <Form.Label className="mb-2">
                         What type of service is needed?
                     </Form.Label>
 
@@ -249,7 +286,9 @@ export function RequestHOServiceCluster() {
                         items={generalServiceTypes}
                         onSelect={handleGeneralTypeSelect}
                         placeholder={
-                            selectedGenType ? selectedGenType.serviceType : "Select a Service Type"
+                            selectedGenType
+                                ? selectedGenType.serviceType
+                                : "Select a Service Type"
                         }
                         labelKey="serviceType"
                     />
@@ -264,42 +303,43 @@ export function RequestHOServiceCluster() {
                         items={specificServices}
                         onSelect={handleSpecServiceSelect}
                         placeholder={
-                            selectedSpecService ? selectedSpecService.serviceType : "Select a Service"
+                            selectedSpecService
+                                ? selectedSpecService.serviceType
+                                : "Select a Service"
                         }
                         labelKey="serviceType"
                     />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Label>
-                        When should the work be done?
-                    </Form.Label>
+                    <Form.Label>When should the work be done?</Form.Label>
 
                     <SearchableDropdown
                         items={timelines}
                         onSelect={handleTimelineSelect}
                         placeholder={
-                            selectedTimeline ? selectedTimeline.title : "Select a Timeline"
+                            selectedTimeline
+                                ? selectedTimeline.title
+                                : "Select a Timeline"
                         }
                         labelKey="title"
                     />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Label>
-                        Choose a service provider
-                    </Form.Label>
+                    <Form.Label>Choose a service provider</Form.Label>
 
                     <SearchableDropdown
                         items={serviceProviders}
                         onSelect={handleServiceProviderSelect}
                         placeholder={
-                            selectedSP ? selectedSP.firstName : "Select a Service Provider"
+                            selectedSP
+                                ? selectedSP.firstName
+                                : "Select a Service Provider"
                         }
                         labelKey="firstName"
                     />
                 </Form.Group>
-
 
                 <Form.Group className="mb-5">
                     <Form.Label>
@@ -307,27 +347,32 @@ export function RequestHOServiceCluster() {
                     </Form.Label>
 
                     <Form.Control
-                        as="textarea" rows={3}
-                        onChange={(e) => {setIssueDetail(e.target.value)}}
+                        as="textarea"
+                        rows={3}
+                        onChange={(e) => {
+                            setIssueDetail(e.target.value);
+                        }}
                     />
                 </Form.Group>
 
                 <div className="d-grid">
                     {isLoading ? (
-                        <Spinner/>
+                        <Spinner />
                     ) : (
-                        <Button variant="primary" size="lg" className="submit-button" onClick={handleSubmit}>
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            className="submit-button"
+                            onClick={handleSubmit}
+                        >
                             Submit
                         </Button>
                     )}
                 </div>
-
             </Form>
 
-
-
-            {error && <ErrorMessageContainer message={error}/>}
+            {error && <ErrorMessageContainer message={error} />}
             {ModalContent}
         </div>
-    )
+    );
 }
