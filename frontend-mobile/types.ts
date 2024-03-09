@@ -93,6 +93,7 @@ export interface ServiceProviderDetail {
 }
 
 export interface TenantProperty {
+    id: string;
     name: string;
     streetAddress: string;
     owner: string;

@@ -47,7 +47,7 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
         }, [user])
     );
 
-    // TODO: Implement handleActivateJob and handleCompleteJob
+    // TODO: Remove these functions and refactor the file
     const handleActivateJob = (jobId: string) => {
         setIsLoading(true);
     }

@@ -60,6 +60,11 @@ const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
                     <Text>New Service Request</Text>
                 </TouchableOpacity>
             </View>
+            <View style={styles.actions}>
+                <TouchableOpacity onPress={() => navigation.navigate("Homie", {propertyId: properties ? properties[0].id : null})} style={styles.button}>
+                    <Text>Chat with homie</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
