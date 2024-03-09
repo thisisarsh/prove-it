@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import CustomButton from "../components/CustomButton";
 import { COLOURS, SIZES, FONTWEIGHT } from '../components/Theme';
 import Text from '../components/Text';
+import ButtonPrimary from '../components/ButtonPrimary';
 
 const Login = () => {
 
@@ -16,7 +17,7 @@ const Login = () => {
     const handleLogin = async () => {
         if (username && password) {
             await login(username, password);
-            console.log("Error" + error);
+            //console.log("Error" + error);
         }
     };
 
@@ -38,7 +39,6 @@ const Login = () => {
                         value={username}
                         onChangeText={setUsername}
                     />
-
                     <TextInput
                         style={styles.input}
                         placeholder="Password"
@@ -48,16 +48,16 @@ const Login = () => {
                     />
                 </View>
 
-                <CustomButton title='Log in' onPress={handleLogin}></CustomButton>
+                <ButtonPrimary title='Log in' onPress={handleLogin} style={styles.button}></ButtonPrimary>
                 
                 <View style={{flex: 1, alignItems: 'center', marginVertical: '5%'}}>
                     <TouchableOpacity style={{marginTop: '5%'}}>
-                        <Text style={styles.footerText}>Forgot Password?</Text>
+                        <Text style={styles.anchorText}>Forgot Password?</Text>
                     </TouchableOpacity>
 
                     <Text style={{color: 'black', marginTop: '10%'}}>Don't have an account?</Text>
-                    <TouchableOpacity style={{}}>
-                        <Text style={styles.footerText}>Register</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.anchorText}>Register</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -102,24 +102,17 @@ const styles = StyleSheet.create({
         marginVertical: '10%'
     },
     button: {
-        backgroundColor: '#007bff',
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginBottom: 10,
+        minWidth: '50%',
+        minHeight: '5%',
     },
     buttonText: {
         color: 'white',
         fontSize: 16,
         fontFamily: 'Montserrat-Regular',
     },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    footerText: {
+    anchorText: {
         color: '#007bff',
-        fontSize: 14,
+        fontSize: SIZES.p,
         fontFamily: 'Montserrat-Regular',
     },
 });

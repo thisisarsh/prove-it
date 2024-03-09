@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import Text from '../components/Text';
 import Footer from '../components/Footer';
+import ButtonPrimary from '../components/ButtonPrimary';
 
 import proveitLogo from '../../assets/prove-it-logo-200.png';
 import htAppsetFull from '../../assets/ht-appset-full.png';
@@ -47,8 +48,8 @@ function Home() {
 
                 <View style={styles.mainContainer}>
                     <Text style={styles.text}>Ready to get started?</Text>
-                    <CustomButton title="Log in" onPress={handleLogIn} />
-                    <CustomButton title="Sign up" onPress={handleSignUp} />
+                    <ButtonPrimary title="Log in" onPress={handleLogIn} style={styles.button} />
+                    <ButtonPrimary title="Sign up" onPress={handleSignUp} style={styles.button} />
                 </View>
 
             </ScrollView>
@@ -92,8 +93,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     button: {
-        marginTop: '10%',
-        marginBottom: '10%',
+        minWidth: '50%',
+        minHeight: '5%',
+        marginVertical: 10
     },
     graphic: {
         width: 200,

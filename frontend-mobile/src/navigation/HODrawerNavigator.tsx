@@ -1,30 +1,22 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import HomeownerTabNavigator from './HOTabNavigator';
 import SettingsScreen from '../screens/SettingsScreen';
-import {Button, View} from "react-native";
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
-
-type HomeProps = {
-    navigation: NavigationProp<ParamListBase>;
-};
+import { COLOURS } from '../components/Theme';
 
 const Drawer = createDrawerNavigator();
-
-const HomeScreen: React.FC<HomeProps> = ({ navigation }) => {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Button
-                onPress={() => navigation.navigate('Notifications')}
-                title="Go to notifications"
-            />
-        </View>
-    );
+const screenOptions = {
+    headerStyle: {backgroundColor: COLOURS.blue,},
+    headerTitleStyle: {color: 'white', fontFamily: 'Montserrat-Regular'},
+    headerTintColor: 'white',
+    drawerActiveTintColor: COLOURS.blue,
+    drawerInactiveTintColor: 'gray',
 }
+
 const HomeownerDrawerNavigator = () => {
     return (
-        <Drawer.Navigator>
-            <Drawer.Screen name="HOHome" component={HomeScreen} />
+        <Drawer.Navigator screenOptions={screenOptions}>
             <Drawer.Screen name="HOHomeTabs" component={HomeownerTabNavigator} options={{ title: 'Dashboard' }} />
             <Drawer.Screen name="Settings" component={SettingsScreen} />
         </Drawer.Navigator>
