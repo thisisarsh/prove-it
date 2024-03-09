@@ -136,6 +136,10 @@ export interface Timeline {
 export interface ServiceType {
     id: string;
     serviceType: string | null;
+    parent: {
+      id: string;
+      serviceType: string;
+    }
 }
 
 export interface Proposal {
