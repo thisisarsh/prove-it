@@ -98,6 +98,7 @@ export interface TenantProperty {
     name: string;
     streetAddress: string;
     owner: string;
+    id: string;
 }
 
 export interface GeneralServiceType {
