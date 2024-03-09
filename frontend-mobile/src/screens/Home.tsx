@@ -8,8 +8,6 @@ import Footer from '../components/Footer';
 import ButtonPrimary from '../components/ButtonPrimary';
 
 import proveitLogo from '../../assets/prove-it-logo-200.png';
-import htAppsetFull from '../../assets/ht-appset-full.png';
-import CustomButton from "../components/CustomButton";
 import { COLOURS, SIZES, FONTWEIGHT } from '../components/Theme';
 
 type RootStackParamList = {
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         resizeMode: 'contain',
-        marginTop: '20%'
+        marginTop: '25%'
     },
     text: {
         marginTop: 20,

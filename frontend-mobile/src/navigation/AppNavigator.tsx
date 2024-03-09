@@ -17,7 +17,7 @@ function AppNavigator() {
             screenOptions={{headerShown: false}}
         >
             <Stack.Screen name="Home" component={Home} options={{gestureEnabled: false}} />
-            <Stack.Screen name="Login" component={Login} options={{gestureEnabled: false}} />
+            <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="HomeownerDashboard" component={HomeownerDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="TenantDashboard" component={TenantDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="SPDashboard" component={SPDrawerNavigator} options={{ headerShown: false }}/>

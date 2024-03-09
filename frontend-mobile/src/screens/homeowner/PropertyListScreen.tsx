@@ -158,8 +158,8 @@ const PropertiesTable = () => {
 
     return (
         <View style={styles.container}>
-
             <ScrollView>
+                <Text style={[styles.header, {fontSize: 24, padding:35}]}>Welcome back, {user?.firstName} {user?.lastName}! 👋</Text>
                 <Text style={styles.header}>Properties</Text>
                 <View style={styles.propertyContainer}>
                     {isLoading ? (
