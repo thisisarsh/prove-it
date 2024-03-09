@@ -4,17 +4,22 @@ import Text from '../../components/Text';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
-import { Property, PropertyDetail, ServiceRequest, TenantinPropertyDetail } from '../../../types';
+import { Property, PropertyDetail, ServiceRequest } from '../../../types';
 
 import {config} from "../../../config";
 
 import { SIZES } from '../../components/Theme';
 import ButtonPrimary from '../../components/ButtonPrimary';
+import ButtonSecondary from '../../components/ButtonSecondary';
 
 const serverAddress = config.SERVER_URL;
 
 type PropertyItemProps = {
     item: Property;
+};
+
+type ServiceRequestItemProps = {
+    item: ServiceRequest;
 };
 
 const PropertiesTable = () => {
@@ -24,9 +29,15 @@ const PropertiesTable = () => {
 
     const [properties, setProperties] = useState<Property[] | null>(null);
     const [update, setUpdate] = useState<boolean>(false);
-    const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
+    const [serviceRequests, setServiceRequests] = useState<ServiceRequest[] | null>(null);
+    const [activeServiceRequests, setActiveServiceRequests] = useState<ServiceRequest[] | null>(null);
+    const [completedServiceRequests, setCompletedServiceRequests] = useState<ServiceRequest[] | null>(null);
+
+
     const [propertyDetail, setPropertyDetail] = useState<PropertyDetail | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isPropertySelected, setIsPropertySelected] = useState(false);
+    const [serviceRequestSelected, setServiceRequestSelected] = useState<ServiceRequest | null>(null);
 
     const navigation = useNavigation();
 
@@ -55,7 +66,7 @@ const PropertiesTable = () => {
     }, [user?.token, update]);
 
     useEffect(() => {
-        if(tickets === null) {
+        if(serviceRequests === null) {
             setIsLoading(true);
             fetch(serverAddress + '/ticket/manager/tickets', {
                 method: "GET",
@@ -72,7 +83,13 @@ const PropertiesTable = () => {
                 })
                 .then((data) => {
                     setIsLoading(false);
-                    setTickets(data);
+
+                    let activeSR = data.filter((sr: ServiceRequest) => !['withdrawn', 'rejected', 'completed'].includes(sr.status));
+                    let completedSR = data.filter((sr: ServiceRequest) => ['withdrawn', 'rejected', 'completed'].includes(sr.status));
+                    
+                    setActiveServiceRequests(activeSR);
+                    setCompletedServiceRequests(completedSR);
+                    setServiceRequests(data);
                 })
                 .catch((error) => {
                     console.error("Error fetching tickets data: " + error);
@@ -84,7 +101,7 @@ const PropertiesTable = () => {
         // Implement delete functionality
     };
 
-    const handleDetails = (property: Property) => {
+    const handleDetailsProperty = (property: Property) => {
         fetch(serverAddress + "/get-property-details", {
             method: "POST",
             headers: {
@@ -103,10 +120,11 @@ const PropertiesTable = () => {
                 if (responseJson.isSuccess) {
                     setPropertyDetail(responseJson);
                 } else if (!responseJson.isSuccess) {
-                    console.log(responseJson);
+                    console.error(responseJson);
                 }
             })
             .then(() => {
+                setIsPropertySelected(true);
                 setModalVisible(true);
             })
             .catch((error) => {
@@ -114,15 +132,26 @@ const PropertiesTable = () => {
             });
     };
 
-    const handleTenant = (item: Property) => {
-        // Implement tenant functionality
+    const handleDetailsServiceRequest = (serviceRequest: ServiceRequest) => {
+        setServiceRequestSelected(serviceRequest);
+        setIsPropertySelected(false);
+        setModalVisible(true);
     };
 
     const PropertyItem:React.FC<PropertyItemProps> = ({ item }) => (
         <View style={styles.row}>
             <Text style={styles.cell}>{item.streetAddress}</Text>
             <View style={styles.actions}>
-                <ButtonPrimary title='Details' onPress={() => handleDetails(item)} />
+                <ButtonPrimary title='Details' onPress={() => handleDetailsProperty(item)} />
+            </View>
+        </View>
+    );
+
+    const TicketItem:React.FC<ServiceRequestItemProps> = ({ item }) => (
+        <View style={styles.row}>
+            <Text style={styles.cell}>{item.detail}</Text>
+            <View style={styles.actions}>
+                <ButtonPrimary title='Details' onPress={() => handleDetailsServiceRequest(item)} />
             </View>
         </View>
     );
@@ -132,7 +161,6 @@ const PropertiesTable = () => {
 
             <ScrollView>
                 <Text style={styles.header}>Properties</Text>
-
                 <View style={styles.propertyContainer}>
                     {isLoading ? (
                         <Text>Loading Properties...</Text>
@@ -140,6 +168,32 @@ const PropertiesTable = () => {
                         <FlatList
                             data={properties}
                             renderItem={({ item }) => <PropertyItem item={item} />}
+                            keyExtractor={(item) => item.id.toString()}
+                        />
+                    )}
+                </View>
+
+                <Text style={styles.header}>Active Service Requests</Text>
+                <View style={styles.propertyContainer}>
+                    {isLoading ? (
+                        <Text>Loading Active Service Requests...</Text>
+                    ) : (
+                        <FlatList
+                            data={activeServiceRequests}
+                            renderItem={({ item }) => <TicketItem item={item} />}
+                            keyExtractor={(item) => item.id.toString()}
+                        />
+                    )}
+                </View>
+
+                <Text style={styles.header}>Completed Service Requests</Text>
+                <View style={styles.propertyContainer}>
+                    {isLoading ? (
+                        <Text>Loading Completed Service Requests...</Text>
+                    ) : (
+                        <FlatList
+                            data={completedServiceRequests}
+                            renderItem={({ item }) => <TicketItem item={item} />}
                             keyExtractor={(item) => item.id.toString()}
                         />
                     )}
@@ -154,9 +208,8 @@ const PropertiesTable = () => {
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-
                             <SectionList
-                                sections={[
+                                sections={(isPropertySelected ? [
                                     {
                                         title: propertyDetail?.name,
                                         data: [
@@ -169,17 +222,28 @@ const PropertiesTable = () => {
                                             "Property type: " + propertyDetail?.propertyType,
                                         ]
                                     }
-                                ]}
+                                ] : [
+                                    {
+                                        title: serviceRequestSelected?.serviceType.parent.serviceType,
+                                        data: [
+                                            "Address: " + serviceRequestSelected?.property.streetAddress,
+                                            "Status: " + serviceRequestSelected?.status,
+                                            "Created on: " + serviceRequestSelected?.createdAt,
+                                            "Timeline: " + serviceRequestSelected?.timeline.title,
+                                            "Service: " + serviceRequestSelected?.serviceType.serviceType,
+                                            "Detail: " + serviceRequestSelected?.detail,
+                                        ]
+                                    }
+                                ])}
                                 renderItem={({ item }) => <Text style={styles.sectionItem}>{item}</Text>}
-                                renderSectionHeader={({section}) => (
+                                renderSectionHeader={({ section }) => (
                                     <Text style={styles.sectionHeader}>{section.title}</Text>
-                                  )}
+                                )}
                             />
-
-                            <ButtonPrimary
+                            <ButtonSecondary
                                 title='Close'
                                 onPress={() => setModalVisible(!modalVisible)}>
-                            </ButtonPrimary>
+                            </ButtonSecondary>
                         </View>
                     </View>
                 </Modal>
