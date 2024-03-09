@@ -74,9 +74,9 @@ export function useSignUp() {
                     payload: { user: responseJson.data },
                 }); //update authContext with new user data
                 if (roleName == "service_provider") {
-                    navigate('/onboarding/serviceprovider');
+                    navigate("/onboarding/serviceprovider");
                 } else {
-                    navigate('/onboarding/tenant');
+                    navigate("/onboarding/tenant");
                 }
             } else {
                 setIsLoading(false);

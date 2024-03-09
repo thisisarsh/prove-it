@@ -5,10 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../styles/pages/addProperty.css";
-
 
 export function AgreementSubmitCluster() {
     const { state } = useAuthContext();
@@ -26,21 +25,20 @@ export function AgreementSubmitCluster() {
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [lateFee, setLateFee] = useState<string>("");
 
-    const TENANT_ID = searchParams.get('id');
+    const TENANT_ID = searchParams.get("id");
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [SuccessModalMessage, setSuccessModalMessage] = useState("");
-    const handleShowSuccessModal = (errorMessage : string) => {
+    const handleShowSuccessModal = (errorMessage: string) => {
         setSuccessModalMessage(errorMessage);
         setShowSuccessModal(true);
     };
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorModalMessage, setErrorModalMessage] = useState("");
-    const handleShowErrorModal = (errorMessage : string) => {
+    const handleShowErrorModal = (errorMessage: string) => {
         setErrorModalMessage(errorMessage);
         setShowErrorModal(true);
     };
-
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement>,
@@ -51,15 +49,19 @@ export function AgreementSubmitCluster() {
     };
 
     const handleDateInput = (
-        e: React.ChangeEvent<HTMLInputElement>, 
-        setter: React.Dispatch<React.SetStateAction<string>>) => {
+        e: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
         const inputValue = e.target.value;
-        
-        if (inputValue === '' || (parseInt(inputValue) >= 1 && parseInt(inputValue) <= 29)) {
+
+        if (
+            inputValue === "" ||
+            (parseInt(inputValue) >= 1 && parseInt(inputValue) <= 29)
+        ) {
             setter(inputValue);
         } else {
             // Display error message or handle invalid input here
-            console.error('Number must be in range 1 to 29');
+            console.error("Number must be in range 1 to 29");
         }
     };
 
@@ -74,11 +76,11 @@ export function AgreementSubmitCluster() {
             rentDueDate: rentDueDate,
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
-            lateFee: lateFee
+            lateFee: lateFee,
         };
-        
+
         const queryParams = new URLSearchParams({
-            userId: TENANT_ID !== null ? TENANT_ID : ''
+            userId: TENANT_ID !== null ? TENANT_ID : "",
         }).toString();
 
         fetch(`${window.config.SERVER_URL}/agreement/submit?${queryParams}`, {
@@ -89,24 +91,27 @@ export function AgreementSubmitCluster() {
             },
             body: JSON.stringify(submitJSON),
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((responseJson) => {
-            if (responseJson.isSuccess) {
-                handleShowSuccessModal(responseJson.message);
-            } else if (!responseJson.isSuccess) {
-                handleShowErrorModal(responseJson.message);
-            }
-        })
-        .catch((error) => console.error("Error updating data:", error));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((responseJson) => {
+                if (responseJson.isSuccess) {
+                    handleShowSuccessModal(responseJson.message);
+                } else if (!responseJson.isSuccess) {
+                    handleShowErrorModal(responseJson.message);
+                }
+            })
+            .catch((error) => console.error("Error updating data:", error));
     };
 
     const SuccessModalContent = (
-        <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
+        <Modal
+            show={showSuccessModal}
+            onHide={() => setShowSuccessModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -114,7 +119,13 @@ export function AgreementSubmitCluster() {
                 <p>{SuccessModalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {setShowSuccessModal(false); navigate("/ho/tenants");}}>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        setShowSuccessModal(false);
+                        navigate("/ho/tenants");
+                    }}
+                >
                     Close
                 </Button>
             </Modal.Footer>
@@ -130,7 +141,10 @@ export function AgreementSubmitCluster() {
                 <p>{errorModalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                <Button
+                    variant="secondary"
+                    onClick={() => setShowErrorModal(false)}
+                >
                     Close
                 </Button>
             </Modal.Footer>
@@ -139,10 +153,8 @@ export function AgreementSubmitCluster() {
 
     return (
         <div className=" main_addProperty">
-
             <div className="forms">
                 <Form>
-
                     <Form.Group controlId="rentAmount">
                         <Form.Label>Rent</Form.Label>
                         <Form.Control
@@ -226,7 +238,7 @@ export function AgreementSubmitCluster() {
                             ) => handleInputChange(e, setLateFee)}
                         />
                     </Form.Group>
-                    
+
                     <Form.Group controlId="startDate">
                         <Form.Label>Start Date</Form.Label>
                         <DatePicker

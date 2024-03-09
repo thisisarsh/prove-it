@@ -4,13 +4,12 @@ import { City, State, Zip } from "../../types";
 import { Button, Form } from "react-bootstrap";
 import SearchableDropdown from "../../components/DropDownList";
 import { useNavigate } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import "../../styles/components/onboardServiceProvider.css";
 import Spinner from "../../components/Spinner";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 
 export function ServiceProviderOnboardingCluster() {
-
     const user = useAuthContext().state.user;
 
     const [states, setStates] = useState<State[]>([]);
@@ -32,11 +31,11 @@ export function ServiceProviderOnboardingCluster() {
 
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const handleShowMessageModal = (message : string) => {
+    const handleShowMessageModal = (message: string) => {
         setModalMessage(message);
         setShowMessageModal(true);
     };
-    
+
     const navigate = useNavigate();
 
     const fetchData = useCallback(
@@ -90,7 +89,7 @@ export function ServiceProviderOnboardingCluster() {
         fetchData(url)
             .then((data) => setCitiesInState(data))
             .catch((error) => console.error("Error fetching data:", error));
-        console.log('Selected state');
+        console.log("Selected state");
         console.log(selectedState);
     };
 
@@ -129,32 +128,34 @@ export function ServiceProviderOnboardingCluster() {
             stateId: selectedState?.id,
             zipcodeId: selectedZip?.zipId,
             streetAddress: address,
-        }
+        };
         const addressValidateResponse = await fetch(
-            window.config.SERVER_URL + '/address/validate',
+            window.config.SERVER_URL + "/address/validate",
             {
-                method:"POST",
-                headers:{
-                    "Content-Type": "application/json"
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(addressValidateBody)
-            }
-        )
-        
+                body: JSON.stringify(addressValidateBody),
+            },
+        );
+
         const addressValidateJson = await addressValidateResponse.json();
         let latitude, longitude;
         if (addressValidateJson.isSuccess) {
             latitude = addressValidateJson.data.latitude;
             longitude = addressValidateJson.data.longitude;
         } else {
-            setError('Failed to validate address. Please enter a valid address')
+            setError(
+                "Failed to validate address. Please enter a valid address",
+            );
             setIsLoading(false);
             return;
         }
 
         const spDetailBody = {
             userId: user?.id,
-            company:company,
+            company: company,
             cityId: selectedCity?.cityId,
             stateId: selectedState?.id,
             countyId: selectedCity?.countyId,
@@ -163,10 +164,10 @@ export function ServiceProviderOnboardingCluster() {
             address: address,
             latitude: latitude,
             longitude: longitude,
-            perHourRate: perHourRate
-        }
+            perHourRate: perHourRate,
+        };
 
-        console.log('Posting service provider details...')
+        console.log("Posting service provider details...");
         console.log(spDetailBody);
 
         const response = await fetch(
@@ -182,15 +183,20 @@ export function ServiceProviderOnboardingCluster() {
 
         const responseJson = await response.json();
         if (responseJson.isSuccess) {
-            handleShowMessageModal('Your account creation is complete. You may now log in.');
-            navigate('/login');
+            handleShowMessageModal(
+                "Your account creation is complete. You may now log in.",
+            );
+            navigate("/login");
         } else {
             setError(responseJson.message);
         }
-    }
+    };
 
     const ModalContent = (
-        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -198,54 +204,57 @@ export function ServiceProviderOnboardingCluster() {
                 <p>{modalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        setShowMessageModal(false);
+                        navigate("/dashboard");
+                    }}
+                >
                     Close
                 </Button>
             </Modal.Footer>
         </Modal>
     );
 
-
     return (
         <div id="onboard-sp-form-container">
             <Form className="onboard-sp">
-
                 <Form.Group className="mb-2" controlId="serviceProviderCompany">
-                    <Form.Label>
-                        What is your company's name?
-                    </Form.Label>
+                    <Form.Label>What is your company's name?</Form.Label>
 
                     <Form.Control
                         placeholder="Company Name"
-                        onChange={(e) => {setCompany(e.target.value)}}
+                        onChange={(e) => {
+                            setCompany(e.target.value);
+                        }}
                     />
                 </Form.Group>
 
                 <Form.Group className="mb-2" controlId="serviceProviderRate">
-                    <Form.Label>
-                        What is your hourly rate? (USD/hr)
-                    </Form.Label>
+                    <Form.Label>What is your hourly rate? (USD/hr)</Form.Label>
 
                     <Form.Control
                         placeholder="Hourly Rate"
                         type="number"
                         min={0}
                         max={10000}
-                        onChange={(e) => {setPerHourRate(parseInt(e.target.value))}}
+                        onChange={(e) => {
+                            setPerHourRate(parseInt(e.target.value));
+                        }}
                     />
                 </Form.Group>
 
-
                 <Form.Group className="mb-2" controlId="serviceProviderState">
-                    <Form.Label>
-                        What state do you operate in?
-                    </Form.Label>
+                    <Form.Label>What state do you operate in?</Form.Label>
 
                     <SearchableDropdown
                         items={states}
                         onSelect={handleStateSelect}
                         placeholder={
-                            selectedState ? selectedState.name : "Select a State"
+                            selectedState
+                                ? selectedState.name
+                                : "Select a State"
                         }
                         labelKey="name"
                     />
@@ -267,27 +276,25 @@ export function ServiceProviderOnboardingCluster() {
                 </Form.Group>
 
                 <Form.Group className="mb-2" controlId="serviceProviderZip">
-                    <Form.Label>
-                        What is your company's zip code?
-                    </Form.Label>
+                    <Form.Label>What is your company's zip code?</Form.Label>
 
                     <SearchableDropdown
                         items={zipsInCity}
                         onSelect={handleZipSelect}
-                        placeholder={selectedZip ? selectedZip.code : "Enter a ZIP"}
+                        placeholder={
+                            selectedZip ? selectedZip.code : "Enter a ZIP"
+                        }
                         labelKey="code"
                     />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="serviceProviderAddress">
-                        <Form.Label>
-                            What is your company's address?
-                        </Form.Label>
+                    <Form.Label>What is your company's address?</Form.Label>
 
-                        <Form.Control
-                            placeholder="Address"
-                            onChange={e => setAddress(e.target.value)}
-                        />
+                    <Form.Control
+                        placeholder="Address"
+                        onChange={(e) => setAddress(e.target.value)}
+                    />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="serviceProviderRadius">
@@ -300,24 +307,30 @@ export function ServiceProviderOnboardingCluster() {
                         max={1000}
                         min={0}
                         placeholder="Radius (Miles)"
-                        onChange = {(e) => {setDistanceCovered(parseInt(e.target.value))}}
+                        onChange={(e) => {
+                            setDistanceCovered(parseInt(e.target.value));
+                        }}
                     />
                 </Form.Group>
 
                 <div className="d-grid">
                     {isLoading ? (
-                        <Spinner/>
+                        <Spinner />
                     ) : (
-                        <Button variant="primary" size="lg" className="submit-button" onClick={handleSubmit}>
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            className="submit-button"
+                            onClick={handleSubmit}
+                        >
                             Submit
                         </Button>
                     )}
-                    
                 </div>
 
-                {error && <ErrorMessageContainer message={error}/>}
+                {error && <ErrorMessageContainer message={error} />}
                 {ModalContent}
             </Form>
         </div>
-    )
+    );
 }

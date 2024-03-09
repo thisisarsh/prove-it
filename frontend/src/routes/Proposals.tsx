@@ -12,15 +12,14 @@ export function Proposals() {
                 onClick={() => navigate("/dashboard")}
             />
 
-            <h1>
-                Service Proposals
-            </h1>
+            <h1>Service Proposals</h1>
 
             <p>
-                Review, Reject, or approve proposals for the following service request:
+                Review, Reject, or approve proposals for the following service
+                request:
             </p>
 
-            <ProposalsCluster/>
+            <ProposalsCluster />
         </div>
     );
 }

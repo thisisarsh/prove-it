@@ -14,7 +14,7 @@ export function RequestService() {
 
             <h1>Request a Service</h1>
 
-            <RequestServiceCluster/>
+            <RequestServiceCluster />
         </div>
-    )
+    );
 }

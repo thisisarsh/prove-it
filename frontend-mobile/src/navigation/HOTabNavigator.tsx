@@ -22,13 +22,13 @@ const HomeownerTabNavigator = () => {
                 ({ route }) => ({
                         tabBarIcon: ({ focused, color, size }) => {
                         let iconName;
-            
+
                         if (route.name === 'Properties') {
                             iconName = 'building';
                         } else if (route.name === 'Profile') {
                             iconName = 'user';
                         }
-            
+
                         // You can return any component that you like here!
                         return <FontAwesome6 name={iconName} size={24} color={color} />;
                     },
@@ -39,8 +39,8 @@ const HomeownerTabNavigator = () => {
                 }
             )}
         >
-            <Tab.Screen name="Properties" component={PropertyListScreen} />
-            <Tab.Screen name="Profile" component={HomeownerProfileScreen} />
+            <Tab.Screen name="HOProperties" component={PropertyListScreen} />
+            <Tab.Screen name="HOProfile" component={HomeownerProfileScreen} />
         </Tab.Navigator>
     );
 };

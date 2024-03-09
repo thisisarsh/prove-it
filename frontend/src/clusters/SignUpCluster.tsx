@@ -4,7 +4,7 @@
  * Sends: A payload to the HT signup API endpoint
  * Receives: Token containing signup status (success/fail)
  */
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useSignUp } from "../hooks/useSignup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,7 +13,7 @@ import { FormGroup } from "../components/Forms";
 import Spinner from "../components/Spinner";
 import { Dropdown } from "react-bootstrap";
 import "../styles/components/signupCluster.css";
-import {useSearchParams} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 /**
  * Handles signup buttons, input boxes
@@ -36,15 +36,14 @@ export function SignUpCluster(props: SignUpTypeProps) {
 
     const [searchParams] = useSearchParams();
 
-
     useEffect(() => {
-        const email = searchParams.get('email');
-        const role = searchParams.get('role');
+        const email = searchParams.get("email");
+        const role = searchParams.get("role");
         if (email) {
             setEmail(decodeURIComponent(email));
         }
         if (role) {
-           handleRoleSelect(role);
+            handleRoleSelect(role);
         }
     }, [searchParams]);
 
@@ -89,11 +88,8 @@ export function SignUpCluster(props: SignUpTypeProps) {
         }
 
         if (
-            props.signupType == "invited" && (
-            !email ||
-            !password ||
-            !confirmPassword ||
-            !roleName)
+            props.signupType == "invited" &&
+            (!email || !password || !confirmPassword || !roleName)
         ) {
             console.log("Failing invited field check");
             setFrontendError("All fields must be filled out.");
