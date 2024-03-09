@@ -101,7 +101,7 @@ export function PhoneInputCluster() {
                 )}
             </Form>
 
-            {error && <ErrorMessageContainer message={error}/>}
+            {error && <ErrorMessageContainer message={error} />}
         </>
     );
 }

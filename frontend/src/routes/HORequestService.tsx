@@ -14,7 +14,7 @@ export function HORequestService() {
 
             <h1>Request a Service</h1>
 
-            <RequestHOServiceCluster/>
+            <RequestHOServiceCluster />
         </div>
-    )
+    );
 }

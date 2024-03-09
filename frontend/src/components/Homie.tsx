@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/components/homie.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComments, faTimes } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from "react";
+import "../styles/components/homie.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../hooks/useAuthContext";
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import SpeechRecognition, {
+    useSpeechRecognition,
+} from "react-speech-recognition";
 
 interface IMessage {
     id: number;
@@ -23,7 +25,7 @@ interface HomieProps {
 const Homie = ({ propertyId }: HomieProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [messages, setMessages] = useState<IMessage[]>([]);
-    const [userInput, setUserInput] = useState<string>('');
+    const [userInput, setUserInput] = useState<string>("");
     const [isThinking, setIsThinking] = useState<boolean>(false);
 
     const { state } = useAuthContext();
@@ -33,7 +35,7 @@ const Homie = ({ propertyId }: HomieProps) => {
         transcript,
         listening,
         resetTranscript,
-        browserSupportsSpeechRecognition
+        browserSupportsSpeechRecognition,
     } = useSpeechRecognition();
 
     useEffect(() => {
@@ -41,7 +43,6 @@ const Homie = ({ propertyId }: HomieProps) => {
             setUserInput(transcript);
         }
     }, [transcript]);
-
 
     const startDictation = () => {
         resetTranscript();
@@ -59,31 +60,45 @@ const Homie = ({ propertyId }: HomieProps) => {
         const messageToSend = userInput.trim();
         if (!messageToSend) return;
 
-        setUserInput('');
+        setUserInput("");
         setIsThinking(true);
 
         const userId = user?.token;
-        const userMessage: IMessage = { id: messages.length + 1, text: messageToSend, sender: userId || 'unknown' };
+        const userMessage: IMessage = {
+            id: messages.length + 1,
+            text: messageToSend,
+            sender: userId || "unknown",
+        };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
         setTimeout(async () => {
             try {
-                const response = await fetch(`${window.config.SERVER_URL}/chat-response`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sender: userId,
-                        message: messageToSend,
-                        metadata: { propertyId: propertyId },
-                    }),
-                });
+                const response = await fetch(
+                    `${window.config.SERVER_URL}/chat-response`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            sender: userId,
+                            message: messageToSend,
+                            metadata: { propertyId: propertyId },
+                        }),
+                    },
+                );
 
                 const responseData: IRasaResponse[] = await response.json();
                 responseData.forEach((botMessage) => {
-                    setMessages((prevMessages) => [...prevMessages, { id: prevMessages.length + 1, text: botMessage.text, sender: 'bot' }]);
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        {
+                            id: prevMessages.length + 1,
+                            text: botMessage.text,
+                            sender: "bot",
+                        },
+                    ]);
                 });
             } catch (error) {
-                console.error('Error sending message to Rasa:', error);
+                console.error("Error sending message to Rasa:", error);
             } finally {
                 setIsThinking(false); // Hide thinking indicator
             }
@@ -99,10 +114,11 @@ const Homie = ({ propertyId }: HomieProps) => {
 
     return (
         <div className="chatbot-container">
-            {!isOpen ?
+            {!isOpen ? (
                 <button className="chatbot-toggle" onClick={toggleChatbot}>
-                <FontAwesomeIcon icon={faComments} />
-            </button>: null}
+                    <FontAwesomeIcon icon={faComments} />
+                </button>
+            ) : null}
 
             {isOpen && (
                 <div className="chatbot-window">
@@ -114,7 +130,14 @@ const Homie = ({ propertyId }: HomieProps) => {
                     </div>
                     <div className="chat-messages">
                         {messages.map((msg) => (
-                            <div key={msg.id} className={`chat-message ${msg.sender !== 'bot' ? 'user-message' : 'bot-message'}`}>
+                            <div
+                                key={msg.id}
+                                className={`chat-message ${
+                                    msg.sender !== "bot"
+                                        ? "user-message"
+                                        : "bot-message"
+                                }`}
+                            >
                                 <div className="message-text">{msg.text}</div>
                             </div>
                         ))}
@@ -125,10 +148,34 @@ const Homie = ({ propertyId }: HomieProps) => {
                         )}
                     </div>
                     <form onSubmit={handleSubmit} className="message-form">
-                        <input type="text" value={userInput} onChange={handleChange} className="message-input" placeholder="Type or speak"/>
-                        {browserSupportsSpeechRecognition ? <><button type="button" onClick={startDictation} disabled={listening}>Start</button>
-                        <button type="button" onClick={stopDictation} disabled={!listening}>Stop</button></>: null}
-                        <button type="submit" className="send-button">Send</button>
+                        <input
+                            type="text"
+                            value={userInput}
+                            onChange={handleChange}
+                            className="message-input"
+                            placeholder="Type or speak"
+                        />
+                        {browserSupportsSpeechRecognition ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={startDictation}
+                                    disabled={listening}
+                                >
+                                    Start
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={stopDictation}
+                                    disabled={!listening}
+                                >
+                                    Stop
+                                </button>
+                            </>
+                        ) : null}
+                        <button type="submit" className="send-button">
+                            Send
+                        </button>
                     </form>
                 </div>
             )}

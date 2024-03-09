@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import { FormGroup } from "../../components/Forms";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 
 interface InviteUserProps {
     roleName: string;
@@ -37,7 +37,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
 
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const handleShowMessageModal = (message : string) => {
+    const handleShowMessageModal = (message: string) => {
         setModalMessage(message);
         setShowMessageModal(true);
     };
@@ -99,27 +99,28 @@ export default function InviteUserCluster(props: InviteUserProps) {
             },
             body: JSON.stringify(inviteUserObject),
         })
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
                     setError("Server response was not ok when inviting user");
-                    return response.json().then(json => Promise.reject(json));
+                    return response.json().then((json) => Promise.reject(json));
                 }
                 return response.json();
             })
-            .then(responseJson => {
+            .then((responseJson) => {
                 if (responseJson.isSuccess) {
-                    handleShowMessageModal("User has been invited successfully");
+                    handleShowMessageModal(
+                        "User has been invited successfully",
+                    );
                 } else {
                     setError(responseJson.message);
                 }
                 setIsLoading(false);
             })
-            .catch(err => {
-                console.error('Error:', err);
+            .catch((err) => {
+                console.error("Error:", err);
                 setError(err.message || "An error occurred");
                 setIsLoading(false);
             });
-
     };
 
     //change handler for all text inputs
@@ -132,7 +133,10 @@ export default function InviteUserCluster(props: InviteUserProps) {
     };
 
     const ModalContent = (
-        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -140,7 +144,13 @@ export default function InviteUserCluster(props: InviteUserProps) {
                 <p>{modalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {setShowMessageModal(false); navigate("/dashboard");}}>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        setShowMessageModal(false);
+                        navigate("/dashboard");
+                    }}
+                >
                     Close
                 </Button>
             </Modal.Footer>

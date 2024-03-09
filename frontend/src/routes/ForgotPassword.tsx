@@ -5,18 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ErrorMessageContainer from "../components/ErrorMessageContainer";
 import Spinner from "../components/Spinner";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 
 export function ForgotPassword() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState <string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const handleShowMessageModal = (message : string) => {
+    const handleShowMessageModal = (message: string) => {
         setModalMessage(message);
         setShowMessageModal(true);
     };
@@ -25,13 +25,16 @@ export function ForgotPassword() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(window.config.SERVER_URL + '/forgotpassword', {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
+        const response = await fetch(
+            window.config.SERVER_URL + "/forgotpassword",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
             },
-            body: JSON.stringify({email})
-        });
+        );
         if (!response.ok) {
             setError(response.statusText);
             setIsLoading(false);
@@ -42,15 +45,18 @@ export function ForgotPassword() {
         if (responseJson.isSuccess) {
             handleShowMessageModal(responseJson.message);
             setIsLoading(false);
-            navigate('/login');
+            navigate("/login");
         } else {
             setIsLoading(false);
             setError(responseJson.message);
         }
-    }
+    };
 
     const ModalContent = (
-        <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Error</Modal.Title>
             </Modal.Header>
@@ -58,7 +64,10 @@ export function ForgotPassword() {
                 <p>{modalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                <Button
+                    variant="secondary"
+                    onClick={() => setShowMessageModal(false)}
+                >
                     Close
                 </Button>
             </Modal.Footer>
@@ -67,33 +76,29 @@ export function ForgotPassword() {
 
     return (
         <div className="login-container">
-            <img src={htLogo} className="main-logo"/>
+            <img src={htLogo} className="main-logo" />
 
             <h1>Forgot password?</h1>
 
             <p>Enter your email below to reset your password</p>
 
             <Form>
-                <Form.Control 
+                <Form.Control
                     className="mb-4"
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 {isLoading ? (
-                    <Spinner/>
+                    <Spinner />
                 ) : (
-                    <Button 
-                    className="submit-button"
-                    onClick={handleSubmit}
-                    >
+                    <Button className="submit-button" onClick={handleSubmit}>
                         Reset Password
                     </Button>
                 )}
-                
             </Form>
 
-            {error && <ErrorMessageContainer message={error}/>}
+            {error && <ErrorMessageContainer message={error} />}
             {ModalContent}
         </div>
-    )
+    );
 }

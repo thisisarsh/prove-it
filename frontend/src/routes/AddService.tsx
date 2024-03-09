@@ -16,9 +16,12 @@ export function AddService() {
 
             <p>Fill out the information below to add a new service offering</p>
 
-            <p>For each service, indicate the typical timeline to complete the service.</p>
+            <p>
+                For each service, indicate the typical timeline to complete the
+                service.
+            </p>
 
-            <AddServiceCluster/>
+            <AddServiceCluster />
         </div>
-    )
+    );
 }
