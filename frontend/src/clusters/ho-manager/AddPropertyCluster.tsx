@@ -5,9 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { City, PropertyJSON, PropertyType, State, Zip } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import "../../styles/pages/addProperty.css";
-
 
 export function AddPropertyCluster() {
     const { state } = useAuthContext();
@@ -44,7 +43,7 @@ export function AddPropertyCluster() {
 
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorModalMessage, setErrorModalMessage] = useState("");
-    const handleShowErrorModal = (errorMessage : string) => {
+    const handleShowErrorModal = (errorMessage: string) => {
         setErrorModalMessage(errorMessage);
         setShowErrorModal(true);
     };
@@ -194,7 +193,13 @@ export function AddPropertyCluster() {
                 <p>{`You've added "${address}" to your account.`}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => {setShowModal(false); navigate("/dashboard"); }}>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        setShowModal(false);
+                        navigate("/dashboard");
+                    }}
+                >
                     Return to dashboard
                 </Button>
             </Modal.Footer>
@@ -210,7 +215,10 @@ export function AddPropertyCluster() {
                 <p>{errorModalMessage}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                <Button
+                    variant="secondary"
+                    onClick={() => setShowErrorModal(false)}
+                >
                     Close
                 </Button>
             </Modal.Footer>

@@ -14,9 +14,12 @@ export function RequestQuote() {
 
             <h1>Request a Quote</h1>
 
-            <p>Request a quote from a public or private service provider for the following service request:</p>
+            <p>
+                Request a quote from a public or private service provider for
+                the following service request:
+            </p>
 
-            <RequestQuoteCluster/>
+            <RequestQuoteCluster />
         </div>
-    )
+    );
 }

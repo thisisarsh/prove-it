@@ -4,6 +4,7 @@ import Home from '../screens/Home';
 import Login from '../screens/Login';
 import HomeownerDrawerNavigator from "./HODrawerNavigator";
 import TenantDrawerNavigator from "./TenantDrawerNavigator";
+import SPDrawerNavigator from "./SPDrawerNavigator";
 import ServiceRequest from "../screens/tenant/ServiceRequest";
 // import ServiceProviderDrawerNavigator from "./SPDrawerNavigator";
 
@@ -12,13 +13,15 @@ const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Login" component={Login} />
+        <Stack.Navigator
+            screenOptions={{headerShown: false}}
+        >
+            <Stack.Screen name="Home" component={Home} options={{gestureEnabled: false}} />
+            <Stack.Screen name="Login" component={Login} options={{gestureEnabled: false}} />
             <Stack.Screen name="HomeownerDashboard" component={HomeownerDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="TenantDashboard" component={TenantDrawerNavigator} options={{ headerShown: false }}/>
+            <Stack.Screen name="SPDashboard" component={SPDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="TenantServiceRequest" component={ServiceRequest}/>
-            {/*<Stack.Screen name="ServiceProviderDashboard" component={ServiceProviderDrawerNavigator} />*/}
         </Stack.Navigator>
     );
 }

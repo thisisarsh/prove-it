@@ -3,14 +3,14 @@ import { useEffect } from "react";
 import { useLogout } from "../../hooks/useLogout";
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Agreement } from "../../types";
-import  Offcanvas  from 'react-bootstrap/Offcanvas';
-import Nav from 'react-bootstrap/Nav'
+import Offcanvas from "react-bootstrap/Offcanvas";
+import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 import "../../styles/pages/tenantAgreement.css";
 
@@ -54,59 +54,79 @@ export function SeeAgreementCluster() {
                 })
                 .catch((error) => {
                     console.error("Error fetching data: " + error);
-                });   
-            }
+                });
+        }
     }, [user, user?.token, agreement, isLoading]);
 
     const handleApproveAgreement = () => {
         if (user) {
             setIsLoading(true);
             const queryParams = new URLSearchParams({
-                userId: user.id
+                userId: user.id,
             }).toString();
 
-            fetch(`${window.config.SERVER_URL}/agreement/approve?${queryParams}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user?.token}`,
+            fetch(
+                `${window.config.SERVER_URL}/agreement/approve?${queryParams}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user?.token}`,
+                    },
                 },
-            })
-                .finally(() => {
-                    setIsLoading(false);
-                });
+            ).finally(() => {
+                setIsLoading(false);
+            });
         }
         navigate("/dashboard");
-    }
+    };
 
     console.log(isLoading);
     return (
         <div className="container">
             <div className="header">
-                <h1 className="dashboard-title" onClick={() => navigate("/dashboard")}>Dashboard Tenant</h1>
-                <button className="menu-toggle-button" onClick={toggleOffcanvas}>
-                        ☰
+                <h1
+                    className="dashboard-title"
+                    onClick={() => navigate("/dashboard")}
+                >
+                    Dashboard Tenant
+                </h1>
+                <button
+                    className="menu-toggle-button"
+                    onClick={toggleOffcanvas}
+                >
+                    ☰
                 </button>
             </div>
 
             {/* Nav Panel */}
-            <Offcanvas show={isOffcanvasOpen} onHide={toggleOffcanvas} placement="end">
+            <Offcanvas
+                show={isOffcanvasOpen}
+                onHide={toggleOffcanvas}
+                placement="end"
+            >
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>View Agreement</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                <div className="nav-container">
-                    <Nav.Link onClick={() => navigate("/dashboard")}>Dashboard</Nav.Link>
-                </div>
-                    <button className="logout-button" onClick={logout}>Log out</button>
+                    <div className="nav-container">
+                        <Nav.Link onClick={() => navigate("/dashboard")}>
+                            Dashboard
+                        </Nav.Link>
+                    </div>
+                    <button className="logout-button" onClick={logout}>
+                        Log out
+                    </button>
                 </Offcanvas.Body>
             </Offcanvas>
-        
+
             <div className="main_agreement">
                 {agreement?.status != "not found" ? (
                     <Form>
                         <Form.Group as={Row} controlId="rent">
-                            <Form.Label column sm="5">Rent</Form.Label>
+                            <Form.Label column sm="5">
+                                Rent
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="text"
@@ -118,7 +138,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="securityDeposit">
-                            <Form.Label column sm="5">Security Deposit</Form.Label>
+                            <Form.Label column sm="5">
+                                Security Deposit
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="text"
@@ -130,7 +152,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="lateFee">
-                            <Form.Label column sm="5">Late Fee</Form.Label>
+                            <Form.Label column sm="5">
+                                Late Fee
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="number"
@@ -142,7 +166,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="rentDueDate">
-                            <Form.Label column sm="5">Rent Due Date</Form.Label>
+                            <Form.Label column sm="5">
+                                Rent Due Date
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="number"
@@ -154,7 +180,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="startDate">
-                            <Form.Label column sm="5">Start Date</Form.Label>
+                            <Form.Label column sm="5">
+                                Start Date
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="string"
@@ -166,7 +194,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="endDate">
-                            <Form.Label column sm="5">End Date</Form.Label>
+                            <Form.Label column sm="5">
+                                End Date
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="string"
@@ -178,7 +208,9 @@ export function SeeAgreementCluster() {
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="status">
-                            <Form.Label column sm="5">Status</Form.Label>
+                            <Form.Label column sm="5">
+                                Status
+                            </Form.Label>
                             <Col sm="5">
                                 <Form.Control
                                     type="string"
@@ -199,8 +231,7 @@ export function SeeAgreementCluster() {
                             </Button>
                         ) : (
                             <p>Agreement is already approved</p>
-                        )
-                        }
+                        )}
                         <Link to="/dashboard" className="goBackLink">
                             <Button
                                 variant="outline-primary"
@@ -213,22 +244,25 @@ export function SeeAgreementCluster() {
                     </Form>
                 ) : (
                     <h1>Agreement haven't been submitted yet!</h1>
-                )
-            }
-            </div>    
+                )}
+            </div>
 
-                {/* Footer */}
-                <footer className="agreement-footer">
+            {/* Footer */}
+            <footer className="agreement-footer">
                 <div className="footer-content">
-                    <p>© {new Date().getFullYear()} HomeTrumpeter. All rights reserved.</p>
+                    <p>
+                        © {new Date().getFullYear()} HomeTrumpeter. All rights
+                        reserved.
+                    </p>
                     <div className="footer-links">
-                        <a onClick={() => navigate("/privacy")}>Privacy Policy</a>
+                        <a onClick={() => navigate("/privacy")}>
+                            Privacy Policy
+                        </a>
                         <a onClick={() => navigate("/tos")}>Terms of Service</a>
                         <a onClick={() => navigate("/contact")}>Contact Us</a>
                     </div>
                 </div>
-                </footer>
+            </footer>
         </div>
     );
-
 }

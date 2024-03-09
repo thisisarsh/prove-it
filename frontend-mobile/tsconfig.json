@@ -8,6 +8,7 @@
     "skipLibCheck": true,
   },
   "include": [
+    "App.tsx",
     "src",
     "declarations.d.ts"
   ]

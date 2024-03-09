@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from '@react-navigation/native';
-import { User } from "../../types"
+import { StackNavigationProp } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {StackNavigationProp} from "@react-navigation/stack";
 
 import {config} from "../../config";
+import { User } from "../../types"
 
 type RootStackParamList = {
     DashboardOwner: undefined;
@@ -14,7 +14,6 @@ type RootStackParamList = {
     DashboardService: undefined;
     HomeownerDashboard: undefined;
 };
-
 
 export function useLogin() {
     const [error, setError] = useState("");
@@ -60,7 +59,7 @@ export function useLogin() {
                         screenName = "TenantDashboard";
                         break;
                     case "service_provider":
-                        screenName = "DashboardService";
+                        screenName = "SPDashboard";
                         break;
                     default:
                         throw new Error(`No dashboard route for user's role of ${user.role?.role}`);

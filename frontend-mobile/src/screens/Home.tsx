@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import Text from '../components/Text';
+import { View, Image, StyleSheet, ScrollView, Linking, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
+import Text from '../components/Text';
+import Footer from '../components/Footer';
+import ButtonPrimary from '../components/ButtonPrimary';
 
 import proveitLogo from '../../assets/prove-it-logo-200.png';
-import htLogo from '../../assets/ht-logo.svg';
-import htFullAppsetGraphic from '../../assets/ht-appset-full.png';
+import htAppsetFull from '../../assets/ht-appset-full.png';
 import CustomButton from "../components/CustomButton";
+import { COLOURS, SIZES, FONTWEIGHT } from '../components/Theme';
 
 type RootStackParamList = {
     Login: undefined;
@@ -31,28 +33,29 @@ function Home() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.logoContainer}>
-                <TouchableOpacity onPress={() => {}}>
-                    <Image source={htLogo} style={styles.logo} />
-                </TouchableOpacity>
-                <Image source={proveitLogo} style={styles.logo} />
-            </View>
 
-            <View style={styles.hr} />
+            <ScrollView>
 
-            <View style={styles.mainContainer}>
-                <View style={styles.mainLeft}>
-                    <Text>
+                <View style={styles.logoContainer}>
+                    <Image source={proveitLogo} style={styles.logo} />
+                    <Text style={[styles.text, {fontSize: SIZES.h1, marginTop: 0, letterSpacing: 4}]}>Prove IT</Text>
+                    <Text style={[styles.text, {fontSize: SIZES.p, textAlign: 'center'}]}>
                         Prove IT by HomeTrumpeter works for you to make property management easier!
                     </Text>
-                    <Image source={htFullAppsetGraphic} style={styles.graphic} />
                 </View>
-                <View style={styles.mainRight}>
-                    <Text>Ready to get started?</Text>
-                    <CustomButton title="Log in" onPress={handleLogIn} />
-                    <CustomButton title="Sign up" onPress={handleSignUp} />
+
+                <View style={styles.hr} />
+
+                <View style={styles.mainContainer}>
+                    <Text style={styles.text}>Ready to get started?</Text>
+                    <ButtonPrimary title="Log in" onPress={handleLogIn} style={styles.button} />
+                    <ButtonPrimary title="Sign up" onPress={handleSignUp} style={styles.button} />
                 </View>
-            </View>
+
+            </ScrollView>
+            <Footer>
+                <Text style={{color:'white'}} onPress={() => Linking.openURL('https://hometrumpeter.com/')}>HomeTrumpeter LLC</Text>
+            </Footer>
         </View>
     );
 }
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     logoContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -72,30 +75,37 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         resizeMode: 'contain',
+        marginTop: '20%'
+    },
+    text: {
+        marginTop: 20,
+        marginBottom: 20,
     },
     hr: {
         height: 1,
-        backgroundColor: 'gray',
-        width: '80%',
+        backgroundColor: 'black',
+        width: '100%',
         marginVertical: 20,
     },
     mainContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    mainLeft: {
-        flex: 1,
+        flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
     },
-    mainRight: {
-        flex: 1,
-        alignItems: 'center',
+    button: {
+        minWidth: '50%',
+        minHeight: '5%',
+        marginVertical: 10
     },
     graphic: {
         width: 200,
         height: 200,
         resizeMode: 'contain',
     },
+
+    footerText: {
+        color: 'white'
+    }
 });
 
 export default Home;

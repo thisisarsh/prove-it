@@ -1,15 +1,19 @@
-import { View, Text, StyleSheet } from "react-native";
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import React from "react";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-type SettingsProps = {
-    navigation: NavigationProp<ParamListBase>;
-};
+import ButtonPrimary from '../components/ButtonPrimary';
+import { useLogout } from '../hooks/useLogout';
 
-const Settings: React.FC<SettingsProps> = ({ navigation }) => {
+function Settings() {
+    const { logout } = useLogout();
+
+    const handleLogOut = () => {
+        logout();
+    }
+
     return (
         <View style={styles.container}>
-            <Text>Settings</Text>
+            <ButtonPrimary title='Log Out' onPress={handleLogOut}></ButtonPrimary>
         </View>
     );
 };
@@ -21,4 +25,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
 export default Settings;

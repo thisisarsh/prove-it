@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { User } from "../types"
+import { User } from "../types";
 export function useLogin() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ export function useLogin() {
         const serverAddress = window.config.SERVER_URL;
 
         const LOGIN_LINK = serverAddress + "/login";
-        console.log(serverAddress)
+        console.log(serverAddress);
         console.log(LOGIN_LINK);
 
         // API call
@@ -33,20 +33,20 @@ export function useLogin() {
         // Handle BAD/GOOD response
         if (response.status === 200) {
             setIsLoading(false);
-            console.log("Login success")
-            const user : User = json.user;
-            localStorage.setItem("user", JSON.stringify(user))
+            console.log("Login success");
+            const user: User = json.user;
+            localStorage.setItem("user", JSON.stringify(user));
             dispatch({ type: "LOGIN", payload: { user } });
-            
+
             if (user.phoneVerified && user.role?.role) {
-                navigate('/dashboard');
+                navigate("/dashboard");
             } else if (user.phoneVerified) {
-                navigate('/setrole');
+                navigate("/setrole");
             } else {
-                navigate('/verifyphone');
+                navigate("/verifyphone");
             }
         } else {
-            console.log("Login failure")
+            console.log("Login failure");
             setIsLoading(false);
             setError(json.message);
         }
