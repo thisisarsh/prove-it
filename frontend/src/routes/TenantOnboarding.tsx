@@ -1,4 +1,4 @@
-import TenantOnboardingCluster from "../clusters/TenantOnboardingCluster";
+import TenantOnboardingCluster from "../clusters/tenant/TenantOnboardingCluster";
 
 export function TenantOnboarding() {
     return (
@@ -11,6 +11,7 @@ export function TenantOnboarding() {
             <h1>Tenant Onboarding</h1>
 
             <p>Let's get to know you! We have just a few questions.</p>
+            <p></p>
             <TenantOnboardingCluster />
         </div>
     );

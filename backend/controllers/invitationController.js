@@ -7,11 +7,11 @@ const HT_QA_API = "https://apiqa.hometrumpeter.com";
 const INVITE_USER_LINK = HT_QA_API + "/user/invite";
 
 const clean = (dirty) => {
-    sanitizeHtml(dirty, {
+    return sanitizeHtml(dirty, { // Sanitize inputs to prevent XSS attacks
         allowedTags: [],
         allowedAttributes: {}
-    }
-)};
+    });
+};
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -53,14 +53,14 @@ exports.inviteUser = (req, res) => {
     // INVITE_USER_LINK will generate user id and store the invite user in HT database
     // sendEmail() will send the email through ProveIT system and redirect the user back to ProveIT system.
 
-    //sanitization of input
-    const firstName = sanitizeHtml(req.body.firstName);
-    const lastName = sanitizeHtml(req.body.lastName);
-    const roleName = sanitizeHtml(req.body.roleName)
-    const propertyName = sanitizeHtml(req.body.propertyName);
-    const encodedUserEmail = encodeURIComponent(sanitizeHtml(req.body.user.email));   
+    // Sanitization of input
+    const firstName = clean(req.body.firstName);
+    const lastName = clean(req.body.lastName);
+    const roleName = clean(req.body.roleName);
+    const propertyName = clean(req.body.propertyName);
+    const encodedUserEmail = encodeURIComponent(clean(req.body.user.email)); // Ensuring the email is also sanitized before encoding
 
-    const recipient = req.body.user.email;
+    const recipient = req.body.user.email; 
     const subject = 'Invitation to Join HomeTrumpeter';
     const htmlContent = `<!DOCTYPE html>
                                 <html lang="en">
@@ -110,12 +110,13 @@ exports.inviteUser = (req, res) => {
                                         </div>
                                         <div class="content">
                                             <p>Hello ${firstName} ${lastName},</p>
-                                            <p>You have been invited to join as a ${req.body.roleName} for ${req.body.propertyName} at HomeTrumpeter.</p>
-                                            <a href="${process.env.FRONT_URL}/signup/invited?email=${encodeURIComponent(req.body.user.email)}&role=${req.body.roleName}" class="button">Join Now</a>
+                                            <p>You have been invited to join as a ${roleName} for ${propertyName} at HomeTrumpeter.</p>
+                                            <a href="${process.env.FRONT_URL}/signup/invited?email=${encodedUserEmail}&role=${roleName}" class="button">Join Now</a>
                                         </div>
                                     </div>
                                 </body>
                                 </html>`;
+
 
 
     delete req.body.propertyName;

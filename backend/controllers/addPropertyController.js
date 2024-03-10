@@ -27,6 +27,8 @@ exports.state = (req, res) => {
     axios.get(STATE_LINK, { 'headers': HEADERS })
     .then(response => {
       // Handle the data from the API response
+        console.log("HOMEOWNER GET ALL STATE url:" + STATE_LINK);
+        //console.log(response.data);
         res.send(response.data.data);
     })
     .catch(error => {
@@ -41,6 +43,8 @@ exports.city = (req, res) => {
     requestedStateId = req.query.stateId;
     axios.get(CITY_LINK + requestedStateId,{ 'headers': HEADERS })
     .then(response => {
+      console.log("HOMEOWNER GET ALL CITY FROM STATE ID:" + requestedStateId);
+      //console.log(response.data);
       // Handle the data from the API response
         const rawData = response.data;
         cityData = rawData.data;
@@ -64,6 +68,8 @@ exports.zip = (req, res) => {
     axios.get(ZIP_LINK + req.query.cityId,{ 'headers': HEADERS })
     .then(response => {
       // Handle the data from the API response
+        console.log("HOMEOWNER GET ZIP FROM CITY ID:" + req.query.cityId);
+        //console.log(response.data);
         const rawData = response.data;
         zipData = rawData.data;
         //console.log(zipData)
@@ -91,8 +97,10 @@ exports.addProperty = (req, res) => {
     axios.post(ADD_PROPERTY_LINK, propertyObject,{ 'headers': addPropertyHeaders })
     .then(response => {
       // Handle the data from the API response
+        console.log("HOMEOWNER ADD PROPERTY USING OBJECT" + propertyObject);
+        //console.log(response.data);
         const rawData = response.data;
-        console.log(rawData);
+        
         if (rawData.isSuccess){
           // Validate address
           axios.get(OWNED_PROPERTIES_LINK, {'headers': addPropertyHeaders})
@@ -121,18 +129,20 @@ exports.addProperty = (req, res) => {
               applicationFeeOnRent: propertyData.applicationFeeOnRent,
               registrationFee: propertyData.registrationFee
             }
-            console.log("PROPERTY DATA");
-            console.log(validatePropertyJSON);
+            //console.log("PROPERTY DATA");
+            //console.log(validatePropertyJSON);
             //post propertyData to validate street address
             axios.post(VALIDATE_PROPERTY_LINK, validatePropertyJSON,{ 'headers': addPropertyHeaders })
             .then(response => {
-              console.log(response.data);
+              console.log("HOMEOWNER VALIDATE PROPERTY USING OBJECT:" + validatePropertyJSON);
+              //console.log(response.data);
               if (response.data.isSuccess){
                 res.send(response.data);
               } else if (!response.data.isSuccess){
                 //delete invalid property
                 axios.delete(DELETE_PROPERTY_LINK + validatePropertyJSON.id, { 'headers': addPropertyHeaders })
                 .then(response => {
+                  console.log("HOMEOWNER DELETE UNVALIDATED PROPERTY FROM ID:" +  validatePropertyJSON.id)
                   console.log(response.data);
                 })
                 .catch(error => {
@@ -169,8 +179,9 @@ exports.getPropertyTypes = (req,res) => {
   propertyTypesHeaders.Authorization = req.headers.authorization ?? null;
 
   axios.get(PROPERTY_TYPE_LINK, {'headers': propertyTypesHeaders}).then(response => {
+    console.log("HOMEOWNER GET PROPERTY TYPE URL:" + PROPERTY_TYPE_LINK);
+    //console.log(response.data);
     const rawData = response.data;
-    //console.log(rawData);
     const refinedData = rawData.data.map(item => ({
       name: item.type,
       propertyTypeId: item.id
@@ -182,6 +193,7 @@ exports.getPropertyTypes = (req,res) => {
 exports.validateAddress = (req, res) => {
   axios.post(VALIDATE_PROPERTY_LINK, req.body, {'headers': HEADERS})
   .then(response => {
+    console.log("HOMEOWNER VALIDATE PROPERTY RESPONSE:")
     console.log(response.data);
     res.send(response.data);
   })

@@ -64,7 +64,9 @@ export function LoginCluster() {
             }}
         >
             {/* Message to user from previous page */}
-            {loginMessage && <p className="login-page-message">{loginMessage}</p>}
+            {loginMessage && (
+                <p className="login-page-message">{loginMessage}</p>
+            )}
 
             <FormGroup
                 label="Email address"
@@ -91,7 +93,10 @@ export function LoginCluster() {
                     label="Remember me"
                     onChange={handleToggleRemember}
                 />
-                <a className="navigate-link" onClick={() => navigate('/forgot-password')}>
+                <a
+                    className="navigate-link"
+                    onClick={() => navigate("/forgot-password")}
+                >
                     Forgot password?
                 </a>
             </div>

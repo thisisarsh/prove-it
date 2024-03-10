@@ -11,24 +11,22 @@ const SET_ROLE_LINK = "https://apiqa.hometrumpeter.com/user/set-role";
 const INVITED_SIGNUP_LINK = "https://apiqa.hometrumpeter.com/user/invited/signup";
 const TENANT_SURVEY_LINK = "https://apiqa.hometrumpeter.com/customer/tenant/signup";
 const SP_DETAIL_LINK = "https://apiqa.hometrumpeter.com/customer/invited/sp-detail";
-const FORGOT_PASSWORD_LINK = "https://apiqa.hometrumpeter.com/user/forgot/password"
+const FORGOT_PASSWORD_LINK = "https://apiqa.hometrumpeter.com/user/forgot/password" 
 
 //process.env.API_TOKEN
 const HEADERS = {
-  'xck': process.env.API_TOKEN,
-  'Content-Type': 'application/json', 
+    'xck': process.env.API_TOKEN,
+    'Content-Type': 'application/json', 
 };
 
 exports.login = (req, res) => {
-  //console.log(HEADERS);
-  //console.log(req.body);
-  axios.post(LOGIN_API, req.body, { 'headers': HEADERS })
-  .then(response => {
+    axios.post(LOGIN_API, req.body, { 'headers': HEADERS })
+    .then(response => {
     // Handle the data from the API response
-    //console.log(response.data.isSuccess === true);
-
-    if(!response.data.isSuccess) {
-      return res.status(401).send({
+    console.log("LOGIN RESPONSE:");
+    console.log(response.data);
+      if(!response.data.isSuccess) {
+        return res.status(401).send({
         accessToken: null,
         message: response.data.message ?? "Invalid Username or Password"
       });
@@ -54,10 +52,10 @@ exports.login = (req, res) => {
 }
 
 exports.signup = (req, res) => {
-  console.log(req.body);
   axios.post(SIGNUP_API, req.body, { 'headers': HEADERS })
   .then(response => {
     // Handle the data from the API response
+    console.log("SIGNUP RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -69,7 +67,6 @@ exports.signup = (req, res) => {
 }
 
 exports.contactsend = (req, res) => {
-  console.log(req.body);
 
   let contactHeaders = JSON.parse(JSON.stringify(HEADERS));
   contactHeaders.Authorization = req.body.Authorization;
@@ -77,6 +74,7 @@ exports.contactsend = (req, res) => {
   axios.post(SEND_CONTACT_LINK, req.body, { 'headers': contactHeaders })
   .then(response => {
     // Handle the data from the API response
+    console.log("SEND CONTACT RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -88,7 +86,6 @@ exports.contactsend = (req, res) => {
 }
 
 exports.contactverify = (req, res) => {
-  console.log(req.body);
 
   let contactHeaders = JSON.parse(JSON.stringify(HEADERS));
   contactHeaders.Authorization = req.body.Authorization;
@@ -96,6 +93,7 @@ exports.contactverify = (req, res) => {
   axios.post(CONTACT_VERIFY_LINK, req.body, { 'headers': contactHeaders })
   .then(response => {
     // Handle the data from the API response
+    console.log("CONTACT VERIFY RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -107,7 +105,6 @@ exports.contactverify = (req, res) => {
 }
 
 exports.setRole = (req, res) => {
-  console.log(req.body);
 
   let setRoleHeaders = JSON.parse(JSON.stringify(HEADERS));
   setRoleHeaders.Authorization = req.body.Authorization;
@@ -115,6 +112,7 @@ exports.setRole = (req, res) => {
 
   axios.post(SET_ROLE_LINK, setRoleBody, { 'headers': setRoleHeaders })
   .then(response => {
+    console.log("SET ROLE RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -125,10 +123,10 @@ exports.setRole = (req, res) => {
 }
 
 exports.invitedSignup = (req, res) => {
-  console.log(req.body);
 
   axios.post(INVITED_SIGNUP_LINK, req.body, {headers: HEADERS})
   .then(response => {
+    console.log("INVITED SIGNUP RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -139,10 +137,10 @@ exports.invitedSignup = (req, res) => {
 }
 
 exports.tenantSurvey = (req, res) => {
-  console.log(req.body);
 
   axios.post(TENANT_SURVEY_LINK, req.body, {headers:HEADERS})
   .then(response => {
+    console.log("TENANT SURVEY RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })
@@ -173,6 +171,7 @@ exports.spDetail = (req, res) => {
 
   axios.post(SP_DETAIL_LINK, SP_DETAIL_BODY, {headers:HEADERS})
   .then(response => {
+    console.log("SERVICE PROVIDER DETAIL RESPONSE:");
     console.log(response.data);
     res.send(response.data)
   })
@@ -183,10 +182,10 @@ exports.spDetail = (req, res) => {
 }
 
 exports.forgotPassword = (req, res) => {
-  console.log(req.body);
 
   axios.post(FORGOT_PASSWORD_LINK, req.body, {headers:HEADERS})
   .then(response => {
+    console.log("FORGOT PASSWORD RESPONSE:");
     console.log(response.data);
     res.send(response.data);
   })

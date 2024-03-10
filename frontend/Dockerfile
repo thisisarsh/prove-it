@@ -1,8 +1,5 @@
 FROM node:18-alpine
 
-ARG BUILD_ENV=prod
-ENV ENV_VAR=$BUILD_ENV
-
 ARG VITE_SERVER
 ENV VITE_SERVER=$VITE_SERVER
 
@@ -12,21 +9,11 @@ WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app/
 
-#RUN if [ "$ENV_VAR" = "dev" ]; then \
-#        npm install; \
-#    elif [ "$ENV_VAR" = "prod" ]; then \
-#        npm install --production; \
-#    else \
-#        echo "Invalid value for ENV_VAR"; exit 1; \
-#    fi
-
 RUN npm install
 
 RUN npm install -g serve
 
 COPY . /usr/src/app
-
-RUN echo "ENV_VAR is set to $ENV_VAR"
 
 RUN npx vite build
 

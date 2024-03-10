@@ -15,6 +15,8 @@ exports.getServiceProvider = (req, res) => {
 
     axios.get(GET_SERVICE_PROVIDER, {'headers': getServiceProviderHeaders})
     .then(response => {
+        console.log("HOMEOWNER GET SERVICE PROVIDER RESPONSE:");
+        console.log(response.data);
         if (response.data?.isSuccess) {
             console.log("RESPONSE");
             //console.log(response.data.data);

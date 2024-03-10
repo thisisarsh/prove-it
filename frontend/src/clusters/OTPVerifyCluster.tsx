@@ -2,6 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
 import { useVerifyOTP } from "../hooks/useVerifyOTP";
+import ErrorMessageContainer from "../components/ErrorMessageContainer";
 type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 
 export function OTPVerifyCluster() {
@@ -10,10 +11,7 @@ export function OTPVerifyCluster() {
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        await verifyOTP(otp);
-        if (error) {
-            alert(error);
-        }
+        verifyOTP(otp);
     };
 
     function handleOTPChange(e: React.ChangeEvent<FormControlElement>) {
@@ -61,6 +59,8 @@ export function OTPVerifyCluster() {
                     </Button>
                 )}
             </Form>
+
+            {error && <ErrorMessageContainer message={error} />}
         </>
     );
 }

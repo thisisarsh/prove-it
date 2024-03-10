@@ -5,6 +5,9 @@ module.exports = {
         '@babel/preset-typescript',
     ],
     plugins: [
-        'babel-plugin-transform-import-meta'
+        'babel-plugin-transform-import-meta',
+        ["@babel/plugin-transform-runtime", {
+            "regenerator": true
+        }]
     ]
 };

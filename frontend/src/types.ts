@@ -26,6 +26,7 @@ export interface User {
     refreshToken: string;
     id: string;
     phoneVerified: boolean;
+    phone: string;
     role: Role;
     spDetail: SPDetail | undefined;
     firstName: string;
@@ -38,6 +39,7 @@ export interface Role {
 }
 
 export interface ServiceRequest {
+    activityStatus: string | undefined;
     createdAt: string;
     serviceTypeId: string;
     details: string;
@@ -53,6 +55,7 @@ export interface ServiceRequest {
     id: string;   
     timeline: Timeline;
     serviceType: ServiceType;
+    job: Job | undefined;
 }
 
 export interface PropertyJSON {
@@ -95,6 +98,7 @@ export interface TenantProperty {
     name: string;
     streetAddress: string;
     owner: string;
+    id: string;
 }
 
 export interface GeneralServiceType {
@@ -274,6 +278,23 @@ export interface TenantBGResult {
     tenantId: string;
     checksResult: ChecksResult[];
     isSuccess: boolean;
+}
+
+export interface Agreement {
+    advancePayment: number;
+    rent: number,
+    lateFee: number,
+    rentDueDate: number,
+    startDate: string,
+    endDate: string,
+    securityDepositStatus: number,
+    status: string
+}
+
+export interface ContactInfo {
+    name: string;
+    email: string;
+    phone: string;
 }
 
 export type FormControlElement = HTMLInputElement | HTMLTextAreaElement;

@@ -14,19 +14,23 @@ export function Dashboard() {
     const user = useAuthContext().state.user;
 
     if (!user) {
-        throw new Error("Could not retrieve user from authContext! Please log in again.");
+        throw new Error(
+            "Could not retrieve user from authContext! Please log in again.",
+        );
     }
 
     switch (user.role.role) {
         case "owner":
+            return <DashboardOwnerCluster />;
         case "manager":
             return <DashboardOwnerCluster />;
         case "tenant":
-            return <DashboardTenantCluster/>;
+            return <DashboardTenantCluster />;
         case "service_provider":
-            return <DashboardServiceCluster/>;
+            return <DashboardServiceCluster />;
         default:
-            throw new Error("No dashboard route for user's role of " + user.role.role);
+            throw new Error(
+                "No dashboard route for user's role of " + user.role.role,
+            );
     }
-    
 }

@@ -1,15 +1,46 @@
 import { useSetRole } from "../hooks/useSetRole";
 import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { useState } from "react";
 
 export function SetRole() {
     const { setRole, isLoading, error } = useSetRole();
 
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const handleShowMessageModal = (message: string) => {
+        setModalMessage(message);
+        setShowMessageModal(true);
+    };
+
     const handleOptionClick = async (roleSelection: string) => {
         await setRole(roleSelection);
         if (error) {
-            alert(error);
+            handleShowMessageModal(error);
         }
     };
+
+    const ModalContent = (
+        <Modal
+            show={showMessageModal}
+            onHide={() => setShowMessageModal(false)}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button
+                    variant="secondary"
+                    onClick={() => setShowMessageModal(false)}
+                >
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
 
     return (
         <div className="select-role-container">
@@ -53,6 +84,7 @@ export function SetRole() {
                     </div>
                 </div>
             )}
+            {ModalContent}
         </div>
     );
 }

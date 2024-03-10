@@ -29,6 +29,9 @@ import { AddService } from "./routes/AddService";
 import { Proposals } from "./routes/Proposals";
 import { SendQuote } from "./routes/SendQuote";
 import { ApplyPublic } from "./routes/ApplyPublic";
+import { SubmitAgreement } from "./routes/SubmitAgreement";
+import { HORequestService } from "./routes/HORequestService";
+import { SeeAgreement } from "./routes/SeeAgreement";
 
 export const Router = createBrowserRouter([
     {
@@ -59,7 +62,7 @@ export const Router = createBrowserRouter([
         path: "/verifyphone",
         element: (
             <ProtectedRoute redirect="/dashboard">
-                <VerifyPhone/>
+                <VerifyPhone />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -68,7 +71,7 @@ export const Router = createBrowserRouter([
         path: "/verifyotp",
         element: (
             <ProtectedRoute redirect="/dashboard">
-                <VerifyOTP/>
+                <VerifyOTP />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -77,7 +80,7 @@ export const Router = createBrowserRouter([
         path: "/setrole",
         element: (
             <ProtectedRoute redirect="/dashboard">
-                <SetRole/>
+                <SetRole />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -86,8 +89,11 @@ export const Router = createBrowserRouter([
         //TODO: Protect this route
         path: "/addproperty",
         element: (
-            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
-                <AddProperty/>
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <AddProperty />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -95,8 +101,11 @@ export const Router = createBrowserRouter([
     {
         path: "/invite/tenant",
         element: (
-            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
-                <InviteTenant/>
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <InviteTenant />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -104,8 +113,11 @@ export const Router = createBrowserRouter([
     {
         path: "/invite/serviceprovider",
         element: (
-            <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
-                <InviteServiceProvider/>
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <InviteServiceProvider />
             </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
@@ -127,67 +139,119 @@ export const Router = createBrowserRouter([
     },
     {
         path: "/onboarding/serviceprovider",
-        element: <ServiceProviderOnboarding/>,
-        errorElement: <ErrorPage />
+        element: <ServiceProviderOnboarding />,
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/forgot-password",
-        element:<ForgotPassword/>,
-        errorElement: <ErrorPage />
+        path: "/forgot-password",
+        element: <ForgotPassword />,
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/ho/tenants",
-        element:<HOTenants/>,
-        errorElement: <ErrorPage />
+        path: "/ho/tenants",
+        element: <HOTenants />,
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/ho/service-providers",
-        element:<HOServiceProvider/>,
-        errorElement: <ErrorPage />
+        path: "/ho/service-providers",
+        element: <HOServiceProvider />,
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/request-service",
-        element: <RequestService/>,
-        errorElement: <ErrorPage />
+        path: "/request-service",
+        element: <RequestService />,
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/add-service",
-        element: 
-        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
-            <AddService/>
-        </ProtectedRoute>,
-        errorElement: <ErrorPage />
+        path: "/add-service",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["service_provider"]}
+            >
+                <AddService />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/request-quote",
-        element:
-        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
-            <RequestQuote/>
-        </ProtectedRoute>,
-        errorElement: <ErrorPage />
+        path: "/request-quote",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <RequestQuote />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/proposals",
-        element:
-        <ProtectedRoute redirect="/dashboard" validRoles={["owner", "manager"]}>
-            <Proposals/>
-        </ProtectedRoute>,
-        errorElement: <ErrorPage />
+        path: "/proposals",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <Proposals />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/send-quote",
-        element:
-        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
-            <SendQuote/>
-        </ProtectedRoute>,
-        errorElement: <ErrorPage />
+        path: "/send-quote",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["service_provider"]}
+            >
+                <SendQuote />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
     },
     {
-        path:"/apply-public",
-        element:
-        <ProtectedRoute redirect="/dashboard" validRoles={["service_provider"]}>
-            <ApplyPublic/>
-        </ProtectedRoute>,
-        errorElement: <ErrorPage />
-    }
+        path: "/apply-public",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["service_provider"]}
+            >
+                <ApplyPublic />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/submit-agreement",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <SubmitAgreement />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/ho-request-service",
+        element: (
+            <ProtectedRoute
+                redirect="/dashboard"
+                validRoles={["owner", "manager"]}
+            >
+                <HORequestService />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/tenant/see-agreement",
+        element: (
+            <ProtectedRoute redirect="/dashboard" validRoles={["tenant"]}>
+                <SeeAgreement />
+            </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+    },
 ]);

@@ -35,6 +35,8 @@ spec:
             value: ht-webserver-dev
           - name: FRONT_URL
             value: <PATCH_ME>
+          - name: HOMIE_URL
+            value: <PATCH_ME>
           - name: API_TOKEN
             valueFrom:
               secretKeyRef:
