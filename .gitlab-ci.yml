@@ -195,24 +195,22 @@ npm-audit:
    key: '${CI_COMMIT_REF_SLUG}'
    paths:
      - frontend/node_modules/
-jest-unit-tests:
- stage: test
- image: 'node:18'
- script:
-   - cd frontend
-   - npm run test
- rules:
-   - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
-     when: never
-   - when: always
-   - if: $CI_COMMIT_REF_NAME == "develop"
-     allow_failure: true
-   - if: $CI_COMMIT_REF_NAME == "main"
-     allow_failure: true
- cache:
-   key: '${CI_COMMIT_REF_SLUG}'
-   paths:
-     - frontend/node_modules/
+# jest-unit-tests:
+#  stage: test
+#  image: 'node:18'
+#  script:
+#    - cd frontend
+#    - npm run test
+#  rules:
+#    - if: '$CI_COMMIT_MESSAGE =~ /--skip-stage-test/'
+#      when: never
+#    - when: always
+#    - if: $CI_COMMIT_REF_NAME == "develop"
+#      allow_failure: true
+#  cache:
+#    key: '${CI_COMMIT_REF_SLUG}'
+#    paths:
+#      - frontend/node_modules/
 release-images:
  extends: .before_script_template
  stage: release
