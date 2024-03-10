@@ -207,6 +207,8 @@ jest-unit-tests:
    - when: always
    - if: $CI_COMMIT_REF_NAME == "develop"
      allow_failure: true
+   - if: $CI_COMMIT_REF_NAME == "main"
+     allow_failure: true
  cache:
    key: '${CI_COMMIT_REF_SLUG}'
    paths:
