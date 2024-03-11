@@ -1,7 +1,7 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import TenantTabNavigator from './TenantTabNavigator';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/Settings';
 
 const Drawer = createDrawerNavigator();
 
