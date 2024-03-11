@@ -2,73 +2,55 @@
 
 ![logo](/frontend/public/prove-it-logo-200.png)
 
-## [DOCUMENTATION](https://proveit-documentation-ht6401839-uofw-9d7499a8c37c5706bcc2952bfc.gitlab.io/)
+Prove IT is a comprehensive solution that integrates various services to streamline operations and enhance user engagement. Our ecosystem includes a robust frontend, a mobile-optimized frontend, a scalable backend, and Homie, our interactive chatbot.
 
-__(!) Please follow branch naming conventions (!)__
-\
-__(!) Please merge back into 'develop' as soon as your feature works (!)__
+## Services
 
-## Building the project
-Requirements:
-- [Node.js (LTS)](https://nodejs.org/en)
+- **Frontend**: A dynamic web interface for desktop users.
+- **Frontend Mobile**: A responsive and intuitive mobile application.
+- **Backend**: A secure and scalable server-side architecture.
+- **Homie (Chatbot)**: An AI-driven assistant for enhanced user interaction.
 
-### Setting up development environment
 
-#### Clone and install dependencies
-```
-git clone -b develop git@gitlab.com:ht6401839/uofw/proveit.git
-(cd frontend && npm install) && (cd backend && npm install)
-```
+## Environment Setup
 
-#### Run TWO terminals
- - Terminal 1 - frontend
-    ```
-    cd frontend
-    npm run dev
-    ```
- - Terminal 2 - backend
-    ```
-    cd backend
-    npm run dev
-    ```
+Before you begin, ensure you have the following installed:
 
-# File structure
-```
-/
-├── backend
-│   ├── controllers
-│   └── routes
-└── frontend
-    └── src
-        ├── components
-        ├── contexts
-        ├── hooks
-        ├── routes
-        └── styles
-```
+- **[Node.js (LTS)](https://nodejs.org/en)**: Required for JavaScript runtime to develop our Frontend and Frontend Mobile services.
+- **Python**: Essential for running the Backend service and Homie chatbot.
+- **Anaconda/Miniconda**: Recommended for managing Python environments and dependencies.
+- **Git**: Necessary for version control and collaboration and also for deployment.
 
-# Environment Variables
+### Detailed Setup Instructions
 
-You must have `.env` files in the __/backend__ and in the __/frontend__.
+Visit the specific service directories within this repository for detailed setup instructions and service-specific dependencies.
 
-```
-/
-└── backend
-    └── .env    -> place the file here
-└── frontend
-    └── .env    -> place the file here
-```
+## Deployment
 
-## Backend
-The backend .env file should contain the following text:
+### Automated Deployment
 
-```
-API_TOKEN=<insert API key>
-```
+- **GitLab CI/CD** is configured for seamless automated deployment. Pushes to the main/develop branch automatically trigger the deployment process.
 
-## Frontend
-The frontend .env file should contain the following text:
+### Manual Deployment
 
-```
-VITE_SERVER=http://localhost:5000
-```
+For manual deployments or development purposes:
+
+1. **Docker**: Ensure you have Docker installed to build and run containers locally.
+2. **OpenShift CLI**: Necessary for deploying services to OpenShift clusters.
+3. Build docker containers with the `amd64` architecture specification to ensure compatibility.
+
+
+## Documentation
+
+For a deeper dive into the architecture, APIs, and more, visit our [Prove-it documentation](https://linktodocumentation).
+
+## Authors
+
+Meet the team behind Prove IT:
+
+- [@thisisarsh](https://www.github.com/thisisarsh)
+- [@liam](https://www.github.com/liam)
+- [@xiao](https://www.github.com/xiao)
+- [@vi](https://www.github.com/vi)
+- [@usmaan](https://www.github.com/usmaan)
+- [@shadman](https://www.github.com/shadman)
