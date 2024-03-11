@@ -8,6 +8,8 @@ import SPDrawerNavigator from "./SPDrawerNavigator";
 import ServiceRequest from "../screens/tenant/ServiceRequest";
 import Homie from "../screens/tenant/Homie";
 
+import { COLOURS, SIZES } from '../components/Theme';
+
 export type AppStackParamList = {
     Home: undefined;
     Login: undefined;
@@ -19,6 +21,24 @@ export type AppStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
+const optionsTenantServiceRequest = {
+    headerShown: true,
+    headerTitle: 'Dashboard',
+    headerBackTitle: 'Back',
+    headerStyle: {backgroundColor: COLOURS.blue,},
+    headerTitleStyle: {color: 'white', fontFamily: 'Montserrat-Regular', fontSize: SIZES.h1+2},
+    headerBackTitleStyle: {color: 'white', fontFamily: 'Montserrat-Regular', fontSize: SIZES.h1},
+    headerTintColor: 'white',
+}
+const optionsHomie = {
+    headerShown: true,
+    headerTitle: 'Homie',
+    headerBackTitle: 'Back',
+    headerStyle: {backgroundColor: COLOURS.blue,},
+    headerTitleStyle: {color: 'white', fontFamily: 'Montserrat-Regular', fontSize: SIZES.h1+2},
+    headerBackTitleStyle: {color: 'white', fontFamily: 'Montserrat-Regular', fontSize: SIZES.h1},
+    headerTintColor: 'white',
+}
 
 function AppNavigator() {
     return (
@@ -30,8 +50,8 @@ function AppNavigator() {
             <Stack.Screen name="HomeownerDashboard" component={HomeownerDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="TenantDashboard" component={TenantDrawerNavigator} options={{ headerShown: false }}/>
             <Stack.Screen name="SPDashboard" component={SPDrawerNavigator} options={{ headerShown: false }}/>
-            <Stack.Screen name="TenantServiceRequest" component={ServiceRequest} options={{ headerShown: true, headerBackTitle: "Back"}}/>
-            <Stack.Screen name="Homie" component={Homie} initialParams={{ propertyId: null }} options={{ headerShown: true, headerBackTitle: "Back" }}/>
+            <Stack.Screen name="TenantServiceRequest" component={ServiceRequest} options={optionsTenantServiceRequest}/>
+            <Stack.Screen name="Homie" component={Homie} initialParams={{ propertyId: null }} options={optionsHomie}/>
         </Stack.Navigator>
     );
 }
