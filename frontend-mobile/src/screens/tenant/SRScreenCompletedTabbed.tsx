@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, Modal, SectionList } from "react-native";
+import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
+import { RefreshControl } from "react-native-gesture-handler";
+import { FontAwesome6 } from '@expo/vector-icons';
+
 import Text from '../../components/Text';
-import {NavigationProp, ParamListBase, useFocusEffect} from '@react-navigation/native';
+import ButtonPrimary from '../../components/ButtonPrimary';
+import ButtonSecondary from '../../components/ButtonSecondary';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { ServiceRequest } from "../../../types";
 import {config} from "../../../config";
-import {RefreshControl} from "react-native-gesture-handler";
+import { SIZES } from "../../components/Theme";
 
 type ServiceRequestsProps = {
     navigation: NavigationProp<ParamListBase>;
@@ -22,8 +27,10 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     const { state } = useAuthContext();
     const { user } = state;
 
-    const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [tickets, setTickets] = useState<ServiceRequest[] | null>(null);
+    const [ticketDetail, setTicketDetail] = useState<ServiceRequest | undefined>(undefined);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -62,41 +69,88 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     }
 
     const handleTicketDetailClick = (id: string) => {
-        console.log('Detail Clicked', id);
-        // navigation.navigate('TicketDetail', { ticketId: id });
+        const ticket: ServiceRequest | undefined = tickets?.filter((obj) => {
+            return obj.id === id;
+        })[0];
+        if(ticket) {
+            console.log(ticket);
+            setTicketDetail(ticket);
+            setModalVisible(true);
+        } else {
+            console.error("ERROR: cannot find ticket ", id);
+        }
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Tickets:</Text>
-            <FlatList
-                data={tickets?.filter(t => ['withdrawn', 'rejected', 'completed'].includes(t.status))}
-                renderItem={({ item }) => (
-                    <TicketItem
-                        item={item}
-                        onDetailClick={handleTicketDetailClick}
-                    />
+        <ScrollView style={styles.container}>
+            <Text style={styles.header}>Completed Tickets</Text>
+            <View style={styles.listContainer}>
+                {isLoading ? (
+                    <Text>Loading Tickets...</Text>
+                ) : (
+                    tickets?.map((item: ServiceRequest) => (
+                        <View key={item.id}>
+                            <TicketItem
+                                item={item}
+                                onDetailClick={handleTicketDetailClick}
+                            />
+                        </View>
+                    ))
                 )}
-                keyExtractor={(item) => item.id}
-                refreshControl={
-                    <RefreshControl refreshing={isLoading} onRefresh={loadData} />
-                }
-            />
-        </View>
+            </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <SectionList
+                            sections={
+                                [
+                                    {// parent? fixes change in json structure of data returned from api
+                                        title: ticketDetail?.serviceType.parent?.serviceType,
+                                        data: [
+                                            "Address: " + ticketDetail?.property.streetAddress,
+                                            "Status: " + ticketDetail?.status,
+                                            "Created on: " + ticketDetail?.createdAt,
+                                            "Timeline: " + ticketDetail?.timeline.title,
+                                            "Service: " + ticketDetail?.serviceType.serviceType,
+                                            "Detail: " + ticketDetail?.detail,
+                                        ]
+                                    }
+                                ]
+                            }
+                            renderItem={({ item }) => <Text style={styles.sectionItem}>{item}</Text>}
+                            renderSectionHeader={({ section }) => (
+                                <Text style={styles.sectionHeader}>{section.title}</Text>
+                            )}
+                        />
+                        <ButtonSecondary
+                            title='Close'
+                            onPress={() => setModalVisible(!modalVisible)}>
+                        </ButtonSecondary>
+                    </View>
+                </View>
+            </Modal>
+        </ScrollView>
     );
 };
 
 const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick }) => (
     <View style={styles.row}>
         <Text style={styles.cell}>{item.serviceType.serviceType}</Text>
+
+        {/*
         <Text style={item.status === "completed" ? styles.statusCompleted : styles.statusDanger}>
             {item.status.toUpperCase()}
         </Text>
-        <View style={styles.actions}>
-            <TouchableOpacity onPress={() => onDetailClick(item.id)} style={styles.button}>
-                <Text>Details</Text>
-            </TouchableOpacity>
-        </View>
+        */}
+
+        <ButtonPrimary title={<FontAwesome6 name='magnifying-glass' color='white' />} onPress={() => {onDetailClick(item.id)}}></ButtonPrimary>
     </View>
 );
 
@@ -140,6 +194,45 @@ const styles = StyleSheet.create({
     statusDanger: {
         // Needs style
     },
+    listContainer: {
+        padding: 10,
+        margin: 10,
+        backgroundColor: 'lightgray',
+        borderStyle: 'solid',
+        borderColor: 'black',
+        borderCurve: 'circular',
+        borderWidth: 1,
+        borderRadius: 10,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    sectionHeader: {
+        fontSize: SIZES.h1,
+        fontWeight: 'bold',
+        marginBottom: 20
+    },
+    sectionItem: {
+        fontSize: SIZES.p,
+        marginBottom: 10
+    }
 });
 
 export default ServiceRequests;

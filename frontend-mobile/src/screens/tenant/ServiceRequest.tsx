@@ -8,6 +8,8 @@ import { StyleSheet } from 'react-native';
 import {GeneralServiceType, Property, ServiceType, SpecificServiceType, Timeline} from "../../../types";
 import {config} from "../../../config";
 import {NavigationProp, ParamListBase} from "@react-navigation/native";
+import ButtonPrimary from '../../components/ButtonPrimary';
+import { SIZES } from '../../components/Theme';
 
 const SERVER_URL = config.SERVER_URL;
 
@@ -217,12 +219,11 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
                 />
             </View>
 
-
             <View style={styles.buttonContainer}>
                 {isLoading ? (
                     <ActivityIndicator />
                 ) : (
-                    <Button title="Submit" onPress={handleSubmit} />
+                    <ButtonPrimary title="Submit" onPress={handleSubmit} />
                 )}
             </View>
         </ScrollView>
@@ -249,6 +250,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         marginTop: 20,
+        marginBottom: SIZES.height * 0.1,
     },
     textInput: {
         height: 100,
@@ -275,14 +277,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
-    },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2
-    },
-    buttonClose: {
-        backgroundColor: "#2196F3",
     },
     textStyle: {
         color: "white",
