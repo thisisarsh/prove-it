@@ -44,7 +44,8 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const data = await response.json();
-            setActiveJobs(data.data.jobs);
+            if(data.data.jobs) setActiveJobs(data.data.jobs);
+            else setActiveJobs([]);
         } catch (error) {
             console.error("Error fetching data: ", error);
         } finally {
