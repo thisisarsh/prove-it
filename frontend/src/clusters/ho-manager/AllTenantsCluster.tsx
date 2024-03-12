@@ -472,6 +472,7 @@ export function AllTenantsCluster() {
                                     </Button>
                                     <Button
                                         variant="success"
+                                        className="logout-button"
                                         onClick={handleBCApprove}
                                     >
                                         Accept

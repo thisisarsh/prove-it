@@ -405,8 +405,7 @@ export function DashboardOwnerCluster() {
                                 </Nav.Link>
                                 <Nav.Link
                                     className="nav-link"
-                                    onClick={() =>
-                                        navigate("/invite/serviceprovider")
+                                    onClick={() => navigate("/invite/serviceprovider")
                                     }
                                 >
                                     Invite Service Provider
@@ -419,8 +418,7 @@ export function DashboardOwnerCluster() {
                                 </Nav.Link>
                                 <Nav.Link
                                     className="nav-link"
-                                    onClick={() =>
-                                        navigate("/ho/service-providers")
+                                    onClick={() => navigate("/ho/service-providers")
                                     }
                                 >
                                     Service Provider
