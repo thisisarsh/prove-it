@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, FlatList, ScrollView } from "react-native";
+import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
+import { RefreshControl } from "react-native-gesture-handler";
+import { FontAwesome6 } from '@expo/vector-icons';
+
 import Text from '../../components/Text';
-import {NavigationProp, ParamListBase, useFocusEffect} from '@react-navigation/native';
+import ButtonPrimary from '../../components/ButtonPrimary';
+import ButtonSecondary from '../../components/ButtonSecondary';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { ServiceRequest } from "../../../types";
 import {config} from "../../../config";
-import {RefreshControl} from "react-native-gesture-handler";
 
 type ServiceRequestsProps = {
     navigation: NavigationProp<ParamListBase>;
@@ -67,36 +71,37 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Tickets:</Text>
-            <FlatList
-                data={tickets?.filter(t => ['withdrawn', 'rejected', 'completed'].includes(t.status))}
-                renderItem={({ item }) => (
-                    <TicketItem
-                        item={item}
-                        onDetailClick={handleTicketDetailClick}
-                    />
+        <ScrollView style={styles.container}>
+            <Text style={styles.header}>Completed Tickets</Text>
+            <View style={styles.listContainer}>
+                {isLoading ? (
+                    <Text>Loading Tickets...</Text>
+                ) : (
+                    tickets?.map((item: ServiceRequest) => (
+                        <View key={item.id}>
+                            <TicketItem
+                                item={item}
+                                onDetailClick={handleTicketDetailClick}
+                            />
+                        </View>
+                    ))
                 )}
-                keyExtractor={(item) => item.id}
-                refreshControl={
-                    <RefreshControl refreshing={isLoading} onRefresh={loadData} />
-                }
-            />
-        </View>
+            </View>
+        </ScrollView>
     );
 };
 
 const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick }) => (
     <View style={styles.row}>
         <Text style={styles.cell}>{item.serviceType.serviceType}</Text>
+
+        {/*
         <Text style={item.status === "completed" ? styles.statusCompleted : styles.statusDanger}>
             {item.status.toUpperCase()}
         </Text>
-        <View style={styles.actions}>
-            <TouchableOpacity onPress={() => onDetailClick(item.id)} style={styles.button}>
-                <Text>Details</Text>
-            </TouchableOpacity>
-        </View>
+        */}
+
+        <ButtonPrimary title={<FontAwesome6 name='magnifying-glass' color='white' />} onPress={() => {onDetailClick(item.id)}}></ButtonPrimary>
     </View>
 );
 
@@ -139,6 +144,16 @@ const styles = StyleSheet.create({
     },
     statusDanger: {
         // Needs style
+    },
+    listContainer: {
+        padding: 10,
+        margin: 10,
+        backgroundColor: 'lightgray',
+        borderStyle: 'solid',
+        borderColor: 'black',
+        borderCurve: 'circular',
+        borderWidth: 1,
+        borderRadius: 10,
     },
 });
 

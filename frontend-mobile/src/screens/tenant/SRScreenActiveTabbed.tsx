@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
+import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
+import { RefreshControl } from "react-native-gesture-handler";
+import { FontAwesome6 } from '@expo/vector-icons';
+
 import Text from '../../components/Text';
-import {NavigationProp, ParamListBase, useFocusEffect} from '@react-navigation/native';
+import ButtonPrimary from '../../components/ButtonPrimary';
+import ButtonSecondary from '../../components/ButtonSecondary';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { ServiceRequest } from "../../../types";
-import {config} from "../../../config";
-import {RefreshControl} from "react-native-gesture-handler";
+import { config } from "../../../config";
 
 type ServiceRequestsProps = {
     navigation: NavigationProp<ParamListBase>;
@@ -54,7 +58,7 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
                 })
                 .then((data) => {
                     setIsLoading(false);
-                    setTickets(data.data.serviceRequests);
+                    setTickets(data.data.serviceRequests?.filter((t: ServiceRequest) => !['withdrawn', 'rejected', 'completed'].includes(t.status)));
                 })
                 .catch((error) => {
                     console.error("Error fetching data: ", error);
@@ -72,40 +76,41 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Tickets:</Text>
-            <FlatList
-                data={tickets?.filter(t => !['withdrawn', 'rejected', 'completed'].includes(t.status))}
-                renderItem={({ item }) => (
-                    <TicketItem
-                        item={item}
-                        onDetailClick={handleTicketDetailClick}
-                        onWithdrawClick={handleWithdrawClick}
-                    />
+        <ScrollView style={styles.container}>
+            <Text style={styles.header}>Active Tickets</Text>
+            <View style={styles.listContainer}>
+                {isLoading ? (
+                    <Text>Loading Active Tickets...</Text>
+                ) : (
+                    tickets?.map((item: ServiceRequest) => (
+                        <View key={item.id}>
+                            <TicketItem
+                                item={item}
+                                onDetailClick={handleTicketDetailClick}
+                                onWithdrawClick={handleWithdrawClick}
+                            />
+                        </View>
+                    ))
                 )}
-                keyExtractor={(item) => item.id}
-                refreshControl={
-                    <RefreshControl refreshing={isLoading} onRefresh={loadData} />
-                }
-            />
-        </View>
+            </View>
+        </ScrollView>
     );
 };
 
 const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick, onWithdrawClick }) => (
     <View style={styles.row}>
         <Text style={styles.cell}>{item.serviceType.serviceType}</Text>
+
+        {/*
         <Text style={item.status === "active" ? styles.statusActive : styles.statusWarning}>
             {item.status.toUpperCase()}
         </Text>
+        */}
+
         <View style={styles.actions}>
-            <TouchableOpacity onPress={() => onDetailClick(item.id)} style={styles.button}>
-                <Text>Details</Text>
-            </TouchableOpacity>
+            <ButtonPrimary title={<FontAwesome6 name='magnifying-glass' color='white' />} onPress={() => {onDetailClick(item.id)}}></ButtonPrimary>
             {item.status === "requested" && (
-                <TouchableOpacity onPress={() => onWithdrawClick(item.id)} style={[styles.button, styles.withdrawButton]}>
-                    <Text>Withdraw</Text>
-                </TouchableOpacity>
+                <ButtonPrimary title={<FontAwesome6 name='x' color='white' />} onPress={() => {onWithdrawClick(item.id)}}></ButtonPrimary>
             )}
         </View>
     </View>
@@ -150,6 +155,16 @@ const styles = StyleSheet.create({
     },
     statusWarning: {
         // Needs style
+    },
+    listContainer: {
+        padding: 10,
+        margin: 10,
+        backgroundColor: 'lightgray',
+        borderStyle: 'solid',
+        borderColor: 'black',
+        borderCurve: 'circular',
+        borderWidth: 1,
+        borderRadius: 10,
     },
 });
 
