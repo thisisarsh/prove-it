@@ -4,6 +4,8 @@ import {useAuthContext} from "../../hooks/useAuthContext";
 import {config} from "../../../config";
 import {RouteProp} from '@react-navigation/native';
 import { AppStackParamList } from "../../navigation/AppNavigator";
+import ButtonPrimary from '../../components/ButtonPrimary';
+import { SIZES } from '../../components/Theme';
 
 const SERVER_URL = config.SERVER_URL;
 
@@ -86,44 +88,42 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
         setUserInput(text);
     };
 
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0
+
     return (
-        <View style={styles.container}>
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
-                <ScrollView style={styles.messagesContainer}>
-                    {messages.map((msg) => (
-                        <View key={msg.id} style={[styles.messageBubble, msg.sender !== 'bot' ? styles.sent : styles.received]}>
-                            <Text style={styles.text} >{msg.text}</Text>
-                        </View>
-                    ))}
-                    {isThinking && (
-                        <View style={[styles.messageBubble, styles.received]}>
-                            <Text>...</Text>
-                        </View>
-                    )}
-                </ScrollView>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        value={userInput}
-                        onChangeText={handleChange}
-                        style={styles.input}
-                        placeholder="Type or speak"
-                    />
-                    {/*{browserSupportsSpeechRecognition && (*/}
-                    {/*    <>*/}
-                    {/*        <TouchableOpacity onPress={startDictation} disabled={listening} style={styles.button}>*/}
-                    {/*            <Text>Start</Text>*/}
-                    {/*        </TouchableOpacity>*/}
-                    {/*        <TouchableOpacity onPress={stopDictation} disabled={!listening} style={styles.button}>*/}
-                    {/*            <Text>Stop</Text>*/}
-                    {/*        </TouchableOpacity>*/}
-                    {/*    </>*/}
-                    {/*)}*/}
-                    <TouchableOpacity onPress={handleSubmit} style={styles.sendButton}>
-                        <Text style={styles.text}>Send</Text>
-                    </TouchableOpacity>
-                </View>
-            </KeyboardAvoidingView>
-        </View>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container} keyboardVerticalOffset={keyboardVerticalOffset}>
+            <ScrollView style={styles.messagesContainer}>
+                {messages.map((msg) => (
+                    <View key={msg.id} style={[styles.messageBubble, msg.sender !== 'bot' ? styles.sent : styles.received]}>
+                        <Text style={styles.text} >{msg.text}</Text>
+                    </View>
+                ))}
+                {isThinking && (
+                    <View style={[styles.messageBubble, styles.received]}>
+                        <Text>...</Text>
+                    </View>
+                )}
+            </ScrollView>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    value={userInput}
+                    onChangeText={handleChange}
+                    style={styles.input}
+                    placeholder="Type or speak"
+                />
+                {/*{browserSupportsSpeechRecognition && (*/}
+                {/*    <>*/}
+                {/*        <TouchableOpacity onPress={startDictation} disabled={listening} style={styles.button}>*/}
+                {/*            <Text>Start</Text>*/}
+                {/*        </TouchableOpacity>*/}
+                {/*        <TouchableOpacity onPress={stopDictation} disabled={!listening} style={styles.button}>*/}
+                {/*            <Text>Stop</Text>*/}
+                {/*        </TouchableOpacity>*/}
+                {/*    </>*/}
+                {/*)}*/}
+                <ButtonPrimary title='Send' onPress={handleSubmit}></ButtonPrimary>
+            </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: '#fff',
+        backgroundColor: '#f5f5f5',
     },
     input: {
         flex: 1,
@@ -166,18 +166,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginRight: 10,
     },
-    sendButton: {
-        padding: 10,
-    },
-    button: {
-        marginHorizontal: 4,
-        padding: 8,
-        backgroundColor: 'lightgrey',
-        borderRadius: 4,
-    },
     text: {
-        fontSize: 22,
-}
+        fontSize: SIZES.p,
+    },
 });
 
 export default Homie;
