@@ -284,6 +284,7 @@ export function AllTenantsCluster() {
     return (
         <body>
             <div className="tenant-tab-container">
+                <main>
                 <div className="header">
                     <h1
                         className="dashboard-title"
@@ -344,7 +345,7 @@ export function AllTenantsCluster() {
                     </Offcanvas.Body>
                 </Offcanvas>
                 <div className="all-tenant-container">
-                    <h1 className="dashboard-label">Tenant</h1>
+                    <h1 className="dashboard-label">Tenants</h1>
                     {isLoading ? (
                         <Spinner />
                     ) : (
@@ -365,30 +366,25 @@ export function AllTenantsCluster() {
                                         <td>{item.tenant.lastName}</td>
                                         <td>{item.tenant.email}</td>
                                         <td>{item.property}</td>
-                                        <td>
-                                            <Button
-                                                variant="primary"
-                                                size="sm"
-                                                onClick={() =>
-                                                    handleBCModalShow(
-                                                        item.tenant,
-                                                    )
-                                                }
-                                            >
-                                                Background Check
-                                            </Button>{" "}
-                                            <Button
-                                                variant="secondary"
-                                                size="sm"
-                                                onClick={() =>
-                                                    handleAgreementModalShow(
-                                                        item.tenant,
-                                                    )
-                                                }
-                                            >
-                                                Agreement
-                                            </Button>
+                                        <td className="centered-column-2">
+                                            <div className="button-container">
+                                                <Button
+                                                    variant="primary"
+                                                    size="sm"
+                                                    onClick={() => handleBCModalShow(item.tenant)}
+                                                >
+                                                    Background Check
+                                                </Button>
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => handleAgreementModalShow(item.tenant)}
+                                                >
+                                                    Agreement
+                                                </Button>
+                                            </div>
                                         </td>
+
                                     </tr>
                                 ))}
                                 <tr>
@@ -410,6 +406,7 @@ export function AllTenantsCluster() {
                         </table>
                     )}
                 </div>
+                </main>
                 {/* Footer */}
                 <footer className="dashboard-footer">
                     <div className="footer-content">
@@ -430,9 +427,8 @@ export function AllTenantsCluster() {
                         </div>
                     </div>
                 </footer>
-                <div></div>
 
-                <Modal show={bcModal} onHide={handleBCModalClose}>
+                <Modal show={bcModal} onHide={handleBCModalClose} size="lg">
                     <Modal.Header closeButton>
                         <Modal.Title>Background Check</Modal.Title>
                     </Modal.Header>
@@ -440,7 +436,7 @@ export function AllTenantsCluster() {
                         {tenantBGResult != null &&
                         Array.isArray(tenantBGResult.checksResult) ? (
                             tenantBGResult.checksResult.length > 1 ? (
-                                <>
+                                <div className="bg-info-table">
                                     <table className="property-detail-table">
                                         <thead className="dashboard-header">
                                             <tr>
@@ -465,7 +461,7 @@ export function AllTenantsCluster() {
                                             )}
                                         </tbody>
                                     </table>
-
+                                    <div className="button-container">
                                     <Button
                                         variant="info"
                                         onClick={() =>
@@ -486,7 +482,8 @@ export function AllTenantsCluster() {
                                     >
                                         Reject
                                     </Button>
-                                </>
+                                    </div>
+                                </div>
                             ) : (
                                 <h1>Background Check initiated</h1>
                             )

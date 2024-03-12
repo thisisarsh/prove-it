@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components/homie.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faTimes , faMicrophone, faMicrophoneSlash} from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../hooks/useAuthContext";
 import SpeechRecognition, {
     useSpeechRecognition,
 } from "react-speech-recognition";
+import Button from "react-bootstrap/Button";
 
 interface IMessage {
     id: number;
@@ -113,14 +114,13 @@ const Homie = ({ propertyId }: HomieProps) => {
     };
 
     return (
-        <div className="chatbot-container">
+        <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
             {!isOpen ? (
                 <button className="chatbot-toggle" onClick={toggleChatbot}>
                     <FontAwesomeIcon icon={faComments} />
                 </button>
             ) : null}
 
-            {isOpen && (
                 <div className="chatbot-window">
                     <div className="chat-header">
                         <h2>Homie</h2>
@@ -148,6 +148,16 @@ const Homie = ({ propertyId }: HomieProps) => {
                         )}
                     </div>
                     <form onSubmit={handleSubmit} className="message-form">
+                        {browserSupportsSpeechRecognition ? (
+                            <Button className="speech-button"
+                                variant={listening ? "danger" : "primary"}
+                                onClick={() => listening ? stopDictation() : startDictation()}
+                            >
+                                <FontAwesomeIcon icon={listening ? faMicrophoneSlash : faMicrophone} />
+                                {listening ? " Stop Talking" : " Start Talking"}
+                            </Button>
+                        ) : null}
+
                         <input
                             type="text"
                             value={userInput}
@@ -155,30 +165,12 @@ const Homie = ({ propertyId }: HomieProps) => {
                             className="message-input"
                             placeholder="Type or speak"
                         />
-                        {browserSupportsSpeechRecognition ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={startDictation}
-                                    disabled={listening}
-                                >
-                                    Start
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={stopDictation}
-                                    disabled={!listening}
-                                >
-                                    Stop
-                                </button>
-                            </>
-                        ) : null}
-                        <button type="submit" className="send-button">
+
+                        <Button type="submit" className="send-button">
                             Send
-                        </button>
+                        </Button>
                     </form>
                 </div>
-            )}
         </div>
     );
 };

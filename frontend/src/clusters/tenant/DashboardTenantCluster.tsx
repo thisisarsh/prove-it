@@ -181,62 +181,65 @@ export function DashboardTenantCluster() {
 
     return (
         <div className="dashboard-container">
-            <div className="header">
-                <h1
-                    className="dashboard-title"
-                    onClick={() => navigate("/dashboard")}
-                >
-                    Tenant Dashboard
-                </h1>
-                <button
-                    className="menu-toggle-button"
-                    onClick={toggleOffcanvas}
-                >
-                    ☰
-                </button>
-            </div>
-
-            {/* Nav Panel */}
-            <Offcanvas
-                show={isOffcanvasOpen}
-                onHide={toggleOffcanvas}
-                placement="end"
-            >
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Tenant Dashboard</Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                    <div className="nav-container">
-                        <Nav.Link
-                            onClick={() => navigate("/tenant/see-agreement")}
-                        >
-                            See Agreement
-                        </Nav.Link>
-                    </div>
-                    <button className="logout-button" onClick={logout}>
-                        Log out
+            <main>
+                <div className="header">
+                    <h1
+                        className="dashboard-title"
+                        onClick={() => navigate("/dashboard")}
+                    >
+                        Tenant Dashboard
+                    </h1>
+                    <button
+                        className="menu-toggle-button"
+                        onClick={toggleOffcanvas}
+                    >
+                        ☰
                     </button>
-                </Offcanvas.Body>
-            </Offcanvas>
-            {/* Property block */}
-            <div className="properties-container">
-                <h1 className="dashboard-label">Property</h1>
-                <table className="dashboard-table">
-                    <thead className="dashboard-header">
+                </div>
+
+                {/* Nav Panel */}
+                <Offcanvas
+                    show={isOffcanvasOpen}
+                    onHide={toggleOffcanvas}
+                    placement="end"
+                >
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>Tenant Dashboard</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <div className="nav-container">
+                            <Nav.Link
+                                onClick={() => navigate("/tenant/see-agreement")}
+                            >
+                                See Agreement
+                            </Nav.Link>
+                        </div>
+                        <button className="logout-button" onClick={logout}>
+                            Log out
+                        </button>
+                    </Offcanvas.Body>
+                </Offcanvas>
+                {/* Property block */}
+                <div className="properties-container">
+                    <h1 className="dashboard-label">Property</h1>
+                    <table className="dashboard-table">
+                        <thead className="dashboard-header">
                         <tr>
                             <th>Name</th>
                             <th>Address</th>
                             <th>Owner</th>
                         </tr>
-                    </thead>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
                         {isLoading ? (
-                            <td colSpan={2}>Loading Properties...</td>
+                            <tr>
+                                <td colSpan={2}>Loading Properties...</td>
+                            </tr>
                         ) : Array.isArray(properties) &&
-                          properties.length > 0 ? (
+                        properties.length > 0 ? (
                             properties.map((userProperty) => (
-                                <tr>
+                                <tr key={userProperty.name}>
                                     <td>{userProperty.name}</td>
                                     <td>{userProperty.streetAddress}</td>
                                     <td>
@@ -263,46 +266,60 @@ export function DashboardTenantCluster() {
                                 </td>
                             </tr>
                         )}
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
 
-            {ownerContact && (
-                <OwnerContactModal
-                    show={showOwnerContact}
-                    ownerContact={ownerContact}
-                    handleClose={() => {
-                        setShowOwnerContact(false);
-                    }}
-                />
-            )}
+                {ownerContact && (
+                    <OwnerContactModal
+                        show={showOwnerContact}
+                        ownerContact={ownerContact}
+                        handleClose={() => {
+                            setShowOwnerContact(false);
+                        }}
+                    />
+                )}
 
-            {/* Service Request block */}
-            <div className="service-container">
-                <h1 className="dashboard-label">Service Requests</h1>
+                {/* Service Request block */}
+                <div className="service-container">
+                    <h1 className="dashboard-label">Service Requests</h1>
 
-                <Accordion defaultActiveKey="0" style={{ paddingTop: "1rem" }}>
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Active</Accordion.Header>
-                        <Accordion.Body>
-                            <table className="dashboard-table">
-                                <thead className="dashboard-header">
+                    <Accordion defaultActiveKey="0" style={{paddingTop: "1rem"}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Active</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
                                     <tr>
                                         <th className="dashboard-header">
                                             Service
                                         </th>
-                                        <th>Request Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>
+                                            <div className="centered-column">
+                                                Request Date
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div className="centered-column">
+                                                Status
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div className="centered-column">
+                                                Actions
+                                            </div>
+                                        </th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {isLoading ? (
-                                        <td colSpan={4}>
+                                        <tr>
+                                            <td colSpan={4}>
                                             Loading Service Requests...
-                                        </td>
+                                            </td>
+                                        </tr>
                                     ) : Array.isArray(tickets) &&
-                                      tickets.length > 0 ? (
+                                    tickets.length > 0 ? (
                                         tickets
                                             .filter(
                                                 (t) =>
@@ -313,7 +330,7 @@ export function DashboardTenantCluster() {
                                                     ].includes(t.status),
                                             )
                                             .map((userTicket) => (
-                                                <tr>
+                                                <tr key={userTicket.id}>
                                                     <td>
                                                         {
                                                             userTicket
@@ -322,37 +339,41 @@ export function DashboardTenantCluster() {
                                                         }
                                                     </td>
                                                     <td>
-                                                        {userTicket.createdAt.substring(
-                                                            0,
-                                                            10,
-                                                        )}
+                                                        <div className="centered-column">
+                                                            {userTicket.createdAt.substring(
+                                                                0,
+                                                                10,
+                                                            )}
+                                                        </div>
                                                     </td>
                                                     <td>
-                                                        {userTicket.job
-                                                            ?.activityStatus ? (
-                                                            <Badge
-                                                                pill
-                                                                bg="primary"
-                                                            >
-                                                                {
-                                                                    userTicket
-                                                                        .job
-                                                                        .activityStatus
-                                                                }
-                                                            </Badge>
-                                                        ) : (
-                                                            <Badge
-                                                                pill
-                                                                bg="warning"
-                                                            >
-                                                                {
-                                                                    userTicket.status
-                                                                }
-                                                            </Badge>
-                                                        )}
+                                                    <div className="centered-column">
+                                                            {userTicket.job
+                                                                ?.activityStatus ? (
+                                                                <Badge
+                                                                    pill
+                                                                    bg="primary"
+                                                                >
+                                                                    {
+                                                                        userTicket
+                                                                            .job
+                                                                            .activityStatus
+                                                                    }
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge
+                                                                    pill
+                                                                    bg="warning"
+                                                                >
+                                                                    {
+                                                                        userTicket.status
+                                                                    }
+                                                                </Badge>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                     <td>
-                                                        <button
+                                                    <button
                                                             className="delete-button"
                                                             onClick={() =>
                                                                 handleTicketDetailClick(
@@ -364,21 +385,21 @@ export function DashboardTenantCluster() {
                                                         </button>
                                                         {userTicket.status ===
                                                             "requested" && (
-                                                            <button
-                                                                className="delete-button"
-                                                                style={{
-                                                                    background:
-                                                                        "maroon",
-                                                                }}
-                                                                onClick={() =>
-                                                                    handleWithdrawClick(
-                                                                        userTicket.id,
-                                                                    )
-                                                                }
-                                                            >
-                                                                Withdraw
-                                                            </button>
-                                                        )}
+                                                                <button
+                                                                    className="delete-button"
+                                                                    style={{
+                                                                        background:
+                                                                            "maroon",
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleWithdrawClick(
+                                                                            userTicket.id,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Withdraw
+                                                                </button>
+                                                            )}
                                                     </td>
                                                 </tr>
                                             ))
@@ -391,34 +412,35 @@ export function DashboardTenantCluster() {
                                             </td>
                                         </tr>
                                     )}
-                                </tbody>
-                                <tr>
-                                    <td
-                                        className="dashboard-empty-service"
-                                        colSpan={4}
-                                    >
-                                        <button
-                                            className="request-service-button"
-                                            onClick={() => {
-                                                navigate("/request-service");
-                                            }}
-                                        >
-                                            {" "}
-                                            Request a Service
-                                        </button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
 
-                <Accordion style={{ paddingTop: "1rem" }}>
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Completed</Accordion.Header>
-                        <Accordion.Body>
-                            <table className="dashboard-table">
-                                <thead className="dashboard-header">
+                                    <tr>
+                                        <td
+                                            className="dashboard-empty-service"
+                                            colSpan={4}
+                                        >
+                                            <button
+                                                className="request-service-button"
+                                                onClick={() => {
+                                                    navigate("/request-service");
+                                                }}
+                                            >
+                                                {" "}
+                                                Request a Service
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+
+                    <Accordion style={{paddingTop: "1rem"}}>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Completed</Accordion.Header>
+                            <Accordion.Body>
+                                <table className="dashboard-table">
+                                    <thead className="dashboard-header">
                                     <tr>
                                         <th className="dashboard-header">
                                             Service
@@ -427,14 +449,16 @@ export function DashboardTenantCluster() {
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {isLoading ? (
-                                        <td colSpan={4}>
-                                            Loading Service Requests...
-                                        </td>
+                                        <tr>
+                                            <td colSpan={4}>
+                                                Loading Service Requests...
+                                            </td>
+                                        </tr>
                                     ) : Array.isArray(tickets) &&
-                                      tickets.length > 0 ? (
+                                    tickets.length > 0 ? (
                                         tickets
                                             .filter((t) =>
                                                 [
@@ -444,7 +468,7 @@ export function DashboardTenantCluster() {
                                                 ].includes(t.status),
                                             )
                                             .map((userTicket) => (
-                                                <tr>
+                                                <tr key={userTicket.id}>
                                                     <td>
                                                         {
                                                             userTicket
@@ -459,6 +483,7 @@ export function DashboardTenantCluster() {
                                                         }
                                                     </td>
                                                     <td>
+                                                        <div className="centered-column">
                                                         {userTicket.status ==
                                                         "completed" ? (
                                                             <Badge
@@ -479,6 +504,7 @@ export function DashboardTenantCluster() {
                                                                 }
                                                             </Badge>
                                                         )}
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <button
@@ -493,21 +519,21 @@ export function DashboardTenantCluster() {
                                                         </button>
                                                         {userTicket.status ===
                                                             "requested" && (
-                                                            <button
-                                                                className="delete-button"
-                                                                style={{
-                                                                    background:
-                                                                        "maroon",
-                                                                }}
-                                                                onClick={() =>
-                                                                    handleWithdrawClick(
-                                                                        userTicket.id,
-                                                                    )
-                                                                }
-                                                            >
-                                                                Withdraw
-                                                            </button>
-                                                        )}
+                                                                <button
+                                                                    className="delete-button"
+                                                                    style={{
+                                                                        background:
+                                                                            "maroon",
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleWithdrawClick(
+                                                                            userTicket.id,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Withdraw
+                                                                </button>
+                                                            )}
                                                     </td>
                                                 </tr>
                                             ))
@@ -520,21 +546,21 @@ export function DashboardTenantCluster() {
                                             </td>
                                         </tr>
                                     )}
-                                </tbody>
-                            </table>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-            </div>
+                                    </tbody>
+                                </table>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                </div>
 
-            {/* Show more detail about property Popup */}
-            <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Service Request Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <table className="property-detail-table">
-                        <tbody>
+                {/* Show more detail about property Popup */}
+                <Modal show={showTicketDetail} onHide={handleCloseTicketDetail}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Service Request Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <table className="property-detail-table">
+                            <tbody>
                             {ticketDetail != null ? (
                                 <>
                                     {ticketDetail.activityStatus && (
@@ -546,7 +572,7 @@ export function DashboardTenantCluster() {
                                         </tr>
                                     )}
                                     <tr>
-                                        <td>Service Type: </td>
+                                        <td>Service Type:</td>
                                         <td>
                                             {
                                                 ticketDetail.serviceType
@@ -555,11 +581,11 @@ export function DashboardTenantCluster() {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Property Name: </td>
+                                        <td>Property Name:</td>
                                         <td>{ticketDetail.property.name}</td>
                                     </tr>
                                     <tr>
-                                        <td>Address: </td>
+                                        <td>Address:</td>
                                         <td>
                                             {
                                                 ticketDetail.property
@@ -568,11 +594,11 @@ export function DashboardTenantCluster() {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Request Date: </td>
+                                        <td>Request Date:</td>
                                         <td>{ticketDetail.createdAt}</td>
                                     </tr>
                                     <tr>
-                                        <td>Request Timeline: </td>
+                                        <td>Request Timeline:</td>
                                         <td>{ticketDetail.timeline.title}</td>
                                     </tr>
                                 </>
@@ -581,18 +607,19 @@ export function DashboardTenantCluster() {
                                     <td colSpan={2}>No details available.</td>
                                 </tr>
                             )}
-                        </tbody>
-                    </table>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button
-                        className="delete-button"
-                        onClick={handleCloseTicketDetail}
-                    >
-                        Close
-                    </button>
-                </Modal.Footer>
-            </Modal>
+                            </tbody>
+                        </table>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button
+                            className="delete-button"
+                            onClick={handleCloseTicketDetail}
+                        >
+                            Close
+                        </button>
+                    </Modal.Footer>
+                </Modal>
+            </main>
 
             {/* Footer */}
             <footer className="dashboard-footer">
@@ -610,7 +637,7 @@ export function DashboardTenantCluster() {
                     </div>
                 </div>
             </footer>
-            <Homie propertyId={propertyID} />
+            <Homie propertyId={propertyID}/>
         </div>
     );
 }

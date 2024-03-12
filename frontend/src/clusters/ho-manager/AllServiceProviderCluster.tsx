@@ -72,7 +72,8 @@ export function AllServiceProviderCluster() {
     };
 
     return (
-        <>
+        <div className="allsp-container">
+            <main>
             <div className="header">
                 <h1
                     className="dashboard-title"
@@ -193,6 +194,7 @@ export function AllServiceProviderCluster() {
                     </tbody>
                 </table>
             </div>
+                </main>
             {/* Footer */}
             <footer className="dashboard-footer">
                 <div className="footer-content">
@@ -211,7 +213,7 @@ export function AllServiceProviderCluster() {
             </footer>
 
             {/* Show more detail about property Popup */}
-            <Modal show={showDetail} onHide={handleCloseDetail}>
+            <Modal show={showDetail} onHide={handleCloseDetail} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Service Provider Details</Modal.Title>
                 </Modal.Header>
@@ -287,6 +289,6 @@ export function AllServiceProviderCluster() {
                     <button onClick={handleCloseDetail}>Close</button>
                 </Modal.Footer>
             </Modal>
-        </>
+    </div>
     );
 }
