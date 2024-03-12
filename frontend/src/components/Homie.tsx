@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components/homie.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faTimes , faMicrophone, faMicrophoneSlash} from "@fortawesome/free-solid-svg-icons";
+import { faRobot, faTimes , faMicrophone, faMicrophoneSlash} from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../hooks/useAuthContext";
 import SpeechRecognition, {
     useSpeechRecognition,
@@ -117,7 +117,7 @@ const Homie = ({ propertyId }: HomieProps) => {
         <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
             {!isOpen ? (
                 <button className="chatbot-toggle" onClick={toggleChatbot}>
-                    <FontAwesomeIcon icon={faComments} />
+                    <FontAwesomeIcon icon={faRobot} className="large-icon"/>
                 </button>
             ) : null}
 

@@ -1,14 +1,16 @@
 .chatbot-container {
     position: fixed;
     bottom: 40px;
+    height: 10px;
     right: 40px;
     max-width: 500px;
     font-family: 'Roboto', sans-serif;
     z-index: 1000;
+    transition: height 0.3s ease-out;
 }
 
 .chat-header {
-    background-color: #007aff;
+    background-color: #194185;
     color: white;
     padding: 15px 20px;
     border-top-left-radius: 8px;
@@ -20,7 +22,7 @@
 }
 
 .chatbot-toggle {
-    background-color: #007aff;
+    background-color: #194185;
     color: white;
     border: none;
     border-radius: 50%;
@@ -30,10 +32,12 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    height: 80px;
+    width: 80px;
 }
 
 .chatbot-toggle:hover {
-    background-color: #005ecb;
+    background-color: #194185;
 }
 
 .chatbot-window {
@@ -46,11 +50,16 @@
     overflow-y: auto;
     transition: all 0.3s ease-out;
     transform: translateY(100%);
+    max-height: 0;
     opacity: 0;
-    max-height: 80vh;
+}
+
+.chatbot-container.open {
+    height: auto;
 }
 
 .chatbot-container.open .chatbot-window {
+    max-height: 80vh;
     transform: translateY(0);
     opacity: 1;
 }
@@ -83,7 +92,7 @@
 }
 
 .user-message {
-    background-color: #007aff;
+    background-color: #194185;
     margin-left: auto;
     text-align: right;
     border-radius: 18px 18px 2px 18px;
@@ -119,12 +128,12 @@
 }
 
 .message-input:focus {
-    border-color: #007aff;
+    border-color: #194185;
     outline: none;
 }
 
 .send-button {
-    background-color: #007aff;
+    background-color: #194185;
     color: white;
     border: none;
     border-radius: 18px;
@@ -134,7 +143,7 @@
 }
 
 .send-button:hover {
-    background-color: #005ecb;
+    background-color: #194185;
 }
 
 .bot-thinking {
@@ -172,4 +181,8 @@
 .speech-button {
     max-width: 100px;
     margin-right: 10px;
+}
+
+.large-icon {
+    font-size: 32px;
 }

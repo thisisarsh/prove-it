@@ -13,6 +13,11 @@ main{
     width: 80%;
 }
 
+.logo-and-title svg {
+    transform: scale(0.8);
+    transform-origin: center;
+}
+
 /* Main dashboard container */
 .dashboard-container {
     background: #f4f7fa;
@@ -31,7 +36,7 @@ main{
     background-color: #194185; 
     width: 100%;
     color: white;
-    padding: 1rem;
+    padding: 0.4rem 3rem 0.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -45,6 +50,7 @@ main{
 
 /* Title styles */
 .dashboard-title {
+    margin: 0;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
@@ -220,6 +226,7 @@ main{
     left: 0;
     right: 0;
     width: 100%;
+    margin-top: 80px;
 }
 
 /* Footer link styles */
@@ -295,17 +302,16 @@ main{
 }
 
 .nav-container {
+    padding-top: 5rem;
     display: flex;
     font-size: 20px;
     flex-direction: column;
 }
 
 .nav-link {
-    margin-bottom: 10px;
     height: 50px;
     display: flex;
-    transition: background-color 0.3s ease;
-    background-color: #f0f0f0;
+    align-items: center;
 }
 
 .nav-link:hover {
