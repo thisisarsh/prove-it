@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from "react-native";
+import { View, StyleSheet, Button, Modal, FlatList, TouchableOpacity, RefreshControl } from "react-native";
 import Text from '../../components/Text';
 import {NavigationProp, ParamListBase, useFocusEffect} from '@react-navigation/native';
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -11,13 +11,13 @@ const SERVER_URL = config.SERVER_URL;
 type TicketItemProps = {
     item: ServiceRequestSP;
     onDetailClick: (id: string) => void;
-    onQuoteClick: (id: string) => void;
+    //onQuoteClick: (id: string) => void;
     onWithdrawClick: (id: string) => void;
 };
-const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick, onQuoteClick, onWithdrawClick }) => {
+const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick, /*onQuoteClick,*/ onWithdrawClick }) => {
     const handleActionClick = () => {
         if (item.status === 'initiated') {
-            onQuoteClick(item.id);
+            //onQuoteClick(item.id);
         } else {
             onWithdrawClick(item.id);
         }
@@ -31,9 +31,9 @@ const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick, onQuoteCli
                 <TouchableOpacity onPress={() => onDetailClick(item.id)} style={styles.button}>
                     <Text>Details</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleActionClick} style={[styles.button, item.status === 'initiated' ? {} : styles.buttonSecondary]}>
+                {/*<TouchableOpacity onPress={handleActionClick} style={[styles.button, item.status === 'initiated' ? {} : styles.buttonSecondary]}>
                     <Text>{item.status === 'initiated' ? 'Quote' : 'Withdraw'}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
             </View>
         </View>
     );
@@ -48,6 +48,8 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     const { user } = state;
 
     const [tickets, setTickets] = useState<ServiceRequestSP[] | null>(null);
+    const [ticketDetail, setTicketDetail] = useState<ServiceRequestSP | undefined>(undefined);
+    const [showTicketDetail, setShowTicketDetail] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const loadData = async () => {
@@ -86,6 +88,16 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     const handleTicketDetailClick = (id: string) => {
         console.log('Detail Clicked', id);
         // Implement navigation or action
+        if (tickets != null) {
+            const ticket = tickets.find((obj) => obj.id === id);
+            setTicketDetail(ticket);
+            setShowTicketDetail(true);
+        }
+    };
+
+    const handleCloseTicketDetail = () => {
+        setTicketDetail(undefined);
+        setShowTicketDetail(false);
     };
 
     const handleWithdrawClick = (id: string) => {
@@ -107,13 +119,36 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
                     <TicketItem
                         item={item}
                         onDetailClick={handleTicketDetailClick}
-                        onQuoteClick={handleQuoteClick}
+                        //onQuoteClick={handleQuoteClick}
                         onWithdrawClick={handleWithdrawClick}
                     />
                 )}
                 keyExtractor={(item) => item.id.toString()}
                 refreshControl={<RefreshControl refreshing={isLoading} onRefresh={loadData} />}
             />
+            <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={showTicketDetail}
+                    onRequestClose={handleCloseTicketDetail}
+                >
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Job Details</Text>
+                        {ticketDetail != null ? (
+                            <>
+                                <Text style={styles.modalText}>Service Type: {ticketDetail.serviceType.serviceType}</Text>
+                                <Text style={styles.modalText}>Property Name: {ticketDetail.property.name}</Text>
+                                <Text style={styles.modalText}>Address: {ticketDetail.property.streetAddress}</Text>
+                                <Text style={styles.modalText}>Request Date: {ticketDetail.createdAt}</Text>
+                                <Text style={styles.modalText}>Request Timeline: {ticketDetail.timeline.title}</Text>
+                                <Text style={styles.modalText}>Details: {ticketDetail.serviceRequest.detail}</Text>
+                            </>
+                        ) : (
+                            <Text>No details available.</Text>
+                        )}
+                        <Button title="Close" onPress={handleCloseTicketDetail} />
+                    </View>
+                </Modal>
         </View>
     );
 };
@@ -154,9 +189,32 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: '#007bff',
         borderRadius: 5,
+        alignItems: 'center'
     },
     buttonSecondary: {
         backgroundColor: 'maroon',
+    },
+    modalView: {
+        top: "20%",
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        borderColor: '#007bff',
+        borderWidth: 2,
+        padding: 30,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        marginBottom: 10, 
+        fontSize: 15
     },
 });
 

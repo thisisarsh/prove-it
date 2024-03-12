@@ -88,8 +88,8 @@ export function DashboardOwnerCluster() {
                     setIsLoading(false);
                     setProperties(data);
 
-                    console.log("PROPERTIES");
-                    console.log(data);
+                    //console.log("PROPERTIES");
+                    //console.log(data);
                 })
                 .catch((error) => {
                     console.error("Error fetching properties data: " + error);

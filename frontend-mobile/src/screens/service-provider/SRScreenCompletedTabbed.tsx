@@ -97,15 +97,15 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
                     onRequestClose={handleCloseJobDetail}
                 >
                     <View style={styles.modalView}>
-                        <Text>Job Details</Text>
+                        <Text style={styles.modalText}>Job Details</Text>
                         {jobDetail != null ? (
                             <>
-                                <Text>Activity Status: {jobDetail.activityStatus}</Text>
-                                <Text>Service Request: {jobDetail.serviceType.serviceType}</Text>
-                                <Text>Description: {jobDetail.proposal.detail}</Text>
-                                <Text>Address: {jobDetail.property.streetAddress}</Text>
-                                <Text>Request Date: ${jobDetail.proposal.quotePrice} ({jobDetail.proposal.quoteType})</Text>
-                                <Text>Request Timeline: {jobDetail.timeline.title}</Text>
+                                <Text style={styles.modalText}>Activity Status: {jobDetail.activityStatus}</Text>
+                                <Text style={styles.modalText}>Service Request: {jobDetail.serviceType.serviceType}</Text>
+                                <Text style={styles.modalText}>Description: {jobDetail.proposal.detail}</Text>
+                                <Text style={styles.modalText}>Address: {jobDetail.property.streetAddress}</Text>
+                                <Text style={styles.modalText}>Request Date: ${jobDetail.proposal.quotePrice} ({jobDetail.proposal.quoteType})</Text>
+                                <Text style={styles.modalText}>Request Timeline: {jobDetail.timeline.title}</Text>
                             </>
                         ) : (
                             <Text>No details available.</Text>
@@ -144,13 +144,16 @@ const styles = StyleSheet.create({
         backgroundColor: "#007bff",
         padding: 10,
         borderRadius: 5,
+        alignItems: 'center'
     },
     modalView: {
         top: "20%",
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
+        borderColor: '#007bff',
+        borderWidth: 2,
+        padding: 30,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -160,6 +163,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+    },
+    modalText: {
+        marginBottom: 10, 
+        fontSize: 15
     },
 });
 

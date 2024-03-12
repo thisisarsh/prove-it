@@ -209,7 +209,9 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        padding: 20,
+        borderColor: '#007bff',
+        borderWidth: 2,
+        padding: 30,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
     sectionItem: {
         fontSize: SIZES.p,
         marginBottom: 10
-    }
+    },
 });
 
 export default ServiceRequests;
