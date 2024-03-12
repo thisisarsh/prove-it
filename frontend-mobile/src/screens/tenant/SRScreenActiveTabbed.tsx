@@ -75,7 +75,6 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
             return obj.id === id;
         })[0];
         if(ticket) {
-            console.log(ticket);
             setTicketDetail(ticket);
             setModalVisible(true);
         } else {
@@ -177,12 +176,6 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
 const TicketItem: React.FC<TicketItemProps> = ({ item, onDetailClick, onWithdrawClick }) => (
     <View style={styles.row}>
         <Text style={styles.cell}>{item.serviceType.serviceType}</Text>
-
-        {/*
-        <Text style={item.status === "active" ? styles.statusActive : styles.statusWarning}>
-            {item.status.toUpperCase()}
-        </Text>
-        */}
 
         <View style={styles.actions}>
             <ButtonPrimary title={<FontAwesome6 name='magnifying-glass' color='white' />} onPress={() => {onDetailClick(item.id)}}></ButtonPrimary>
