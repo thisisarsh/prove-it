@@ -353,6 +353,7 @@ export function DashboardOwnerCluster() {
     return (
         <body>
             <div className="dashboard-container">
+                <main>
                 <div className="header">
                     <h1 className="dashboard-title">Homeowner Dashboard</h1>
                     <button
@@ -803,6 +804,7 @@ export function DashboardOwnerCluster() {
                         </Accordion.Item>
                     </Accordion>
                 </div>
+                    </main>
                 {/* Footer */}
                 <footer className="dashboard-footer">
                     <div className="footer-content">

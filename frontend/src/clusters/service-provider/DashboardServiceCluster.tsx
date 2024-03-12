@@ -23,7 +23,7 @@ import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
 import Accordion from "react-bootstrap/Accordion";
 import Badge from "react-bootstrap/Badge";
-import { Button } from "react-bootstrap";
+import {Button, ListGroup} from "react-bootstrap";
 
 /**
  *
@@ -351,6 +351,7 @@ export function DashboardServiceCluster() {
 
     return (
         <div className="dashboard-container">
+            <main>
             <div className="header mb-5">
                 <h1
                     className="dashboard-title"
@@ -536,28 +537,17 @@ export function DashboardServiceCluster() {
                             </Nav.Item>
                         </Nav>
                         <Tab.Content>
-                            {dashboardServices.map(
-                                (dashboardService, index) => (
-                                    <Tab.Pane
-                                        key={index}
-                                        eventKey={index.toString()}
-                                        className="custom-tab-content"
-                                    >
-                                        {dashboardService.childs.map(
-                                            (childService) => (
-                                                <div
-                                                    key={
-                                                        childService.serviceType
-                                                    }
-                                                >
-                                                    {childService.serviceType}
-                                                    <br />
-                                                </div>
-                                            ),
-                                        )}
-                                    </Tab.Pane>
-                                ),
-                            )}
+                            {dashboardServices.map((dashboardService, index) => (
+                                <Tab.Pane key={index} eventKey={index.toString()} className="custom-tab-content">
+                                    <ListGroup >
+                                        {dashboardService.childs.map((childService) => (
+                                            <ListGroup.Item key={childService.serviceType}>
+                                                {childService.serviceType}
+                                            </ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                </Tab.Pane>
+                            ))}
                         </Tab.Content>
                     </Tab.Container>
                 ) : (
@@ -728,6 +718,7 @@ export function DashboardServiceCluster() {
                     </button>
                 </Modal.Footer>
             </Modal>
+                </main>
 
             {/* Footer */}
             <footer className="dashboard-footer">

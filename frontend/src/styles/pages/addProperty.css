@@ -23,7 +23,7 @@
 #city-dropdown.dropdown-toggle,
 #zip-dropdown.dropdown-toggle,
 #property-type-dropdown.dropdown-toggle {
-    width: 300px;
+    width: 100%;
     background-color: #194185;
     color: white;
     margin-bottom: 20px;
@@ -35,7 +35,7 @@
 #city-dropdown.dropdown-toggle:hover,
 #zip-dropdown.dropdown-toggle:hover,
 #property-type-dropdown.dropdown-toggle:hover {
-    background-color: #194185; /* Maintain the style on hover */
+    background-color: #194185;
     color: white;
 }
 
@@ -45,7 +45,6 @@
 #city-dropdown.dropdown-menu,
 #zip-dropdown.dropdown-menu,
 #property-type-dropdown.dropdown-menu {
-    width: 300px;
     text-align: left;
     background-color: #194185;
     border: 1px solid #194185;
@@ -77,3 +76,9 @@
     border: 3px outset #194185;
     color: white;
 }
+
+.form-label{
+    padding-top: 2%;
+    margin-bottom: 0;
+}
+
