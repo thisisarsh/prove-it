@@ -314,7 +314,7 @@ export function AddPropertyCluster() {
                     <Button
                         variant="primary"
                         type="submit"
-                        className="submitButton"
+                        className="submit-button"
                         onClick={(e: React.MouseEvent) => handleSubmit(e)}
                     >
                         Submit

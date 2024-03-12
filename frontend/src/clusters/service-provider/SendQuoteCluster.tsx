@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import { FormControl, Button, Modal } from "react-bootstrap";
+import "../../styles/components/sendQuote.css";
 
 const INVITED_SIGNUP_LINK = window.config.SERVER_URL + "/send-proposal";
 
@@ -114,8 +115,9 @@ export function SendQuoteCluster(ticketObj: { ticket: ServiceRequestSP }) {
     };
 
     return (
-        <>
+        <div id="send-form-container">
             {/*error && <ErrorMessageContainer message={error}/>*/}
+            <Form className="send-quote">
             <Form.Group>
                 <Form.Label>Quote Price</Form.Label>
                 <FormControl
@@ -163,18 +165,20 @@ export function SendQuoteCluster(ticketObj: { ticket: ServiceRequestSP }) {
                     }
                 />
             </Form.Group>
-            <p>Start Date</p>
+            <p>Start Date</p>  
             <DatePicker
                 selected={startDate}
                 onChange={(date: Date) => setStartDate(date)}
+                className="date-select"
             />
             <p>End Date</p>
             <DatePicker
                 selected={endDate}
                 onChange={(date: Date) => setEndDate(date)}
+                className="date-select"
             />
             <br></br>
-            <button className="delete-button" onClick={() => handleSubmit()}>
+            <button className="submit-button" onClick={() => handleSubmit()}>
                 Submit Quote
             </button>
             <Link to="/dashboard" className="goBackLink">
@@ -186,6 +190,7 @@ export function SendQuoteCluster(ticketObj: { ticket: ServiceRequestSP }) {
                     <span>Go Back</span>
                 </Button>
             </Link>
+            </Form>
 
             <Modal
                 show={showErrorModal}
@@ -206,6 +211,6 @@ export function SendQuoteCluster(ticketObj: { ticket: ServiceRequestSP }) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </>
+        </div>
     );
 }

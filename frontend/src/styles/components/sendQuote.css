@@ -1,35 +1,38 @@
-form.create-request .submit-button {
+form.send-quote .submit-button {
     background-color:#194185;
     width:100%;
+    padding-top: 10px;
     border:2px outset #194185;
+    border-radius: 5px;
+    text-align: center;
 }
 
-form.create-request .submit-button:hover {
+form.send-quote .submit-button:hover {
     background-color: #0b5ed7;
 }
 
-form.create-request {
+form.send-quote {
     border: 1px solid grey;
     border-radius: 5px;
     padding: 15px;
 }
 
-#request-form-container::before {
-    position:relative;
-    top:12px;
-    left:10px;
-    content: "Service Request";
-    align-items: center;
-    background-color: white;
-    padding: 0 5px;
+form.date-select {
+    padding-bottom: 10px;
+    width: 100%;
 }
 
-form.create-request {
+p {
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+
+form.send-quote {
     width:100%;
     align-items: center;
 }
 
-#request-form-container {
+#send-form-container {
     width:100%;
     max-width: 500px;
     margin: auto;
@@ -37,4 +40,5 @@ form.create-request {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-bottom: 50px;
 }
