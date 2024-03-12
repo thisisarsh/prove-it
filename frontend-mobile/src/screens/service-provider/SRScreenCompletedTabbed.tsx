@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {StyleSheet, View} from "react-native";
+import React, { useState } from "react";
+import {ActivityIndicator, Button, FlatList, Modal, StyleSheet, TouchableOpacity, View} from "react-native";
 import Text from '../../components/Text';
 import {NavigationProp, ParamListBase, useFocusEffect} from '@react-navigation/native';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import {Job } from "../../../types";
 import {config} from "../../../config";
-import JobList from "../../components/JobList";
 
 const SERVER_URL = config.SERVER_URL;
 
@@ -17,14 +16,18 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
     const { state } = useAuthContext();
     const { user } = state;
 
-    const [activeJobs, setActiveJobs] = useState<Job[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
+
+    const [showJobDetail, setShowJobDetail] = useState<boolean>(false);
+    const [jobDetail, setJobDetail] = useState<Job | undefined>(undefined);
 
     const loadData = async () => {
         if (!user) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${SERVER_URL}/active-jobs`, {
+            const response = await fetch(`${SERVER_URL}/completed-jobs`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +36,7 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
             });
             if (!response.ok) throw new Error("Network response was not ok");
             const data = await response.json();
-            setActiveJobs(data.data.jobs);
+            setCompletedJobs(data.data.jobs);
         } catch (error) {
             console.error("Error fetching data: ", error);
         } finally {
@@ -47,36 +50,117 @@ const ServiceRequests: React.FC<ServiceRequestsProps> = ({ navigation }) => {
         }, [user])
     );
 
-    // TODO: Remove these functions and refactor the file
-    const handleActivateJob = (jobId: string) => {
-        setIsLoading(true);
-    }
+    const handleJobDetailClick = (id: string) => {
+        const job = completedJobs.find((obj) => obj.id === id);
+        setJobDetail(job);
+        setShowJobDetail(true);
+    };
 
-    const handleCompleteJob = (jobId: string) => {
-        setIsLoading(true);
-    }
+    const handleCloseJobDetail = () => {
+        setJobDetail(undefined);
+        setShowJobDetail(false);
+    };
+
+    const renderJobItem = ({ item }: { item: Job }) => (
+        <View style={styles.row}>
+            <Text style={styles.cell}>{item.initiator.firstName + " " + item.initiator.lastName}</Text>
+            <Text style={styles.cell}>{item.serviceType.serviceType}</Text>
+            <Text style={styles.cell}>{item.property.streetAddress}</Text>
+            <View style={styles.cell}>
+                <TouchableOpacity style={styles.button} onPress={() => handleJobDetailClick(item.id)} disabled={isLoading}>
+                    <Text>Details</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Completed Jobs</Text>
-            <JobList
-                jobs={activeJobs}
-                activateJob={handleActivateJob}
-                completeJob={handleCompleteJob}
-                isLoading={isLoading}
-            />
+            <View style={styles.container}>
+                {isLoading ? (
+                    <ActivityIndicator size="large" />
+                ) : completedJobs.length > 0 ? (
+                    <FlatList
+                        data={completedJobs}
+                        renderItem={renderJobItem}
+                        keyExtractor={(item) => item.id}
+                    />
+                ) : (
+                    <Text>You're not working on any service Request! Accept one to get started.</Text>
+                )}
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={showJobDetail}
+                    onRequestClose={handleCloseJobDetail}
+                >
+                    <View style={styles.modalView}>
+                        <Text>Job Details</Text>
+                        {jobDetail != null ? (
+                            <>
+                                <Text>Activity Status: {jobDetail.activityStatus}</Text>
+                                <Text>Service Request: {jobDetail.serviceType.serviceType}</Text>
+                                <Text>Description: {jobDetail.proposal.detail}</Text>
+                                <Text>Address: {jobDetail.property.streetAddress}</Text>
+                                <Text>Request Date: ${jobDetail.proposal.quotePrice} ({jobDetail.proposal.quoteType})</Text>
+                                <Text>Request Timeline: {jobDetail.timeline.title}</Text>
+                            </>
+                        ) : (
+                            <Text>No details available.</Text>
+                        )}
+                        <Button title="Close" onPress={handleCloseJobDetail} />
+                    </View>
+                </Modal>
+            </View>
         </View>
     );
 };
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginBottom: 20,
     },
     header: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
         padding: 10,
-    }
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    cell: {
+        margin: 5,
+        flex: 1,
+    },
+    button: {
+        marginVertical: 5,
+        backgroundColor: "#007bff",
+        padding: 10,
+        borderRadius: 5,
+    },
+    modalView: {
+        top: "20%",
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
 });
 
 export default ServiceRequests;
