@@ -72,7 +72,6 @@ const Homie = ({ propertyId }: HomieProps) => {
         };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-        setTimeout(async () => {
             try {
                 const response = await fetch(
                     `${window.config.SERVER_URL}/chat-response`,
@@ -89,21 +88,22 @@ const Homie = ({ propertyId }: HomieProps) => {
 
                 const responseData: IRasaResponse[] = await response.json();
                 responseData.forEach((botMessage) => {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            id: prevMessages.length + 1,
-                            text: botMessage.text,
-                            sender: "bot",
-                        },
-                    ]);
+                    setIsThinking(true);
+                    setTimeout(() => {
+                        setMessages((prevMessages) => [
+                            ...prevMessages,
+                            {
+                                id: prevMessages.length + 1,
+                                text: botMessage.text,
+                                sender: "bot",
+                            },
+                        ]);
+                        setIsThinking(false);
+                    }, botMessage.text.length * 100);
                 });
             } catch (error) {
                 console.error("Error sending message to Rasa:", error);
-            } finally {
-                setIsThinking(false); // Hide thinking indicator
             }
-        }, 2000);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import {useAuthContext} from "../../hooks/useAuthContext";
 import {config} from "../../../config";
 import {RouteProp} from '@react-navigation/native';
@@ -22,6 +22,37 @@ interface IRasaResponse {
     recipient_id: string;
     text: string;
 }
+
+const TypingAnimation = () => {
+    const opacity = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        const animation = Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
+            ])
+        );
+
+        animation.start();
+
+        return () => animation.stop();
+    }, [opacity]);
+
+    return (
+        <Animated.Text style={{ opacity: opacity }}> . . . </Animated.Text>
+    );
+};
+
+
 const Homie:React.FC<HomieProps> = ({ route}) => {
 
     const { propertyId } = route.params;
@@ -34,6 +65,8 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
 
     const {state} = useAuthContext();
     const {user} = state;
+
+    const scrollViewRef = useRef<ScrollView>(null);
 
     const handleSubmit = async () => {
         const messageToSend = userInput.trim();
@@ -50,23 +83,24 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
         };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-        setTimeout(async () => {
-            try {
-                const response = await fetch(
-                    `${SERVER_URL}/chat-response`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            sender: userId,
-                            message: messageToSend,
-                            metadata: { propertyId: propertyId },
-                        }),
-                    },
-                );
+        try {
+            const response = await fetch(
+                `${SERVER_URL}/chat-response`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sender: userId,
+                        message: messageToSend,
+                        metadata: { propertyId: propertyId },
+                    }),
+                },
+            );
 
-                const responseData: IRasaResponse[] = await response.json();
-                responseData.forEach((botMessage) => {
+            const responseData: IRasaResponse[] = await response.json();
+            responseData.forEach((botMessage) => {
+                setIsThinking(true);
+                setTimeout(() => {
                     setMessages((prevMessages) => [
                         ...prevMessages,
                         {
@@ -75,13 +109,12 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
                             sender: "bot",
                         },
                     ]);
-                });
-            } catch (error) {
-                console.error("Error sending message to Rasa:", error);
-            } finally {
-                setIsThinking(false);
-            }
-        }, 2000);
+                    setIsThinking(false);
+                }, botMessage.text.length * 30);
+            });
+        } catch (error) {
+            console.error("Error sending message to Rasa:", error);
+        }
     };
 
     const handleChange = (text: string) => {
@@ -92,15 +125,19 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container} keyboardVerticalOffset={keyboardVerticalOffset}>
-            <ScrollView style={styles.messagesContainer}>
+            <ScrollView style={styles.messagesContainer}
+                        ref={scrollViewRef}
+                        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+                        onLayout={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+            >
                 {messages.map((msg) => (
-                    <View key={msg.id} style={[styles.messageBubble, msg.sender !== 'bot' ? styles.sent : styles.received]}>
-                        <Text style={styles.text} >{msg.text}</Text>
+                    <View key={msg.id} style={[msg.sender !== 'bot' ? styles.messageBubbleSent : styles.messageBubbleReceived, msg.sender !== 'bot' ? styles.sent : styles.received]}>
+                        <Text style={[msg.sender !== 'bot' ? styles.textSent : styles.textReceived]} >{msg.text}</Text>
                     </View>
                 ))}
                 {isThinking && (
-                    <View style={[styles.messageBubble, styles.received]}>
-                        <Text>...</Text>
+                    <View style={[styles.messageBubbleReceived, styles.received]}>
+                        <TypingAnimation />
                     </View>
                 )}
             </ScrollView>
@@ -110,6 +147,8 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
                     onChangeText={handleChange}
                     style={styles.input}
                     placeholder="Type or speak"
+                    returnKeyType="send"
+                    onSubmitEditing={handleSubmit}
                 />
                 {/*{browserSupportsSpeechRecognition && (*/}
                 {/*    <>*/}
@@ -131,20 +170,37 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
+
     },
     messagesContainer: {
         flex: 1,
-        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 20,
     },
-    messageBubble: {
+    messageBubbleSent: {
         padding: 10,
-        borderRadius: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 2,
+        marginVertical: 5,
+        maxWidth: '80%',
+    },
+    messageBubbleReceived: {
+        padding: 10,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 20,
         marginVertical: 5,
         maxWidth: '80%',
     },
     sent: {
         alignSelf: 'flex-end',
-        backgroundColor: '#dcf8c6',
+        color: 'white',
+        backgroundColor: '#194185',
+        textDecorationColor: 'white',
     },
     received: {
         alignSelf: 'flex-start',
@@ -166,9 +222,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginRight: 10,
     },
-    text: {
-        fontSize: SIZES.p,
+    textSent: {
+        fontFamily: 'Montserrat-Regular',
+        fontSize: SIZES.h3,
+        color: 'white',
     },
+    textReceived: {
+        fontFamily: 'Montserrat-Regular',
+        fontSize: SIZES.h3,
+        color: 'black',
+    },
+    text: {
+        fontSize: SIZES.h3,
+    }
 });
 
 export default Homie;
