@@ -3,7 +3,8 @@
     bottom: 40px;
     height: 10px;
     right: 40px;
-    max-width: 500px;
+    max-width: 450px;
+    min-width: 450px;
     font-family: 'Roboto', sans-serif;
     z-index: 1000;
     transition: height 0.3s ease-out;
@@ -59,19 +60,25 @@
 }
 
 .chatbot-container.open .chatbot-window {
-    max-height: 80vh;
+    max-height: 60vh;
+    min-height: 60vh;
     transform: translateY(0);
     opacity: 1;
 }
 
 .chat-messages {
-    min-height: 400px;
     flex-grow: 1;
     padding: 15px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chat-messages::-webkit-scrollbar {
+    display: none;
 }
 
 .chat-message {

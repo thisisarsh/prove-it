@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import "../styles/components/homie.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot, faTimes , faMicrophone, faMicrophoneSlash} from "@fortawesome/free-solid-svg-icons";
@@ -56,6 +56,22 @@ const Homie = ({ propertyId }: HomieProps) => {
 
     const toggleChatbot = () => setIsOpen(!isOpen);
 
+    const processMessage = async (botMessage: IRasaResponse) => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        id: prevMessages.length + 1,
+                        text: botMessage.text,
+                        sender: "bot",
+                    },
+                ]);
+                resolve();
+            }, botMessage.text.length * 30);
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const messageToSend = userInput.trim();
@@ -71,7 +87,6 @@ const Homie = ({ propertyId }: HomieProps) => {
             sender: userId || "unknown",
         };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
-
             try {
                 const response = await fetch(
                     `${window.config.SERVER_URL}/chat-response`,
@@ -87,20 +102,10 @@ const Homie = ({ propertyId }: HomieProps) => {
                 );
 
                 const responseData: IRasaResponse[] = await response.json();
-                responseData.forEach((botMessage) => {
-                    setIsThinking(true);
-                    setTimeout(() => {
-                        setMessages((prevMessages) => [
-                            ...prevMessages,
-                            {
-                                id: prevMessages.length + 1,
-                                text: botMessage.text,
-                                sender: "bot",
-                            },
-                        ]);
-                        setIsThinking(false);
-                    }, botMessage.text.length * 100);
-                });
+                for (const botMessage of responseData) {
+                    await processMessage(botMessage);
+                }
+                setIsThinking(false);
             } catch (error) {
                 console.error("Error sending message to Rasa:", error);
             }
@@ -112,6 +117,12 @@ const Homie = ({ propertyId }: HomieProps) => {
         }
         setUserInput(e.target.value);
     };
+
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     return (
         <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
@@ -146,6 +157,7 @@ const Homie = ({ propertyId }: HomieProps) => {
                                 <div className="message-text">...</div>
                             </div>
                         )}
+                        <div ref={messagesEndRef}/>
                     </div>
                     <form onSubmit={handleSubmit} className="message-form">
                         {browserSupportsSpeechRecognition ? (

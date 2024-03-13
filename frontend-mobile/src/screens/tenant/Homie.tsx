@@ -52,7 +52,6 @@ const TypingAnimation = () => {
     );
 };
 
-
 const Homie:React.FC<HomieProps> = ({ route}) => {
 
     const { propertyId } = route.params;
@@ -67,6 +66,23 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
     const {user} = state;
 
     const scrollViewRef = useRef<ScrollView>(null);
+
+    const processMessage = async (botMessage: IRasaResponse) => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        id: prevMessages.length + 1,
+                        text: botMessage.text,
+                        sender: "bot",
+                    },
+                ]);
+                resolve();
+            }, botMessage.text.length * 30);
+        });
+    };
+
 
     const handleSubmit = async () => {
         const messageToSend = userInput.trim();
@@ -98,20 +114,10 @@ const Homie:React.FC<HomieProps> = ({ route}) => {
             );
 
             const responseData: IRasaResponse[] = await response.json();
-            responseData.forEach((botMessage) => {
-                setIsThinking(true);
-                setTimeout(() => {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            id: prevMessages.length + 1,
-                            text: botMessage.text,
-                            sender: "bot",
-                        },
-                    ]);
-                    setIsThinking(false);
-                }, botMessage.text.length * 30);
-            });
+            for (const botMessage of responseData) {
+                await processMessage(botMessage);
+            }
+            setIsThinking(false);
         } catch (error) {
             console.error("Error sending message to Rasa:", error);
         }
