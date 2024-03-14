@@ -1,5 +1,4 @@
 .tenant-tab-container {
-    background: #f4f7fa;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -38,8 +37,9 @@ main{
 
 .button-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
+    height: 100%;
     width: 100%;
 }
 

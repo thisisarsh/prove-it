@@ -131,7 +131,7 @@ export function AllServiceProviderCluster() {
             {/* Property block */}
             <div className="all-serviceProvider-container">
                 <h1 className="dashboard-label">Service Providers</h1>
-                <table className="dashboard-table">
+                <table className="dashboard-table main-property-table">
                     <thead className="dashboard-header">
                         <tr>
                             <th>First Name</th>

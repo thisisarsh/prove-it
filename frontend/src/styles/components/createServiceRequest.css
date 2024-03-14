@@ -1,27 +1,18 @@
 form.create-request .submit-button {
-    background-color:#194185;
+    /*background-color:#194185;*/
     width:100%;
     border:2px outset #194185;
 }
 
 form.create-request .submit-button:hover {
-    background-color: #0b5ed7;
+    /*background-color: #0b5ed7;*/
 }
 
 form.create-request {
-    border: 1px solid grey;
-    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    border-radius: 10px;
     padding: 15px;
-}
-
-#request-form-container::before {
-    position:relative;
-    top:12px;
-    left:10px;
-    content: "Service Request";
-    align-items: center;
-    background-color: white;
-    padding: 0 5px;
+    backdrop-filter: blur(10px);
 }
 
 form.create-request {
@@ -29,7 +20,12 @@ form.create-request {
     align-items: center;
 }
 
+textarea.form-control {
+    background-color: rgb(187, 202, 228);
+}
+
 #request-form-container {
+    padding-top: 2vh;
     width:100%;
     max-width: 500px;
     margin: auto;

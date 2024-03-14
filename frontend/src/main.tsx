@@ -12,9 +12,11 @@ import "./styles/styles.css";
  * Entry point into the React app
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
+    <div className="background-image">
     <React.StrictMode>
         <AuthProvider>
-            <RouterProvider router={Router} />
+        <RouterProvider router={Router} />
         </AuthProvider>
-    </React.StrictMode>,
+    </React.StrictMode>
+    </div>,
 );

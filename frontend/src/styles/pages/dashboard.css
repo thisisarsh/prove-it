@@ -21,7 +21,7 @@ main{
 
 /* Main dashboard container */
 .dashboard-container {
-    background: #f4f7fa;
+
     min-height: 100vh;
     padding-top: 3rem;
     display: flex;
@@ -29,6 +29,10 @@ main{
     margin: 0;
     width: 100%;
     overflow: auto;
+    background-image: url('../../../public/watercolor-light-steel-blue-wallpaper-image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 
 }
 
@@ -129,9 +133,10 @@ main{
     border-collapse: separate; 
     border-spacing: 0; 
     margin: auto; 
-    border-radius: 25px;
+    border-radius: 0 0 25px 25px;
     overflow: hidden; 
 }
+
 
 /* Table header styles */
 .dashboard-table .dashboard-header {
@@ -344,4 +349,8 @@ a.nav-link {
 
 th {
     font-size: large;
+}
+
+.main-property-table{
+    border-radius: 20px;
 }
