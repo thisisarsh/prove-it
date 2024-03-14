@@ -12,9 +12,12 @@ export function InviteServiceProvider() {
                 onClick={() => navigate("/dashboard")}
             />
 
+            <div className="form-container">
+
             <h1>Invite a Service Provider</h1>
 
             <InviteUserCluster roleName="service_provider" />
+            </div>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import HomeownerTabNavigator from './HOTabNavigator';
-import SettingsScreen from '../screens/SettingsScreen';
+import Settings from '../screens/Settings';
 import { COLOURS } from '../components/Theme';
 
 const Drawer = createDrawerNavigator();
@@ -18,7 +18,7 @@ const HomeownerDrawerNavigator = () => {
     return (
         <Drawer.Navigator screenOptions={screenOptions}>
             <Drawer.Screen name="HOHomeTabs" component={HomeownerTabNavigator} options={{ title: 'Dashboard' }} />
-            <Drawer.Screen name="Settings" component={SettingsScreen} />
+            <Drawer.Screen name="Settings" component={Settings} />
         </Drawer.Navigator>
     );
 };

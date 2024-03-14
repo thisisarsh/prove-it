@@ -167,7 +167,7 @@ export function ProposalsCluster() {
             onHide={() => setShowMessageModal(false)}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Error</Modal.Title>
+                <Modal.Title>Notice</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>{modalMessage}</p>

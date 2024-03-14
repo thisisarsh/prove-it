@@ -57,6 +57,10 @@ export function LoginCluster() {
     };
 
     return (
+        <div className="login-cluster-container">
+            <div className="login-cluster-header">
+                <h1>Login</h1>
+            </div>
         <Form
             className={`login-cluster ${formSubmitted ? "form-submitted" : ""}`}
             onSubmit={(e) => {
@@ -120,5 +124,6 @@ export function LoginCluster() {
 
             {error && <ErrorMessageContainer message={error} />}
         </Form>
+        </div>
     );
 }

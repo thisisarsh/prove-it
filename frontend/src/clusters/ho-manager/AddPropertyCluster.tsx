@@ -274,7 +274,7 @@ export function AddPropertyCluster() {
             )}
 
             <div className="forms">
-                <Form>
+                <Form className="add-property-form">
                     <Form.Group controlId="propertyName">
                         <Form.Label>Property Name</Form.Label>
                         <Form.Control
@@ -314,7 +314,7 @@ export function AddPropertyCluster() {
                     <Button
                         variant="primary"
                         type="submit"
-                        className="submitButton"
+                        className="submit-button"
                         onClick={(e: React.MouseEvent) => handleSubmit(e)}
                     >
                         Submit

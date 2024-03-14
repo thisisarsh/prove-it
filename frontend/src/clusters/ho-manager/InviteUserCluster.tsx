@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 import "../../styles/pages/inviteUser.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import { FormGroup } from "../../components/Forms";
@@ -159,20 +159,21 @@ export default function InviteUserCluster(props: InviteUserProps) {
 
     return (
         <>
-            {/*Only display property selector if we are inviting a tenant*/}
-            {props.roleName == "tenant" && (
-                <SearchableDropdown
-                    items={properties || []}
-                    onSelect={(property) => handlePropertySelect(property)}
-                    placeholder={
-                        selectedProperty
-                            ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
-                            : "Select a property"
-                    }
-                    labelKey={"name"} // Assuming you want to search and display by 'name'
-                />
-            )}
             <div id="invite-form-container">
+                {/*Only display property selector if we are inviting a tenant*/}
+                {props.roleName == "tenant" && (
+                    <SearchableDropdown
+                        items={properties || []}
+                        onSelect={(property) => handlePropertySelect(property)}
+                        placeholder={
+                            selectedProperty
+                                ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
+                                : "Select a property"
+                        }
+                        labelKey={"name"} // Assuming you want to search and display by 'name'
+                    />
+                )}
+
                 <Form id="invite-form">
                     <FormGroup
                         label="First Name"
@@ -202,7 +203,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     />
 
                     {isLoading ? (
-                        <Spinner />
+                        <Spinner/>
                     ) : (
                         <Button
                             id="invite-submit-button"
@@ -212,10 +213,19 @@ export default function InviteUserCluster(props: InviteUserProps) {
                             Send Invite
                         </Button>
                     )}
+                        <Link to="/dashboard" className="goBackLink">
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className="goBackButton"
+                            >
+                                <span>Go Back</span>
+                            </Button>
+                        </Link>
                 </Form>
             </div>
             {ModalContent}
-            {error && <ErrorMessageContainer message={error} />}
+            {error && <ErrorMessageContainer message={error}/>}
         </>
     );
 }

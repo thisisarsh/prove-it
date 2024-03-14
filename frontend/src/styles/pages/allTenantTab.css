@@ -1,6 +1,48 @@
-.all-tenant-container {
-    padding-top: 6rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+.tenant-tab-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+    overflow: auto;
+    padding-top: 10%;
 }
 
+main{
+    flex: 1;
+    margin: auto;
+    width: 80%;
+}
+
+.dashboard-footer {
+    background-color: #194185;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.centered-column-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.button-container > button {
+    flex-grow: 1;
+    margin: 0 5px;
+}

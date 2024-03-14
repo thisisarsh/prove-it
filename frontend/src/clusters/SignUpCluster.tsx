@@ -127,6 +127,7 @@ export function SignUpCluster(props: SignUpTypeProps) {
     };
 
     return (
+
         <Form className="signup-cluster" onSubmit={handleSubmit}>
             {props.signupType == "invited" && (
                 <Form.Group>

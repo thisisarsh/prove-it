@@ -72,7 +72,8 @@ export function AllServiceProviderCluster() {
     };
 
     return (
-        <>
+        <div className="allsp-container">
+            <main>
             <div className="header">
                 <h1
                     className="dashboard-title"
@@ -130,7 +131,7 @@ export function AllServiceProviderCluster() {
             {/* Property block */}
             <div className="all-serviceProvider-container">
                 <h1 className="dashboard-label">Service Providers</h1>
-                <table className="dashboard-table">
+                <table className="dashboard-table main-property-table">
                     <thead className="dashboard-header">
                         <tr>
                             <th>First Name</th>
@@ -168,9 +169,9 @@ export function AllServiceProviderCluster() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={3}>
-                                    You have not invite any service provider
-                                    Start by invite a service provider!
+                                <td colSpan={5}>
+                                    You do not have invite any service providers,
+                                    start by inviting a service provider!
                                 </td>
                             </tr>
                         )}
@@ -193,6 +194,7 @@ export function AllServiceProviderCluster() {
                     </tbody>
                 </table>
             </div>
+                </main>
             {/* Footer */}
             <footer className="dashboard-footer">
                 <div className="footer-content">
@@ -211,7 +213,7 @@ export function AllServiceProviderCluster() {
             </footer>
 
             {/* Show more detail about property Popup */}
-            <Modal show={showDetail} onHide={handleCloseDetail}>
+            <Modal show={showDetail} onHide={handleCloseDetail} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Service Provider Details</Modal.Title>
                 </Modal.Header>
@@ -287,6 +289,6 @@ export function AllServiceProviderCluster() {
                     <button onClick={handleCloseDetail}>Close</button>
                 </Modal.Footer>
             </Modal>
-        </>
+    </div>
     );
 }

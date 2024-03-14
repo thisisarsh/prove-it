@@ -10,7 +10,7 @@ import {
 import SearchableDropdown from "../../components/DropDownList";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
 import "../../styles/components/createServiceRequest.css";
@@ -296,6 +296,15 @@ export function RequestServiceCluster() {
                         </Button>
                     )}
                 </div>
+                <Link to="/dashboard" className="goBackLink">
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className="goBackButton"
+                            >
+                                <span>Go Back</span>
+                            </Button>
+                        </Link>
             </Form>
 
             {ModalContent}

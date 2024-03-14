@@ -1,20 +1,6 @@
 .main_addProperty {
-    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    border: 2px solid #000000;
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.main_addProperty::before {
-    content: "Property Info";
-    position: absolute;
-    top: -15px;
-    left: 10px;
-    background-color: white;
-    padding: 0 10px;
 }
 
 /* Consolidated Styles for Dropdown Toggle */
@@ -23,7 +9,7 @@
 #city-dropdown.dropdown-toggle,
 #zip-dropdown.dropdown-toggle,
 #property-type-dropdown.dropdown-toggle {
-    width: 300px;
+    width: 100%;
     background-color: #194185;
     color: white;
     margin-bottom: 20px;
@@ -35,7 +21,7 @@
 #city-dropdown.dropdown-toggle:hover,
 #zip-dropdown.dropdown-toggle:hover,
 #property-type-dropdown.dropdown-toggle:hover {
-    background-color: #194185; /* Maintain the style on hover */
+    background-color: #194185;
     color: white;
 }
 
@@ -45,7 +31,6 @@
 #city-dropdown.dropdown-menu,
 #zip-dropdown.dropdown-menu,
 #property-type-dropdown.dropdown-menu {
-    width: 300px;
     text-align: left;
     background-color: #194185;
     border: 1px solid #194185;
@@ -57,12 +42,15 @@
     color: white;
 }
 
-.forms {
-    width: 300px;
-    margin: 20px;
+.forms{
+    flex-grow: 1;
 }
 
-.submitButton {
+.add-property-form{
+    max-width: 100%;
+}
+
+.submit-button {
     min-width: 100%;
     max-width: 300px;
     background-color: #194185;
@@ -77,3 +65,9 @@
     border: 3px outset #194185;
     color: white;
 }
+
+.form-label{
+    padding-top: 2%;
+    margin-bottom: 0;
+}
+

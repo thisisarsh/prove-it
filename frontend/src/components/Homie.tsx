@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import "../styles/components/homie.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faRobot, faTimes , faMicrophone, faMicrophoneSlash} from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../hooks/useAuthContext";
 import SpeechRecognition, {
     useSpeechRecognition,
 } from "react-speech-recognition";
+import Button from "react-bootstrap/Button";
 
 interface IMessage {
     id: number;
@@ -55,6 +56,22 @@ const Homie = ({ propertyId }: HomieProps) => {
 
     const toggleChatbot = () => setIsOpen(!isOpen);
 
+    const processMessage = async (botMessage: IRasaResponse) => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        id: prevMessages.length + 1,
+                        text: botMessage.text,
+                        sender: "bot",
+                    },
+                ]);
+                resolve();
+            }, botMessage.text.length * 30);
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const messageToSend = userInput.trim();
@@ -70,8 +87,6 @@ const Homie = ({ propertyId }: HomieProps) => {
             sender: userId || "unknown",
         };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
-
-        setTimeout(async () => {
             try {
                 const response = await fetch(
                     `${window.config.SERVER_URL}/chat-response`,
@@ -87,22 +102,13 @@ const Homie = ({ propertyId }: HomieProps) => {
                 );
 
                 const responseData: IRasaResponse[] = await response.json();
-                responseData.forEach((botMessage) => {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            id: prevMessages.length + 1,
-                            text: botMessage.text,
-                            sender: "bot",
-                        },
-                    ]);
-                });
+                for (const botMessage of responseData) {
+                    await processMessage(botMessage);
+                }
+                setIsThinking(false);
             } catch (error) {
                 console.error("Error sending message to Rasa:", error);
-            } finally {
-                setIsThinking(false); // Hide thinking indicator
             }
-        }, 2000);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,15 +118,20 @@ const Homie = ({ propertyId }: HomieProps) => {
         setUserInput(e.target.value);
     };
 
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     return (
-        <div className="chatbot-container">
+        <div className={`chatbot-container ${isOpen ? "open" : ""}`}>
             {!isOpen ? (
                 <button className="chatbot-toggle" onClick={toggleChatbot}>
-                    <FontAwesomeIcon icon={faComments} />
+                    <FontAwesomeIcon icon={faRobot} className="large-icon"/>
                 </button>
             ) : null}
 
-            {isOpen && (
                 <div className="chatbot-window">
                     <div className="chat-header">
                         <h2>Homie</h2>
@@ -146,8 +157,19 @@ const Homie = ({ propertyId }: HomieProps) => {
                                 <div className="message-text">...</div>
                             </div>
                         )}
+                        <div ref={messagesEndRef}/>
                     </div>
                     <form onSubmit={handleSubmit} className="message-form">
+                        {browserSupportsSpeechRecognition ? (
+                            <Button className="speech-button"
+                                variant={listening ? "danger" : "primary"}
+                                onClick={() => listening ? stopDictation() : startDictation()}
+                            >
+                                <FontAwesomeIcon icon={listening ? faMicrophoneSlash : faMicrophone} />
+                                {listening ? " Stop Talking" : " Start Talking"}
+                            </Button>
+                        ) : null}
+
                         <input
                             type="text"
                             value={userInput}
@@ -155,30 +177,12 @@ const Homie = ({ propertyId }: HomieProps) => {
                             className="message-input"
                             placeholder="Type or speak"
                         />
-                        {browserSupportsSpeechRecognition ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={startDictation}
-                                    disabled={listening}
-                                >
-                                    Start
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={stopDictation}
-                                    disabled={!listening}
-                                >
-                                    Stop
-                                </button>
-                            </>
-                        ) : null}
-                        <button type="submit" className="send-button">
+
+                        <Button type="submit" className="send-button">
                             Send
-                        </button>
+                        </Button>
                     </form>
                 </div>
-            )}
         </div>
     );
 };

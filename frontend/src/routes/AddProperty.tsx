@@ -11,6 +11,7 @@ export function AddProperty() {
                 className="main-logo"
                 onClick={() => navigate("/dashboard")}
             />
+            <div className="form-container">
 
             <h1>Add a Property</h1>
 
@@ -21,6 +22,7 @@ export function AddProperty() {
             <p>Ensure all information is entered correctly.</p>
 
             <AddPropertyCluster />
+            </div>
         </div>
     );
 }

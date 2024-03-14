@@ -8,6 +8,8 @@ import { StyleSheet } from 'react-native';
 import {GeneralServiceType, Property, ServiceType, SpecificServiceType, Timeline} from "../../../types";
 import {config} from "../../../config";
 import {NavigationProp, ParamListBase} from "@react-navigation/native";
+import ButtonPrimary from '../../components/ButtonPrimary';
+import { SIZES } from '../../components/Theme';
 
 const SERVER_URL = config.SERVER_URL;
 
@@ -26,7 +28,7 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
     const [selectedGenType, setSelectedGenType] = useState<GeneralServiceType | null>(null);
 
     const [specificServices, setSpecificServices] = useState<SpecificServiceType[]>([]);
-    const [selectedSpecService, setSelectedSpecService] = useState<SpecificServiceType | null>(null);
+    const [selectedSpecService, setSelectedSpecService] = useState<SpecificServiceType | null | undefined>(null);
 
     const [timelines, setTimelines] = useState<Timeline[]>([]);
     const [selectedTimeline, setSelectedTimeline] = useState<Timeline | null>(null);
@@ -94,15 +96,11 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
                     setError(response.message);
                 }
             });
-    }, [fetchData, GENERAL_SERVICE_TYPE_LINK, TENANT_PROPERTY_LINK, TIMELINES_LINK, user?.id])
+    }, [fetchData, GENERAL_SERVICE_TYPE_LINK, TENANT_PROPERTY_LINK, TIMELINES_LINK, user?.id]);
 
-    const handleGeneralTypeSelect = (type: string) => {
-        const actual_type = generalServiceTypes.find(t => t.id === type);
-        setSelectedGenType(actual_type || null);
-        setSelectedSpecService(null);
-
-        if (actual_type) {
-            const params = new URLSearchParams({parentId: actual_type.id});
+    useEffect (() => {
+        if (selectedGenType) {
+            const params = new URLSearchParams({parentId: selectedGenType.id});
 
             fetchData(SPECIFIC_SERVICES_LINK + "?" + params.toString())
                 .then((response) => {
@@ -117,13 +115,23 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
                     setError(error.error);
                 });
         }
+    }, [selectedGenType])
+
+
+    const handleGeneralTypeSelect = (type: string) => {
+        const actual_type = generalServiceTypes.find(t => t.id === type);
+        setSelectedGenType(actual_type || null);
     };
 
 
     const handleSpecServiceSelect = (type: string) => {
         console.log('Handling spec service select...');
         const actual_type = specificServices.find(t => t.id === type);
-        setSelectedSpecService(actual_type || null);
+        console.log("actual type:" );
+        console.log(actual_type);
+        setSelectedSpecService(actual_type);
+        console.log("selectedSpec:" + selectedSpecService);
+        
     };
 
     const handleTimelineSelect = (itemValue: string | number) => {
@@ -143,6 +151,7 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
             serviceTypeId: selectedSpecService?.id,
             detail: issueDetail
         }
+        console.log(createRequestBody);
 
         fetch(SERVER_URL + "/ticket/initiated", {
             method: "POST",
@@ -162,7 +171,7 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
                 setIsLoading(false);
                 if (responseJson.isSuccess) {
                     alert(responseJson.message ?? "Request successfully created");
-                    navigation.navigate("TenantServiceRequestsActive");
+                    navigation.navigate("Active Tickets");
                 } else {
                     setError(responseJson.message);
                 }
@@ -217,12 +226,11 @@ const ServiceRequest: React.FC<ServiceRequestProps> = ( {navigation} ) => {
                 />
             </View>
 
-
             <View style={styles.buttonContainer}>
                 {isLoading ? (
                     <ActivityIndicator />
                 ) : (
-                    <Button title="Submit" onPress={handleSubmit} />
+                    <ButtonPrimary title="Submit" onPress={handleSubmit} />
                 )}
             </View>
         </ScrollView>
@@ -249,6 +257,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         marginTop: 20,
+        marginBottom: SIZES.height * 0.1,
     },
     textInput: {
         height: 100,
@@ -275,14 +284,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
-    },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2
-    },
-    buttonClose: {
-        backgroundColor: "#2196F3",
     },
     textStyle: {
         color: "white",

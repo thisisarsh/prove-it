@@ -34,8 +34,10 @@ export function OTPVerifyCluster() {
     return (
         <>
             <div className="info-message">
-                A four-digit one-time passcode has been sent to your phone by
-                SMS. Please enter the code to verify your phone number.
+
+                <p>A four-digit one-time passcode has been sent to your phone by
+                    SMS.</p>
+                <p>Please enter the code to verify your phone number.</p>
             </div>
             <Form className="otp-input-cluster" onSubmit={handleSubmit}>
                 <Form.Control

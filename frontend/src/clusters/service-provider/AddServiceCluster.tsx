@@ -10,7 +10,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { Button, Form } from "react-bootstrap";
 import SearchableDropdown from "../../components/DropDownList";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import Modal from "react-bootstrap/Modal";
 
@@ -227,11 +227,11 @@ export function AddServiceCluster() {
     );
 
     return (
-        <div id="service-form-container">
+        <>
             <Form className="add-service mb-4">
                 <Form.Group>
                     <Form.Label className="mb-2">
-                        What category of service would you like to offer?
+                        <h4>What category of service would you like to offer?</h4>
                     </Form.Label>
 
                     <SearchableDropdown
@@ -250,7 +250,7 @@ export function AddServiceCluster() {
 
                 {serviceOfferings.map((offering, index) => (
                     <Form.Group>
-                        <Form.Label>Service {index + 1}</Form.Label>
+                        <Form.Label><h4>Service {index + 1}</h4></Form.Label>
 
                         <SearchableDropdown
                             items={specificServices}
@@ -273,7 +273,7 @@ export function AddServiceCluster() {
                             placeholder={
                                 offering.timeline
                                     ? offering.timeline.title
-                                    : "Select a typlical timeline"
+                                    : "Select a typical timeline"
                             }
                             labelKey="title"
                         />
@@ -284,7 +284,7 @@ export function AddServiceCluster() {
 
                 <Button
                     className="add-service mb-5 "
-                    disabled={selectedGenType ? false : true}
+                    disabled={!selectedGenType}
                     onClick={() => {
                         addNewOffering();
                     }}
@@ -297,16 +297,25 @@ export function AddServiceCluster() {
                 ) : (
                     <Button
                         className="submit-button"
-                        disabled={serviceOfferings.length > 0 ? false : true}
+                        disabled={serviceOfferings.length <= 0}
                         onClick={handleSubmit}
                     >
                         Submit
                     </Button>
                 )}
+                <Link to="/dashboard" className="goBackLink">
+                <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="goBackButton"
+                    >
+                    <span>Go Back</span>
+                </Button>
+            </Link>
             </Form>
 
             {error && <ErrorMessageContainer message={error} />}
             {ModalContent}
-        </div>
+        </>
     );
 }

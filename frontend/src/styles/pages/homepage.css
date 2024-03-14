@@ -5,6 +5,8 @@ div.homepage-logo-container {
     display:flex;
     flex-direction:row;
     justify-content:space-around;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
   
 a.ht-logo-link {
@@ -13,69 +15,75 @@ a.ht-logo-link {
   width:75%;
 }
 
-  img.homepage-ht-logo {
-    width:100%;
-  }
-  
-  img.homepage-proveit-logo {
-    width:25%;
-    max-width:100px;
-    min-width:50px;
-  }
+img.homepage-ht-logo {
+  width:100%;
+}
 
-  div.homepage-main-container {
-    display:flex;
-    width:100%;
-  }
-  
-  div.homepage-main-left {
-    display:flex;
-    flex:2;
-    /*border:1px solid blue;
-    */
-    flex-direction:column;
-    align-items:center;
-  }
-  
-  div.homepage-main-right {
-    display:flex;
-    flex:1;
-    justify-content: space-between;
-    align-items:center;
-    flex-direction:column;
-    /*border: 1px solid red;
-    */
-  }
-  
-  div.homepage-main-right p {
-    margin-bottom:0px;
-    text-align: center;
-  }
-  
-  div.homepage-main-left p {
-    text-align:center;
-    width:80%;
-  }
-  
-  button.homepage-action-button {
-    background-color:#194185;
-    border:3px outset #194185;
-    width:80%;
-    min-height:50px;
-    height:fit-content;
-  }
-  
-  img.homepage-graphic {
-    width:100%;
-    max-width: 500px;
-    min-width:100px;
-  }
+img.homepage-proveit-logo {
+  width:25%;
+  max-width:100px;
+  min-width:50px;
+}
 
-  hr.homepageHr {
-    margin-bottom: 5rem;
-  }
+div.homepage-main-container {
+  margin-top: 20vh;
+  display:flex;
+  width:100%;
+}
 
-  body {
-    height:100vh;
-    min-height: 100vh;
-  }
+div.homepage-main-left {
+  display:flex;
+  flex:2;
+  /*border:1px solid blue;
+  */
+  flex-direction:column;
+  align-items:center;
+}
+
+div.homepage-main-right {
+  display:flex;
+  flex:1;
+  justify-content: space-between;
+  align-items:center;
+  flex-direction:column;
+  /*border: 1px solid red;
+  */
+}
+
+div.homepage-main-right p {
+  margin-bottom:0px;
+  text-align: center;
+}
+
+div.homepage-main-left p {
+  text-align:center;
+  width:80%;
+}
+
+button.homepage-action-button {
+  background-color:#194185;
+  border:3px outset #194185;
+  width:80%;
+  min-height:50px;
+  height:fit-content;
+}
+
+img.homepage-graphic {
+  width:100%;
+  max-width: 500px;
+  min-width:100px;
+}
+
+hr.homepageHr {
+  margin-bottom: 5rem;
+}
+
+body {
+  height:100vh;
+  min-height: 100vh;
+}
+
+.homepage-main-left, .homepage-main-right {
+  font-size: 1.5rem;
+  font-weight: 450;
+}

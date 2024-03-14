@@ -11,9 +11,6 @@ export function RequestService() {
                 className="main-logo"
                 onClick={() => navigate("/dashboard")}
             />
-
-            <h1>Request a Service</h1>
-
             <RequestServiceCluster />
         </div>
     );
