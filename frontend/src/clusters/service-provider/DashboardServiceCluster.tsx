@@ -21,7 +21,6 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import Nav from "react-bootstrap/Nav";
 import { ApplyPublicPrompt } from "../../components/ApplyPublicPrompt";
 import { SPJobTable } from "../../components/SPJobTable";
-import Accordion from "react-bootstrap/Accordion";
 import Badge from "react-bootstrap/Badge";
 import {Button, ListGroup} from "react-bootstrap";
 
@@ -392,10 +391,11 @@ export function DashboardServiceCluster() {
                             <Nav.Link onClick={() => navigate("/add-service")}>
                                 Add a service
                             </Nav.Link>
+                            <button className="logout-button" onClick={logout}>
+                                Log out
+                            </button>
                         </div>
-                        <button className="logout-button" onClick={logout}>
-                            Log out
-                        </button>
+
                     </Offcanvas.Body>
                 </Offcanvas>
 
@@ -577,35 +577,34 @@ export function DashboardServiceCluster() {
 
                 <div className="properties-container">
                     <h1 className="dashboard-label">Current Service Requests</h1>
-                    {/* Current Requests Table */}
-                    <Accordion defaultActiveKey="0" style={{paddingTop: "1rem"}}>
-                        <Accordion.Item eventKey="0">
-                            <Accordion.Header>Active</Accordion.Header>
-                            <Accordion.Body>
+                    <Tab.Container defaultActiveKey="0">
+                        <Nav variant="tabs" className="custom-tab-header">
+                            <Nav.Item>
+                                <Nav.Link eventKey="0">Active</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="1">Completed</Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+                        <Tab.Content>
+                            <Tab.Pane key="0" eventKey="0" className="custom-tab-content">
                                 <SPJobTable
                                     jobs={activeJobs}
                                     activateJob={handleActivateJob}
                                     completeJob={handleCompleteJob}
                                     isLoading={isLoading}
                                 />
-                            </Accordion.Body>
-                        </Accordion.Item>
-                    </Accordion>
-
-                    {/* Completed Requests Table */}
-                    <Accordion style={{paddingTop: "1rem"}}>
-                        <Accordion.Item eventKey="0">
-                            <Accordion.Header>Completed</Accordion.Header>
-                            <Accordion.Body>
+                            </Tab.Pane>
+                            <Tab.Pane key="1" eventKey="1" className="custom-tab-content">
                                 <table className="dashboard-table">
                                     <thead className="dashboard-header">
                                     <tr>
                                         <th>Service</th>
                                         <th>Property</th>
-                                        <th>Status</th>
+                                        <th className="centered-column">Status</th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     {isLoading ? (
                                         <td colSpan={2}>
                                             Loading Service Requests...
@@ -635,6 +634,7 @@ export function DashboardServiceCluster() {
                                                         }
                                                     </td>
                                                     <td>
+                                                        <div className="centered-column">
                                                         {job.activityStatus ===
                                                             "completed" && (
                                                             <Badge
@@ -646,6 +646,7 @@ export function DashboardServiceCluster() {
                                                                 }
                                                             </Badge>
                                                         )}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))
@@ -656,11 +657,11 @@ export function DashboardServiceCluster() {
                                             </td>
                                         </tr>
                                     )}
-                                </tbody>
-                            </table>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
+                                    </tbody>
+                                </table>
+                            </Tab.Pane>
+                        </Tab.Content>
+                    </Tab.Container>
             </div>
 
             {/* Show more detail about property Popup */}

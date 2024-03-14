@@ -223,10 +223,11 @@ export function DashboardTenantCluster() {
                             >
                                 See Agreement
                             </Nav.Link>
+                            <button className="logout-button" onClick={logout}>
+                                Log out
+                            </button>
                         </div>
-                        <button className="logout-button" onClick={logout}>
-                            Log out
-                        </button>
+
                     </Offcanvas.Body>
                 </Offcanvas>
                 {/* Property block */}

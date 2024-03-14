@@ -423,10 +423,11 @@ export function DashboardOwnerCluster() {
                                 >
                                     Service Provider
                                 </Nav.Link>
+                                <button className="logout-button" onClick={logout}>
+                                    Log out
+                                </button>
                             </div>
-                            <button className="logout-button" onClick={logout}>
-                                Log out
-                            </button>
+
                         </Offcanvas.Body>
                     </Offcanvas>
                     {/* Property block */}
@@ -437,7 +438,7 @@ export function DashboardOwnerCluster() {
                             <tr>
                                 <th>Name</th>
                                 <th>Address</th>
-                                <th>Actions</th>
+                                <th className="centered-column">Actions</th>
                             </tr>
                             </thead>
 
@@ -451,6 +452,7 @@ export function DashboardOwnerCluster() {
                                         <td>{userProperty.name}</td>
                                         <td>{userProperty.streetAddress}</td>
                                         <td>
+                                            <div className="centered-column-bts">
                                             <button
                                                 onClick={() =>
                                                     handleDeleteClick(
@@ -481,6 +483,7 @@ export function DashboardOwnerCluster() {
                                             >
                                                 Tenant
                                             </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -514,7 +517,7 @@ export function DashboardOwnerCluster() {
                     {/* Service Request block */}
                     <div className="service-container">
                         <h1 className="dashboard-label">Service Requests</h1>
-                        {/* Accordion drop downs */}
+                        {/* Accordion drop-downs */}
                         <Accordion
                             defaultActiveKey="0"
                             style={{paddingTop: "1rem"}}
@@ -528,9 +531,9 @@ export function DashboardOwnerCluster() {
                                             <th className="dashboard-header">
                                                 Service
                                             </th>
-                                            <th>Status</th>
+                                            <th className="centered-column">Status</th>
                                             <th>Property</th>
-                                            <th>Actions</th>
+                                            <th className="centered-column">Actions</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -560,6 +563,7 @@ export function DashboardOwnerCluster() {
                                                         </td>
 
                                                         <td>
+                                                            <div className="centered-column">
                                                             {userTicket.job
                                                                 ?.activityStatus ? (
                                                                 <Badge
@@ -582,6 +586,7 @@ export function DashboardOwnerCluster() {
                                                                     }
                                                                 </Badge>
                                                             )}
+                                                            </div>
                                                         </td>
 
                                                         <td>
@@ -593,6 +598,7 @@ export function DashboardOwnerCluster() {
                                                         </td>
 
                                                         <td>
+                                                            <div className="centered-column-bts">
                                                             {(userTicket.status ===
                                                                 "requested" ||
                                                                 (userTicket.status ===
@@ -667,6 +673,7 @@ export function DashboardOwnerCluster() {
                                                                         Reject
                                                                     </Button>
                                                                 )}
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 ))
@@ -710,7 +717,7 @@ export function DashboardOwnerCluster() {
                                     <thead className="dashboard-header">
                                         <tr>
                                             <th>Service</th>
-                                            <th>Status</th>
+                                            <th className="centered-column">Status</th>
                                             <th>Property</th>
                                         </tr>
                                     </thead>
@@ -732,14 +739,15 @@ export function DashboardOwnerCluster() {
                                                 .map((userTicket) => (
                                                     <tr key={userTicket.id}>
                                                         <td>
+
                                                             {
                                                                 userTicket
                                                                     .serviceType
                                                                     .serviceType
                                                             }
                                                         </td>
-
                                                         <td>
+                                                        <div className="centered-column">
                                                             {userTicket.status ===
                                                                 "rejected" && (
                                                                 <Badge
@@ -773,6 +781,7 @@ export function DashboardOwnerCluster() {
                                                                     }
                                                                 </Badge>
                                                             )}
+                                                        </div>
                                                         </td>
 
                                                         <td>
