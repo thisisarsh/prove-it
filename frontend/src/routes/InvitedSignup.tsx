@@ -7,8 +7,12 @@ export function InvitedSignup() {
                 src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
                 className="main-logo"
             />
-            <h1>Tenant / Service Provider Signup</h1>
-            <SignUpCluster signupType="invited" />
+            <div className="signup-cluster-container">
+                <h1>Sign Up</h1>
+                <h2>Tenant / Service Provider</h2>
+                <p></p>
+                <SignUpCluster signupType="invited"/>
+            </div>
         </div>
     );
 }

@@ -148,7 +148,6 @@ main{
 
 .dashboard-table th,
 .dashboard-table td {
-    border: 1px solid #dee2e6; 
     padding: 0.75rem; 
     text-align: left;
 }
@@ -157,6 +156,10 @@ main{
 .dashboard-table .dashboard-empty-property {
     text-align: center; 
     padding: 1rem; 
+}
+
+.dashboard-empty-property, .dashboard-empty-service{
+    background-color: rgb(161, 178, 204);
 }
 
 .property-detail-table {

@@ -48,9 +48,10 @@ export function SetRole() {
                 src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
                 className="main-logo"
             />
+            <div className="role-cluster-container">
             <div className="info-message">
-                Welcome to HomeTrumpeter! What is your role in property
-                management?
+                <h2>Welcome to HomeTrumpeter!</h2>
+                <p>What is your role in property management?</p>
             </div>
 
             {isLoading ? (
@@ -84,6 +85,7 @@ export function SetRole() {
                     </div>
                 </div>
             )}
+            </div>
             {ModalContent}
         </div>
     );

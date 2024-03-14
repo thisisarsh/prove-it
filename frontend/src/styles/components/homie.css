@@ -139,16 +139,6 @@
     outline: none;
 }
 
-.send-button {
-    background-color: #194185;
-    color: white;
-    border: none;
-    border-radius: 18px;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
 .send-button:hover {
     background-color: #194185;
 }
@@ -183,6 +173,24 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+#root > div > div > div > div > form > button.send-button.btn.btn-primary{
+    background-color: #194185;
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#root > div > div > div > div > form > button.speech-button.btn.btn-primary{
+    background-color: #194185;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .speech-button {

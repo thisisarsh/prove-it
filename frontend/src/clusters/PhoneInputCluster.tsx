@@ -78,9 +78,9 @@ export function PhoneInputCluster() {
     return (
         <>
             <div className="welcome-message">
-                Welcome to HomeTrumpeter, NewUser!
+                <h2>Welcome to HomeTrumpeter!</h2>
                 <br />
-                Please enter your phone number to finalize your account
+                <p>Please enter your phone number to finalize your account</p>
             </div>
             <Form className="PhoneInputCluster" onSubmit={handleSubmit}>
                 <Form.Control

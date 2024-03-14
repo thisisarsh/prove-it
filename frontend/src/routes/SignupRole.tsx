@@ -11,7 +11,8 @@ export function SignupRole() {
                 className="main-logo"
             />
             <div className="info-message">
-                Welcome to HomeTrumpeter! What category best describes you?
+                Welcome to HomeTrumpeter!
+                What category best describes you?
             </div>
 
             <div className="button-options-container">

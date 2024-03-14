@@ -12,6 +12,8 @@ export function AddService() {
                 onClick={() => navigate("/dashboard")}
             />
 
+            <div className="form-container">
+
             <h1>Add a Service</h1>
 
             <p>Fill out the information below to add a new service offering</p>
@@ -22,6 +24,7 @@ export function AddService() {
             </p>
 
             <AddServiceCluster />
+                </div>
         </div>
     );
 }

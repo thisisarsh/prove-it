@@ -1,7 +1,7 @@
 form.add-service .submit-button {
     background-color:#194185;
     width:100%;
-    border:2px outset #194185;
+
 }
 
 form.add-service .submit-button:hover {
@@ -11,7 +11,7 @@ form.add-service .submit-button:hover {
 form.add-service button.add-service {
     background-color:#194185;
     width:100%;
-    border:2px outset #194185;
+
 }
 
 form.add-service button.add-service:hover {
@@ -19,26 +19,12 @@ form.add-service button.add-service:hover {
 }
 
 form.add-service {
-    border: 1px solid grey;
     border-radius: 5px;
     padding: 15px;
     align-items: center;
 }
 
-#service-form-container::before {
-    position:relative;
-    top:12px;
-    left:10px;
-    content: "Service information";
-    background-color: white;
-    padding: 0 5px;
-}
-
 form.add-service {
     width:100%;
-}
-
-#service-form-container {
-    width:100%;
-    max-width: 500px;
+    margin: auto;
 }

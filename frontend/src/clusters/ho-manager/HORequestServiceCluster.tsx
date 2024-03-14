@@ -269,6 +269,9 @@ export function RequestHOServiceCluster() {
     return (
         <div id="request-form-container">
             <Form className="create-request">
+                <div className="form-header">
+                <h1>Request a Service</h1>
+                </div>
                 <Form.Group>
                     <SearchableDropdown
                         items={properties}
@@ -357,7 +360,7 @@ export function RequestHOServiceCluster() {
 
                 <div className="d-grid">
                     {isLoading ? (
-                        <Spinner />
+                        <Spinner/>
                     ) : (
                         <Button
                             variant="primary"
@@ -371,7 +374,7 @@ export function RequestHOServiceCluster() {
                 </div>
             </Form>
 
-            {error && <ErrorMessageContainer message={error} />}
+            {error && <ErrorMessageContainer message={error}/>}
             {ModalContent}
         </div>
     );

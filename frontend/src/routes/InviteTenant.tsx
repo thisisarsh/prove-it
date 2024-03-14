@@ -11,10 +11,12 @@ export function InviteTenant() {
                 className="main-logo"
                 onClick={() => navigate("/dashboard")}
             />
+            <div className="form-container">
 
             <h1>Invite a Tenant</h1>
 
             <InviteUserCluster roleName="tenant" />
+            </div>
         </div>
     );
 }

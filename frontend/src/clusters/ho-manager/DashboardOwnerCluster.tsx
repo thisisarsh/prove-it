@@ -696,7 +696,7 @@ export function DashboardOwnerCluster() {
                                                 className="standard-button"
                                                 onClick={() => {
                                                     navigate(
-                                                        "/request-service",
+                                                        "/ho-request-service",
                                                     );
                                                 }}
                                             >

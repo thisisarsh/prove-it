@@ -11,7 +11,9 @@ export function VerifyPhone() {
                 src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
                 className="main-logo"
             />
+            <div className="signup-cluster-container">
             <PhoneInputCluster />
+            </div>
         </div>
     );
 }
