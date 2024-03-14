@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 import "../../styles/pages/inviteUser.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Property } from "../../types";
 import SearchableDropdown from "../../components/DropDownList";
 import { FormGroup } from "../../components/Forms";
@@ -213,6 +213,15 @@ export default function InviteUserCluster(props: InviteUserProps) {
                             Send Invite
                         </Button>
                     )}
+                        <Link to="/dashboard" className="goBackLink">
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className="goBackButton"
+                            >
+                                <span>Go Back</span>
+                            </Button>
+                        </Link>
                 </Form>
             </div>
             {ModalContent}

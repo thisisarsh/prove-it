@@ -10,7 +10,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { Button, Form } from "react-bootstrap";
 import SearchableDropdown from "../../components/DropDownList";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import Modal from "react-bootstrap/Modal";
 
@@ -303,6 +303,15 @@ export function AddServiceCluster() {
                         Submit
                     </Button>
                 )}
+                <Link to="/dashboard" className="goBackLink">
+                <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="goBackButton"
+                    >
+                    <span>Go Back</span>
+                </Button>
+            </Link>
             </Form>
 
             {error && <ErrorMessageContainer message={error} />}

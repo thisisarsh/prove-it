@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { RequestDetails, ServiceProvider } from "../../types";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ErrorMessageContainer from "../../components/ErrorMessageContainer";
 import { useSearchParams } from "react-router-dom";
 import { RequestQuoteTable } from "../../components/RequestQuoteTable";
@@ -236,6 +236,16 @@ export function RequestQuoteCluster() {
                     inviting a service provider...
                 </p>
             )}
+            
+            <Link to="/dashboard" className="goBackLink">
+                <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="goBackButton"
+                    >
+                    <span>Go Back</span>
+                </Button>
+            </Link>
             
             {ModalContent}
         </>
