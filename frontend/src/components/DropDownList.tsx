@@ -29,7 +29,7 @@ const SearchableDropdown = <
     const [filteredItems, setFilteredItems] = useState<T[]>(items);
 
     useEffect(() => {
-        setFilteredItems(items); // Initialize filteredItems with all items
+        setFilteredItems(items);
     }, [items]);
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toLowerCase();
@@ -61,7 +61,7 @@ const SearchableDropdown = <
                     onChange={handleSearchChange}
                     value={search}
                 />
-                <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+                <div style={{maxHeight: "40vh", overflowY: "auto" }}>
                     {filteredItems.map((item, index) => (
                         <Dropdown.Item
                             key={index}

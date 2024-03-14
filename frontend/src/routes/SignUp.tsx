@@ -11,9 +11,12 @@ export function SignUp() {
                 src="https://hometrumpeter.com/wp-content/uploads/2023/03/logo.svg"
                 className="main-logo"
             />
-            <h1>Homeowner / Manager Signup</h1>
-            <p></p>
-            <SignUpCluster signupType="manager" />
+            <div className="signup-cluster-container">
+                <h1>Sign Up</h1>
+                <h2>Homeowner / Manager</h2>
+                <p></p>
+                <SignUpCluster signupType="manager"/>
+            </div>
         </div>
     );
 }

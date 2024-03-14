@@ -274,7 +274,7 @@ export function AddPropertyCluster() {
             )}
 
             <div className="forms">
-                <Form>
+                <Form className="add-property-form">
                     <Form.Group controlId="propertyName">
                         <Form.Label>Property Name</Form.Label>
                         <Form.Control

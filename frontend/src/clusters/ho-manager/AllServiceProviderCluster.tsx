@@ -131,7 +131,7 @@ export function AllServiceProviderCluster() {
             {/* Property block */}
             <div className="all-serviceProvider-container">
                 <h1 className="dashboard-label">Service Providers</h1>
-                <table className="dashboard-table">
+                <table className="dashboard-table main-property-table">
                     <thead className="dashboard-header">
                         <tr>
                             <th>First Name</th>
@@ -169,9 +169,9 @@ export function AllServiceProviderCluster() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={3}>
-                                    You have not invite any service provider
-                                    Start by invite a service provider!
+                                <td colSpan={5}>
+                                    You do not have invite any service providers,
+                                    start by inviting a service provider!
                                 </td>
                             </tr>
                         )}

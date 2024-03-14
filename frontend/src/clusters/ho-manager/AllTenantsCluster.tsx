@@ -338,18 +338,19 @@ export function AllTenantsCluster() {
                             >
                                 Service Provider
                             </Nav.Link>
+                            <button className="logout-button" onClick={logout}>
+                                Log out
+                            </button>
                         </div>
-                        <button className="logout-button" onClick={logout}>
-                            Log out
-                        </button>
+
                     </Offcanvas.Body>
                 </Offcanvas>
-                <div className="all-tenant-container">
-                    <h1 className="dashboard-label">Tenants</h1>
+                    <div className="all-tenant-container">
+                        <h1 className="dashboard-label">Tenants</h1>
                     {isLoading ? (
                         <Spinner />
                     ) : (
-                        <table className="dashboard-table">
+                        <table className="dashboard-table main-property-table">
                             <thead className="dashboard-header">
                                 <tr>
                                     <th>First Name</th>

@@ -113,14 +113,16 @@ export function SeeAgreementCluster() {
                         <Nav.Link onClick={() => navigate("/dashboard")}>
                             Dashboard
                         </Nav.Link>
+                        <button className="logout-button" onClick={logout}>
+                            Log out
+                        </button>
                     </div>
-                    <button className="logout-button" onClick={logout}>
-                        Log out
-                    </button>
+
                 </Offcanvas.Body>
             </Offcanvas>
 
             <div className="main_agreement">
+                <h2>Agreement</h2>
                 {agreement?.status != "not found" ? (
                     <Form>
                         <Form.Group as={Row} controlId="rent">

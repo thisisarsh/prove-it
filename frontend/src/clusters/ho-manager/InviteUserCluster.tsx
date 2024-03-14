@@ -159,20 +159,21 @@ export default function InviteUserCluster(props: InviteUserProps) {
 
     return (
         <>
-            {/*Only display property selector if we are inviting a tenant*/}
-            {props.roleName == "tenant" && (
-                <SearchableDropdown
-                    items={properties || []}
-                    onSelect={(property) => handlePropertySelect(property)}
-                    placeholder={
-                        selectedProperty
-                            ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
-                            : "Select a property"
-                    }
-                    labelKey={"name"} // Assuming you want to search and display by 'name'
-                />
-            )}
             <div id="invite-form-container">
+                {/*Only display property selector if we are inviting a tenant*/}
+                {props.roleName == "tenant" && (
+                    <SearchableDropdown
+                        items={properties || []}
+                        onSelect={(property) => handlePropertySelect(property)}
+                        placeholder={
+                            selectedProperty
+                                ? `${selectedProperty.name}, ${selectedProperty.streetAddress}`
+                                : "Select a property"
+                        }
+                        labelKey={"name"} // Assuming you want to search and display by 'name'
+                    />
+                )}
+
                 <Form id="invite-form">
                     <FormGroup
                         label="First Name"
@@ -202,7 +203,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
                     />
 
                     {isLoading ? (
-                        <Spinner />
+                        <Spinner/>
                     ) : (
                         <Button
                             id="invite-submit-button"
@@ -224,7 +225,7 @@ export default function InviteUserCluster(props: InviteUserProps) {
                 </Form>
             </div>
             {ModalContent}
-            {error && <ErrorMessageContainer message={error} />}
+            {error && <ErrorMessageContainer message={error}/>}
         </>
     );
 }

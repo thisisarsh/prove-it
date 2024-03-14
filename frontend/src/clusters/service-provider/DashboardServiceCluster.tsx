@@ -405,7 +405,7 @@ export function DashboardServiceCluster() {
                 {/* New Requests Table */}
                 <div className="new-request-container mb-5">
                     <h1 className="dashboard-label">New Requests</h1>
-                    <table className="dashboard-table">
+                    <table className="dashboard-table main-property-table">
                         <thead className="dashboard-header">
                         <tr>
                             <th>Service</th>

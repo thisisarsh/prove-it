@@ -233,7 +233,7 @@ export function DashboardTenantCluster() {
                 {/* Property block */}
                 <div className="properties-container">
                     <h1 className="dashboard-label">Property</h1>
-                    <table className="dashboard-table">
+                    <table className="dashboard-table main-property-table">
                         <thead className="dashboard-header">
                         <tr>
                             <th>Name</th>
